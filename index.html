@@ -6,13 +6,13 @@ usr = urlParams.get('username');
 pwd = urlParams.get('password');
 if (!(usr == null && pwd == null))
 {
-	if (usr == "admin" && pwd.slice(1, -2) == "never!")
+	if (usr == "letmein" && pwd == "please")
 	{
-		//window.location.href = "admin.html";
+		window.location.href = "admin.html";
 	}
 	else
 	{
-		//window.location.href = "nosuccess.html";
+		window.location.href = "nosuccess.html";
 	}
 }
 
@@ -22,22 +22,35 @@ Login Page
 </title>
 </head>
 <body>
+<center>
+<img src="/top_secret.png"/>
 <form method="get" action="index.html">
-Username:<input type="text" name="username"/>
-<br>
-<br>
-Password<input type="text" name="password"/>
-<br>
-<br>
-
-<select name="class">
-<option value="11TINF">Computing</option>
-<option value="11MMET">Methods</option>
-</select>
-
-<br>
-
-<input type="submit" value="GO!!!">
+<table>
+<tr>
+<td>
+Username:
+</td>
+<td>
+<input type="text" name="username"/>
+</td>
+</tr>
+<tr>
+<td>
+Password:
+</td>
+<td>
+<input type="text" name="password"/>
+</td>
+</tr>
+<tr>
+<td colspan = 2>
+<center>
+<input type="submit" value="Login">
+</center>
+</td>
+</tr>
+</table>
 </form>
+</center>
 </body>
 </html>
