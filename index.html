@@ -1,0 +1,43 @@
+<html>
+<head>
+<script>
+urlParams = new URLSearchParams(window.location.search);
+usr = urlParams.get('username');
+pwd = urlParams.get('password');
+if (!(usr == null && pwd == null))
+{
+	if (usr == "admin" && pwd.slice(1, -2) == "never!")
+	{
+		//window.location.href = "admin.html";
+	}
+	else
+	{
+		//window.location.href = "nosuccess.html";
+	}
+}
+
+</script>
+<title>
+Login Page
+</title>
+</head>
+<body>
+<form method="get" action="index.html">
+Username:<input type="text" name="username"/>
+<br>
+<br>
+Password<input type="text" name="password"/>
+<br>
+<br>
+
+<select name="class">
+<option value="11TINF">Computing</option>
+<option value="11MMET">Methods</option>
+</select>
+
+<br>
+
+<input type="submit" value="GO!!!">
+</form>
+</body>
+</html>
