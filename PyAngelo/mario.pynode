@@ -1,0 +1,14 @@
+﻿import math
+i = 0
+img = "https://vignette.wikia.nocookie.net/mario-ememiesbossesand-mario-with-a-power-up/images/0/0a/96px-SMB3_Smallmario.svg.png"
+while graphics.reveal():
+    colour = 0.5 * math.sin(i) + 0.5
+    graphics.clear(1,colour,0)
+    
+    graphics.drawImage(img, 100, 100 + 100 * colour)
+    
+    graphics.drawLine(200 + colour * 100, 0, 200 - colour * 100, 200, 0, 0, 1)
+    i += 0.1
+    
+    if i > 100 * 2 * math.pi:
+        i = 0
