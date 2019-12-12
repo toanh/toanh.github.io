@@ -118,6 +118,9 @@ class EdSim():
     def LeftLed(self, state):
         send_message(["LED", False, state])
         
+    def PlayBeep(self):
+        send_message(["beep"])
+        
     def ReadClapSensor(self):
         global array
         

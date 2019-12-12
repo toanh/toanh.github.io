@@ -164,6 +164,7 @@ class PyAngeloEDSim():
         
         howl = window.Howl
         self.clap_sound = howl.new({"src": ["clap.mp3"]})
+        self.beep_sound = howl.new({"src": ["beep.mp3"]})
 
         self.state = self.STATE_WAIT
         self.interval_timer = timer.set_interval(self.update, 16)
@@ -194,7 +195,10 @@ class PyAngeloEDSim():
         self.keys[ev.which] = False      
 
         global array
-        array[ev.which] = 0        
+        array[ev.which] = 0  
+
+    def playBeep(self):
+        self.beep_sound.play()
         
     def stop(self):        
         #timer.clear_interval(self.interval_timer)
@@ -319,6 +323,8 @@ def onmessage(e):
             Ed.ed.target_rotation = int(e.data[3])
     elif e.data[0] == "clearclap":
         Ed.clearclap()
+    elif e.data[0] == "beep":
+        Ed.playBeep()
     elif e.data[0] == "LED":
         if e.data[1] == True:
             Ed.ed.rightLED = e.data[2]
