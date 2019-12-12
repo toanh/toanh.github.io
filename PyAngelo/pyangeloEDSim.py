@@ -322,8 +322,19 @@ def onmessage(e):
     elif e.data[0] == "LED":
         if e.data[1] == True:
             Ed.ed.rightLED = e.data[2]
+            pixel = window.Int8Array.new(4)
+            x = Ed.ed.position[0]
+            y = Ed.ed.position[1]            
+            
+            imageData = Ed.ctx.getImageData(x, y, 1, 1);
+           
+            
+            window.console.log("Pixel: ", str(imageData.data[0]), ",",  str(imageData.data[1]), ",", str(imageData.data[2]), ",", str(imageData.data[3]))            
         else:
             Ed.ed.leftLED = e.data[2]
+            '''
+            '''
+
     elif e.data[0] == "waitdone":
         window.console.log("finished waiting");
         if Ed.state == Ed.STATE_WAIT:
