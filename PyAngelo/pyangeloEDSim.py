@@ -168,6 +168,10 @@ class PyAngeloEDSim():
 
         self.state = self.STATE_WAIT
         self.interval_timer = timer.set_interval(self.update, 16)
+        
+        self.debug_draw = True
+        
+        
         self.reset()
 
     def reset(self):
@@ -207,6 +211,33 @@ class PyAngeloEDSim():
     def clearclap(self):
         self.clap_timer = 0
         # no need to change the shared array because the worker would have done this
+        
+    def drawDebugLine(self):       
+        imageData = Ed.ctx.getImageData(0, 0, self.width, self.height)        
+                
+        radians = math.radians(90 + self.ed.orientation)
+        dx = math.cos(radians)
+        dy = math.sin(radians)
+        
+        x = self.ed.position[0]
+        y = self.height - self.ed.position[1]
+        
+        for n in range(200):        
+            imageData.data[(((int(y)) * self.width + int(x)) << 2) + 1] = 0
+            #imageData.data[((self.height - int(y)) * self.width + int(x)) * 4 + 1] = 255
+            #imageData.data[((self.height - int(y)) * self.width + int(x)) * 4 + 2] = 0
+            #imageData.data[((self.height - int(y)) * self.width + int(x)) * 4 + 3] = 255
+            
+            x += dx
+            y -= dy    
+            
+            if x < 0 or x > self.width:
+                break
+            elif y < 0 or y > self.height:
+                break
+            
+        Ed.ctx.putImageData(imageData, 0, 0) 
+        return
                 
     def update(self):    
         self.anim_timer -= 16
@@ -286,6 +317,20 @@ class PyAngeloEDSim():
                 self.ctx.drawImage(self.ed.led_img, -anchorX * width, -anchorY * height)
             
             self.ctx.restore()
+            
+            if self.debug_draw:
+                self.drawDebugLine()
+                '''
+                imageData = Ed.ctx.getImageData(0, 0, self.width, self.height)
+                x = 10
+                y = 100
+                imageData.data[((self.height - y) * self.width + x) * 4] = 0
+                imageData.data[((self.height - y) * self.width + x) * 4 + 1] = 255
+                imageData.data[((self.height - y) * self.width + x) * 4 + 2] = 0
+                imageData.data[((self.height - y) * self.width + x) * 4 + 3] = 255
+                Ed.ctx.putImageData(imageData, 0, 0)
+                '''
+
             
             if self.state == self.STATE_RUN:
                 if self.anim_timer <= 0:
