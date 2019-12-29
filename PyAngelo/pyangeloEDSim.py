@@ -12,6 +12,7 @@ from browser import document, window, alert, timer, worker, bind, html, load
 from browser.local_storage import storage
 
 load("howler.js")
+load("js/planck.min.js")
 
 # Cursor control and motion
 KEY_HOME          = 0xff50
@@ -135,7 +136,8 @@ class PyAngeloEDSim():
         self.width = self.canvas.width
         self.height = self.canvas.height   
 
-        self.bg = html.IMG(src = "carpet.jpg")           
+        self.bg = html.IMG(src = "carpet.jpg", id="bg", style={"display": "none"}) 
+        document <= self.bg
         
         self.bgcolor = Vector(0, 0, 0, 1)
         
@@ -171,6 +173,21 @@ class PyAngeloEDSim():
         
         self.debug_draw = True
         
+        ####### Begin Test box2d physics
+        pl = window.planck
+       
+        self.world = pl.World.new(pl.Vec2.new(0, -10));
+
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(400.0, 0.0)), 0.0);
+
+        self.c1 = self.world.createDynamicBody(pl.Vec2.new(15.0, 200))
+        
+        self.c1.createFixture(pl.Circle.new(10), 10.0);
+
+        self.c2 = self.world.createDynamicBody(pl.Vec2.new(10.0, 100))
+        self.c2.createFixture(pl.Circle.new(10), 10.0);       
+
+        ####### End Test box2d physics        
         
         self.reset()
 
@@ -238,6 +255,23 @@ class PyAngeloEDSim():
             
         Ed.ctx.putImageData(imageData, 0, 0) 
         return
+        
+    def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.beginPath();
+        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(
+            int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+
+        self.ctx.arc(x, self.height - y, radius, 0, 2 * math.pi, True);
+
+        #self.ctx.fill();
+
+        self.ctx.stroke()        
                 
     def update(self):    
         self.anim_timer -= 16
@@ -256,7 +290,9 @@ class PyAngeloEDSim():
                 self.starting_text += "."
                 if self.starting_text.count(".") > 5:
                     self.starting_text = self.starting_text[:-5]
-            self.ctx.fillText(self.starting_text, 100, 200);            
+            self.ctx.fillText(self.starting_text, 100, 200); 
+
+            
         else:
             # update
             
@@ -317,6 +353,17 @@ class PyAngeloEDSim():
                 self.ctx.drawImage(self.ed.led_img, -anchorX * width, -anchorY * height)
             
             self.ctx.restore()
+            
+            ### Begin Test Physics
+            
+            self.world.step(1/60)
+            pos = self.c1.getPosition()
+            self.drawCircle(pos.x, pos.y, 10, 1, 0, 0)
+            pos = self.c2.getPosition()
+            self.drawCircle(pos.x, pos.y, 10, 1, 0, 0)            
+            
+            ### End Test Physics
+            
             
             if self.debug_draw:
                 self.drawDebugLine()

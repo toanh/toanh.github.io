@@ -74,6 +74,8 @@
                 <div class="pynodeTitle">PyEdSim</div>
                 <div class="pynodeSubtitle">
                     <h3>PyEd Simulator for the Edison Robot</h3>
+                    <input id="file-input" type="file" name="name" style="display: none;"/>
+                    <input id="image-input" type="file" name="image" style="display: none;"/>
                 </div>
             </div>
         </div>
@@ -88,7 +90,7 @@
                             <div class="appSectionEnlarge">
                                 <div class="appSectionBarIconDivider"></div>
                                 <div class="appSectionBarIcon"><h3><a href=""
-                                                                      onclick="document.getElementById('file-input').click(); return false;"><img
+                                                                      onclick="document.getElementById('file-input').click(); alert('hello');return false;"><img
                                         src="images/controls/import.png" width="16" height="16"></a></h3></div>
                                 <div class="appSectionBarIcon"><h3><a href=""
                                                                       onclick="userSaveCode(); return false;"><img
@@ -136,8 +138,12 @@
                             </div>
                             <div class="buttonBarLayoutPanel">
                                 <div id="layout1">
-                                    <div id="layout1On" class="layoutButtonOn" style="display: inherit"><img
-                                            src="images/controls/layoutButton1.png" width="20" height="20"></div>
+                                    <div class="appSectionBarIcon"><h3><a href=""
+                                                                      onclick="document.getElementById('image-input').click(); return false;"><img
+                                        src="images/controls/import.png" width="16" height="16"></a></h3></div>                                
+                                    <div id="layout1On" class="layoutButtonOn" style="display: inherit"><img 
+                                            src="images/controls/layoutButton1.png" width="20" height="20"><a href=""
+                                                                      onclick="document.getElementById('image-input').click(); return false;"></div>
                                     <div id="layout1Off" class="layoutButtonOff" style="display: none"><img
                                             src="images/controls/layoutButton1.png" width="20" height="20"></div>
                                 </div>
@@ -249,7 +255,7 @@
 
 </script>
 
-<input id="file-input" type="file" name="name" style="display: none;"/>
+
 <script type="text/javascript" src="js/filesaver/filesaver.min.js?version=0.9.2"></script>
 <script>
     function userLoadCode(event) {
@@ -272,11 +278,29 @@
         saveAs(blob, "project.pynode");
     }
 
+    function userLoadImage(event) {
+        var files = event.target.files;
+        var file = null;
+        if (files.length > 0) file = files[0];
+        else return;
+        var fr = new FileReader();
+        fr.onload = () => showImage(fr);
+        fr.readAsDataURL(file);        
+    }
+    
+    function showImage(fileReader) {
+        var img = document.getElementById("bg");
+        img.onload = () => getImageData(img);
+        img.src = fileReader.result;
+    }      
+    
     document.getElementById('file-input').addEventListener('change', userLoadCode, false);
+    document.getElementById('image-input').addEventListener('change', userLoadImage, false);
 </script>
 
 <script type="text/javascript" src="js/brython/brython.js?version=0.9.7"></script>
 <script type="text/javascript" src="js/brython/brython_stdlib.js?version=0.9.7"></script>
+<script type="text/javascript" src="js/planck.min.js"></script>
 
 <!--<script type="text/python" class="webworker" id="executor" src="PyAngelo_worker.py">-->
 <script type="text/python" class="webworker" id="executor" src="PyAngelo_EDSim_Worker.py">
@@ -301,24 +325,28 @@
 
     writeOutput("<p style='color:green;'>Done!</p>", true);
 
-    document.getElementById("layout1").onclick = function () {
+    /*
+    document.getElementById("layout1").onclick = function (evt) {
         if (document.getElementById("layout1On").style.display === "none") {
             document.getElementById("layout1On").style.display = "inherit";
             document.getElementById("layout1Off").style.display = "none";
             document.getElementById("layout2On").style.display = "none";
             document.getElementById("layout2Off").style.display = "inherit";
-            set_layout_type()
+            
         }
     };
+    */  
+    
     document.getElementById("layout2").onclick = function () {
         if (document.getElementById("layout2On").style.display === "none") {
             document.getElementById("layout2On").style.display = "inherit";
             document.getElementById("layout2Off").style.display = "none";
             document.getElementById("layout1On").style.display = "none";
             document.getElementById("layout1Off").style.display = "inherit";
-            set_layout_type()
         }
     };
+    
+    
 </script>
 
 <!-- Relevant links that are not directly referenced. Allows website to be properly read with automatic web crawling. -->
