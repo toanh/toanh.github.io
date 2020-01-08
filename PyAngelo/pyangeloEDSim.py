@@ -12,7 +12,7 @@ from browser import document, window, alert, timer, worker, bind, html, load
 from browser.local_storage import storage
 
 load("howler.js")
-load("js/planck.min.js")
+load("js/planck-with-testbed.js")
 
 # Cursor control and motion
 KEY_HOME          = 0xff50
@@ -48,6 +48,8 @@ PyAngeloWorker = worker.Worker("executor")
 test_buff = None
 array = None
 
+pl = window.planck
+
 class EDSim():
     # Unique constants
     V2                  =   1
@@ -82,8 +84,73 @@ class EDSim():
     DistanceUnits   = CM
     Tempo           = TEMPO_MEDIUM
     
-    def __init__(self):
+    def __init__(self, ctx, world, screen_width, screen_height, ED_Sim):
         self.reset()
+        self.ctx = ctx
+        self.world = world
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        
+        self.ED_Sim = ED_Sim
+        
+        self.box = self.world.createDynamicBody(pl.Vec2.new(self.position[0], self.position[1]))
+
+        vertices1 = [pl.Vec2(-self.width/2, 3.0 * self.height/4),
+                    pl.Vec2(self.width/2, 3.0 * self.height/4),
+                    pl.Vec2(self.width/2, 0),
+                    pl.Vec2(-self.width/2, 0)]
+        shape1 = pl.Polygon.new(vertices1)
+        
+  
+        #shape = pl.Box.new(self.width/2, self.height/2)
+        
+        self.box.createFixture(shape1, 0.0)   
+                
+        
+        vertices2 = [pl.Vec2(-self.width/2, 0),
+                    pl.Vec2(self.width/2, 0),
+                    pl.Vec2(self.width/2, -self.height/4),
+                    pl.Vec2(-self.width/2, -self.height/4)]
+        shape2 = pl.Polygon.new(vertices2)
+        
+        
+  
+        #shape = pl.Box.new(self.width/2, self.height/2)
+        
+        self.box.createFixture(shape2, 0.0)
+        
+              
+        #self.box.createFixture(polygonShape, 0.0)
+        
+        self.box.setGravityScale(0)
+        
+        '''
+        massData = pl.Body.MassData.new()
+        self.box.getMassData(massData)
+        window.console.log("center:", massData.center)
+        
+        massData.center = pl.Vec2.new(0, -self.height * 0.5)
+        
+        self.box.setMassData(massData)
+
+        massData = self.box.getMassData()
+        window.console.log("center:", massData.center)
+        '''
+        
+      
+        '''
+        massData = window.planck.MassData()
+        self.box.getMassData(massData)
+        window.console.log(massData)
+        
+        window.console.log("massData.mass:" + massData.mass)
+        '''
+
+        
+
+        #self.box.setLinearVelocity(pl.Vec2.new(0, -20))
+        #self.box.setAngularVelocity(0.1)
+        #self.box.setAngle(-0.6)        
         
     def reset(self):
         self.position           = Vector(250, 200)
@@ -114,10 +181,45 @@ class EDSim():
             # correct for overshoot
             if self.current_rotation > self.target_rotation:
                 self.orientation -= math.copysign(self.current_rotation - self.target_rotation, self.rotation_speed)
+            self.box.setAngularVelocity(-self.rotation_speed)
+        else:
+            self.box.setAngularVelocity(0)
+        
             
         if self.current_distance < self.target_distance:
             self.current_distance += abs(self.speed)            
             self.position += self.heading.rotate(self.orientation) * self.speed 
+            
+            heading = self.heading.rotate(self.orientation) * self.speed * 100
+            
+            self.box.setLinearVelocity(pl.Vec2.new(heading[0], heading[1]))
+        else:
+            self.box.setLinearVelocity(pl.Vec2.new(0, 0))
+            
+            
+    def draw(self):
+        
+        fixture = self.box.getFixtureList()#.getNext()
+        
+        self.ctx.save()
+        self.ctx.translate(self.box.getPosition().x, self.screen_height-(self.box.getPosition().y))
+        self.ctx.rotate(self.box.getAngle())  
+        f = 0
+        while fixture is not None:
+            f += 1
+            vertices = fixture.getShape().m_vertices   
+            center = self.box.getMassCenter()
+            points = [[v.x, v.y] for v in vertices]
+            
+            
+                        
+            
+                      
+            self.ED_Sim.drawShape(points, 0, 1, 0)
+            fixture = fixture.getNext()
+            
+        self.ctx.restore()
+        window.console.log(f"Number of fixtures: {f}")
                
 
 class PyAngeloEDSim():
@@ -128,14 +230,14 @@ class PyAngeloEDSim():
     
     def __init__(self):
         global array
-        self.ed = EDSim()
+        
         
         self.canvas = document["canvas"]
         self.ctx = self.canvas.getContext('2d')		
         
         self.width = self.canvas.width
         self.height = self.canvas.height   
-
+        
         self.bg = html.IMG(src = "carpet.jpg", id="bg", style={"display": "none"}) 
         document <= self.bg
         
@@ -174,18 +276,21 @@ class PyAngeloEDSim():
         self.debug_draw = True
         
         ####### Begin Test box2d physics
-        pl = window.planck
-       
-        self.world = pl.World.new(pl.Vec2.new(0, -10));
 
-        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(400.0, 0.0)), 0.0);
+        self.world = pl.World.new(pl.Vec2.new(0, -1000));
 
-        self.c1 = self.world.createDynamicBody(pl.Vec2.new(15.0, 200))
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(self.width, 0.0)), 0.0);
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(0, self.height)), 0.0);
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width, 0.0), pl.Vec2.new(self.width, self.height)), 0.0);
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width, self.height), pl.Vec2.new(0, self.height)), 0.0);
         
+        self.c1 = self.world.createDynamicBody(pl.Vec2.new(135.0, 200))        
         self.c1.createFixture(pl.Circle.new(10), 10.0);
 
-        self.c2 = self.world.createDynamicBody(pl.Vec2.new(10.0, 100))
-        self.c2.createFixture(pl.Circle.new(10), 10.0);       
+        self.c2 = self.world.createDynamicBody(pl.Vec2.new(127.0, 100))
+        self.c2.createFixture(pl.Circle.new(20), 10.0);    
+        
+        self.ed = EDSim(self.ctx, self.world, self.width, self.height, self)
 
         ####### End Test box2d physics        
         
@@ -229,7 +334,8 @@ class PyAngeloEDSim():
         self.clap_timer = 0
         # no need to change the shared array because the worker would have done this
         
-    def drawDebugLine(self):       
+    def drawDebugLine(self):  
+        return    
         imageData = Ed.ctx.getImageData(0, 0, self.width, self.height)        
                 
         radians = math.radians(90 + self.ed.orientation)
@@ -271,7 +377,30 @@ class PyAngeloEDSim():
 
         #self.ctx.fill();
 
-        self.ctx.stroke()        
+        self.ctx.stroke()      
+
+    def drawShape(self, points, r=1.0, g=1.0, b=1.0, a=1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+
+        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(
+            int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+
+        self.ctx.beginPath()        
+        
+        for n, point in enumerate(points):
+            if n == 0:
+                self.ctx.moveTo(point[0], - point[1])
+            self.ctx.lineTo(point[0], - point[1])
+        self.ctx.closePath()
+
+        #self.ctx.fill();
+
+        self.ctx.stroke()      
                 
     def update(self):    
         self.anim_timer -= 16
@@ -360,7 +489,9 @@ class PyAngeloEDSim():
             pos = self.c1.getPosition()
             self.drawCircle(pos.x, pos.y, 10, 1, 0, 0)
             pos = self.c2.getPosition()
-            self.drawCircle(pos.x, pos.y, 10, 1, 0, 0)            
+            self.drawCircle(pos.x, pos.y, 20, 1, 0, 0)   
+
+            self.ed.draw()
             
             ### End Test Physics
             
