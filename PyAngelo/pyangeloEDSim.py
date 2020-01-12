@@ -164,6 +164,7 @@ class EDSim():
             
     def draw(self):
         
+        '''
         fixture = self.box.getFixtureList()#.getNext()
         
         self.ctx.save()
@@ -178,17 +179,15 @@ class EDSim():
             points = [[v.x / visual_scale, v.y / visual_scale] for v in vertices]
             
             self.ED_Sim.drawShape(points, 0, 1, 0)
-            
-            '''
-            radius = fixture.getShape().m_radius / visual_scale
-            self.ED_Sim.drawCircle(0, 0, radius, 0, 1, 0)  
-            '''
+
             
             fixture = fixture.getNext()
             
         self.ctx.restore()
 
         window.console.log(f"Number of fixtures: {f}")
+        '''
+        return
                
 
 class PyAngeloEDSim():
@@ -209,6 +208,9 @@ class PyAngeloEDSim():
         
         self.bg = html.IMG(src = "carpet.jpg", id="bg", style={"display": "none"}) 
         document <= self.bg
+        
+        self.ball_img = html.IMG(src = "ball.png")  
+        self.img = html.IMG(src = "ed.png")  
         
         self.bgcolor = Vector(0, 0, 0, 1)
         
@@ -259,11 +261,15 @@ class PyAngeloEDSim():
         self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width * visual_scale, self.height * visual_scale), pl.Vec2.new(0, self.height * visual_scale)), 0.0);
         
         self.c1 = self.world.createDynamicBody(pl.Vec2.new(135.0 * visual_scale, 200 * visual_scale))        
-        self.c1.createFixture(pl.Circle.new(10 * visual_scale), 10.0);
+        self.c1.createFixture(pl.Circle.new(10 * visual_scale), {"restitution": 0.2, "friction": 1.0, "density": 1.0})
+        self.c1.setAngularDamping(0.1)
+        self.c1.setLinearDamping(0.2)
         self.c1.setGravityScale(0)
 
         self.c2 = self.world.createDynamicBody(pl.Vec2.new(127.0 * visual_scale, 100 * visual_scale))
-        self.c2.createFixture(pl.Circle.new(20 * visual_scale), 10.0);    
+        self.c2.createFixture(pl.Circle.new(20 * visual_scale), {"restitution": 0.2, "friction": 1.0, "density": 1.0});   
+        self.c2.setAngularDamping(0.1)
+        self.c2.setLinearDamping(0.2)
         self.c2.setGravityScale(0)
         
         self.ed = EDSim(self.ctx, self.world, self.width, self.height, self)
@@ -451,11 +457,33 @@ class PyAngeloEDSim():
             ### Begin Test Physics
             
             self.world.step(1/60)
+            
             pos = self.c1.getPosition()
-            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 10, 1, 0, 0)
+            orientation = self.c1.getAngle()
+            radius = self.c1.getFixtureList().getShape().getRadius() / visual_scale
+            
+            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 10, 1, 0, 0)                               
+            
+            self.ctx.save()
+            self.ctx.translate(pos.x / visual_scale, self.height - pos.y / visual_scale)
+            self.ctx.rotate(-orientation)
+            #self.ctx.scale()
+            self.ctx.drawImage(self.ball_img, - radius, - radius, radius * 2, radius * 2)            
+            self.ctx.restore()
+            
             pos = self.c2.getPosition()
-            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 20, 1, 0, 0)   
+            orientation = self.c2.getAngle()
+            radius = self.c2.getFixtureList().getShape().getRadius() / visual_scale
+            
+            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 20, 1, 0, 0) 
 
+            self.ctx.save()
+            self.ctx.translate(pos.x / visual_scale, self.height - pos.y / visual_scale)
+            self.ctx.rotate(-orientation)
+            #self.ctx.scale()
+            self.ctx.drawImage(self.ball_img, - radius, - radius, radius * 2, radius * 2)            
+            self.ctx.restore()            
+            
             self.ed.draw()
             
             ### End Test Physics
