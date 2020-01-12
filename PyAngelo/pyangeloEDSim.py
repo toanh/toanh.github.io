@@ -97,62 +97,25 @@ class EDSim():
         
         self.box = self.world.createDynamicBody(pl.Vec2.new(self.position[0], self.position[1]))
 
+        
         vertices1 = [pl.Vec2(-self.width/2,		3.0 * self.height/4),
                     pl.Vec2(self.width/2, 		3.0 * self.height/4),
                     pl.Vec2(self.width/2, 		0),
                     pl.Vec2(-self.width/2, 		0)]
-        shape1 = pl.Polygon.new(vertices1)
-        
-  
-        #shape = pl.Box.new(self.width/2, self.height/2)
-        
-        self.box.createFixture(shape1, 0.0)   
-                
+        shape1 = pl.Polygon.new(vertices1)              
+        self.box.createFixture(shape1, 0.0)                   
         
         vertices2 = [pl.Vec2(-self.width/2, 	0),
                     pl.Vec2(self.width/2, 		0),
                     pl.Vec2(self.width/2, 		-self.height/4),
                     pl.Vec2(-self.width/2, 		-self.height/4)]
-        shape2 = pl.Polygon.new(vertices2)
-        
-        
-  
-        #shape = pl.Box.new(self.width/2, self.height/2)
-        
+        shape2 = pl.Polygon.new(vertices2)        
         self.box.createFixture(shape2, 0.0)
         
-              
-        #self.box.createFixture(polygonShape, 0.0)
         
-        self.box.setGravityScale(0)
-        
-        '''
-        massData = pl.Body.MassData.new()
-        self.box.getMassData(massData)
-        window.console.log("center:", massData.center)
-        
-        massData.center = pl.Vec2.new(0, -self.height * 0.5)
-        
-        self.box.setMassData(massData)
-
-        massData = self.box.getMassData()
-        window.console.log("center:", massData.center)
-        '''
-        
-      
-        '''
-        massData = window.planck.MassData()
-        self.box.getMassData(massData)
-        window.console.log(massData)
-        
-        window.console.log("massData.mass:" + massData.mass)
-        '''
-
-        
-
-        #self.box.setLinearVelocity(pl.Vec2.new(0, -20))
-        #self.box.setAngularVelocity(0.1)
-        #self.box.setAngle(-0.6)        
+        #self.box.createFixture(pl.Circle.new(30 * visual_scale), 10.0);
+                
+        self.box.setGravityScale(0)   
         
     def reset(self):
         self.position           = Vector(250  * visual_scale, 200 * visual_scale)
@@ -183,18 +146,16 @@ class EDSim():
             # correct for overshoot
             if self.current_rotation > self.target_rotation:
                 self.orientation -= math.copysign(self.current_rotation - self.target_rotation, self.rotation_speed)
-            self.box.setAngularVelocity(-self.rotation_speed)
+                
+            self.box.setAngularVelocity(self.rotation_speed)
         else:
             self.box.setAngularVelocity(0)
-        
-		
-        
             
         if self.current_distance < self.target_distance:
             self.current_distance += abs(self.speed)            
             #self.position += self.heading.rotate(math.degrees(self.box.getAngle()) * self.speed 
             
-            heading = self.heading.rotate(math.degrees(-self.box.getAngle())) * self.speed
+            heading = self.heading.rotate(math.degrees(self.box.getAngle())) * self.speed
             
             self.box.setLinearVelocity(pl.Vec2.new(heading[0], heading[1]))
         else:
@@ -207,18 +168,26 @@ class EDSim():
         
         self.ctx.save()
         self.ctx.translate(self.box.getPosition().x / visual_scale, (self.screen_height -(self.box.getPosition().y / visual_scale)))
-        self.ctx.rotate(self.box.getAngle())  
+        self.ctx.rotate(-self.box.getAngle())  
 		
         f = 0
         while fixture is not None:
             f += 1
+            
             vertices = fixture.getShape().m_vertices               
             points = [[v.x / visual_scale, v.y / visual_scale] for v in vertices]
             
             self.ED_Sim.drawShape(points, 0, 1, 0)
+            
+            '''
+            radius = fixture.getShape().m_radius / visual_scale
+            self.ED_Sim.drawCircle(0, 0, radius, 0, 1, 0)  
+            '''
+            
             fixture = fixture.getNext()
             
         self.ctx.restore()
+
         window.console.log(f"Number of fixtures: {f}")
                
 
@@ -464,7 +433,7 @@ class PyAngeloEDSim():
             orientation = self.ed.box.getAngle()
             
             self.ctx.translate(x, y)
-            self.ctx.rotate(orientation)
+            self.ctx.rotate(-orientation)
             self.ctx.drawImage(self.ed.img, -anchorX * width, -anchorY * height, width, height)
             
             if self.ed.leftLED:
