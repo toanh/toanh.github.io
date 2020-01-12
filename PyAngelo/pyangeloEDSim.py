@@ -50,6 +50,8 @@ array = None
 
 pl = window.planck
 
+visual_scale = 0.01
+
 class EDSim():
     # Unique constants
     V2                  =   1
@@ -95,10 +97,10 @@ class EDSim():
         
         self.box = self.world.createDynamicBody(pl.Vec2.new(self.position[0], self.position[1]))
 
-        vertices1 = [pl.Vec2(-self.width/2, 3.0 * self.height/4),
-                    pl.Vec2(self.width/2, 3.0 * self.height/4),
-                    pl.Vec2(self.width/2, 0),
-                    pl.Vec2(-self.width/2, 0)]
+        vertices1 = [pl.Vec2(-self.width/2,		3.0 * self.height/4),
+                    pl.Vec2(self.width/2, 		3.0 * self.height/4),
+                    pl.Vec2(self.width/2, 		0),
+                    pl.Vec2(-self.width/2, 		0)]
         shape1 = pl.Polygon.new(vertices1)
         
   
@@ -107,10 +109,10 @@ class EDSim():
         self.box.createFixture(shape1, 0.0)   
                 
         
-        vertices2 = [pl.Vec2(-self.width/2, 0),
-                    pl.Vec2(self.width/2, 0),
-                    pl.Vec2(self.width/2, -self.height/4),
-                    pl.Vec2(-self.width/2, -self.height/4)]
+        vertices2 = [pl.Vec2(-self.width/2, 	0),
+                    pl.Vec2(self.width/2, 		0),
+                    pl.Vec2(self.width/2, 		-self.height/4),
+                    pl.Vec2(-self.width/2, 		-self.height/4)]
         shape2 = pl.Polygon.new(vertices2)
         
         
@@ -153,7 +155,7 @@ class EDSim():
         #self.box.setAngle(-0.6)        
         
     def reset(self):
-        self.position           = Vector(250, 200)
+        self.position           = Vector(250  * visual_scale, 200 * visual_scale)
         self.speed              = 0
         self.heading            = Vector(0, 1)
         self.orientation        = 0
@@ -171,8 +173,8 @@ class EDSim():
         self.img = html.IMG(src = "ed.png")  
         self.led_img = html.IMG(src = "led.png")
         
-        self.height = 64
-        self.width = 62
+        self.height = 64 * visual_scale
+        self.width = 62 * visual_scale
         
     def update(self):
         if self.current_rotation < self.target_rotation:
@@ -185,12 +187,14 @@ class EDSim():
         else:
             self.box.setAngularVelocity(0)
         
+		
+        
             
         if self.current_distance < self.target_distance:
             self.current_distance += abs(self.speed)            
-            self.position += self.heading.rotate(self.orientation) * self.speed 
+            #self.position += self.heading.rotate(math.degrees(self.box.getAngle()) * self.speed 
             
-            heading = self.heading.rotate(self.orientation) * self.speed * 100
+            heading = self.heading.rotate(math.degrees(-self.box.getAngle())) * self.speed
             
             self.box.setLinearVelocity(pl.Vec2.new(heading[0], heading[1]))
         else:
@@ -202,19 +206,15 @@ class EDSim():
         fixture = self.box.getFixtureList()#.getNext()
         
         self.ctx.save()
-        self.ctx.translate(self.box.getPosition().x, self.screen_height-(self.box.getPosition().y))
+        self.ctx.translate(self.box.getPosition().x / visual_scale, (self.screen_height -(self.box.getPosition().y / visual_scale)))
         self.ctx.rotate(self.box.getAngle())  
+		
         f = 0
         while fixture is not None:
             f += 1
-            vertices = fixture.getShape().m_vertices   
-            center = self.box.getMassCenter()
-            points = [[v.x, v.y] for v in vertices]
+            vertices = fixture.getShape().m_vertices               
+            points = [[v.x / visual_scale, v.y / visual_scale] for v in vertices]
             
-            
-                        
-            
-                      
             self.ED_Sim.drawShape(points, 0, 1, 0)
             fixture = fixture.getNext()
             
@@ -277,18 +277,25 @@ class PyAngeloEDSim():
         
         ####### Begin Test box2d physics
 
-        self.world = pl.World.new(pl.Vec2.new(0, -1000));
+        self.world = pl.World.new(pl.Vec2.new(0, -1000 * visual_scale));
 
-        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(self.width, 0.0)), 0.0);
-        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(0, self.height)), 0.0);
-        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width, 0.0), pl.Vec2.new(self.width, self.height)), 0.0);
-        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width, self.height), pl.Vec2.new(0, self.height)), 0.0);
+        # screen edges
+        # bottom
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(self.width * visual_scale, 0.0)), 0.0);
+        # left
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(0.0, 0.0), pl.Vec2.new(0, self.height * visual_scale)), 0.0);
+        # right
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width * visual_scale, 0.0), pl.Vec2.new(self.width  * visual_scale, self.height * visual_scale)), 0.0);       
+        # top
+        self.world.createBody().createFixture(pl.Edge.new(pl.Vec2(self.width * visual_scale, self.height * visual_scale), pl.Vec2.new(0, self.height * visual_scale)), 0.0);
         
-        self.c1 = self.world.createDynamicBody(pl.Vec2.new(135.0, 200))        
-        self.c1.createFixture(pl.Circle.new(10), 10.0);
+        self.c1 = self.world.createDynamicBody(pl.Vec2.new(135.0 * visual_scale, 200 * visual_scale))        
+        self.c1.createFixture(pl.Circle.new(10 * visual_scale), 10.0);
+        self.c1.setGravityScale(0)
 
-        self.c2 = self.world.createDynamicBody(pl.Vec2.new(127.0, 100))
-        self.c2.createFixture(pl.Circle.new(20), 10.0);    
+        self.c2 = self.world.createDynamicBody(pl.Vec2.new(127.0 * visual_scale, 100 * visual_scale))
+        self.c2.createFixture(pl.Circle.new(20 * visual_scale), 10.0);    
+        self.c2.setGravityScale(0)
         
         self.ed = EDSim(self.ctx, self.world, self.width, self.height, self)
 
@@ -434,16 +441,7 @@ class PyAngeloEDSim():
                 array[KEY_C] = 1
                 
             self.ed.update()
-            
-            # check for borders
-            pos_x = self.ed.position[0]
-            pos_y = self.ed.position[1]
-            if pos_y > self.height -  self.ed.height//2:
-                pos_y = self.height -  self.ed.height//2
-            elif pos_y < self.ed.height//2:
-                pos_y = self.ed.height//2
-            self.ed.position = Vector(pos_x, pos_y)
-                                
+                                                       
             # render
             # clear the screen
             
@@ -452,23 +450,21 @@ class PyAngeloEDSim():
                                 "," + str(int(self.bgcolor[2] * 255.0)) + \
                                 "," + str(int(self.bgcolor[3] * 255.0))+ ")"
             
-            self.ctx.fillRect(0, 0, self.width, self.height)   
-            
-            
+            self.ctx.fillRect(0, 0, self.width, self.height)                          
             self.ctx.drawImage(self.bg, 0, 0)#, self.width, self.height)
             
             self.ctx.save()
-            x = self.ed.position[0]
-            y = self.height - self.ed.position[1]
-            width = self.ed.width
-            height = self.ed.height
+            x = self.ed.box.getPosition().x  / visual_scale
+            y = self.height - self.ed.box.getPosition().y / visual_scale
+            width = self.ed.width  / visual_scale
+            height = self.ed.height  / visual_scale
             anchorX = 0.5
-            anchorY = 0.75
+            anchorY = 0.75            
             
-            orientation = math.radians(self.ed.orientation)
+            orientation = self.ed.box.getAngle()
             
             self.ctx.translate(x, y)
-            self.ctx.rotate(- orientation)# - 3.1415926535)# + math.PI / 180)
+            self.ctx.rotate(orientation)
             self.ctx.drawImage(self.ed.img, -anchorX * width, -anchorY * height, width, height)
             
             if self.ed.leftLED:
@@ -487,9 +483,9 @@ class PyAngeloEDSim():
             
             self.world.step(1/60)
             pos = self.c1.getPosition()
-            self.drawCircle(pos.x, pos.y, 10, 1, 0, 0)
+            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 10, 1, 0, 0)
             pos = self.c2.getPosition()
-            self.drawCircle(pos.x, pos.y, 20, 1, 0, 0)   
+            self.drawCircle(pos.x / visual_scale, pos.y / visual_scale, 20, 1, 0, 0)   
 
             self.ed.draw()
             
