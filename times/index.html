@@ -49,7 +49,7 @@ function draw() {
 	ctx.fillText(get12HourTime(time), 300, 50);
 	
 	
-	var description = "Out of Class hours";
+	var description = "No Classes";
 	var remainingTime = 0;
 	
 	var i = 0;
@@ -59,7 +59,6 @@ function draw() {
 		if (time >= times[i][0] && time <= times[i][1])
 		{
 			description = times[i][2];
-			
 			
 			var timeSpan = times[i][1] - times[i][0];
 			timeSpan -= 40 * (Math.floor(times[i][1] / 100) - Math.floor(times[i][0] / 100));
@@ -103,7 +102,6 @@ function draw() {
 </script>
 </head>
 <body>
-<!--"height:100%;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin:auto;" -->
 <canvas id ="canvas" width = 480 height = 290 style = "width: 100%; height:100%;object-fit: contain;">
 </canvas>
 </body>
