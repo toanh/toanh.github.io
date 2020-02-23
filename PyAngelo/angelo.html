@@ -75,6 +75,7 @@
                 <div class="pynodeSubtitle">
                     <h3>Simple Browser Python Graphics Programming</h3>
                 </div>
+				<!--
                 <div class="pynodeAuthorSubtitle">
                     <h5>By <a href="https://github.com/alexsocha">Alex Socha</a></h5>
                 </div>
@@ -87,6 +88,7 @@
                         </li>
                     </ul>
                 </div>
+				-->
             </div>
         </div>
         <div class="appWrapper" id="appWrapper">
@@ -216,7 +218,7 @@
     function loadCode() {
         src = localStorage.getItem("code");
         if (src === null || src == "") {
-            openCode("dijkstra");
+            openCode("first");
         }
         else {
             editor.setValue(src, -1);
