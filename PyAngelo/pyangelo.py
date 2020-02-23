@@ -360,7 +360,7 @@ def end_playing():
 
 def clear_button_run():
     document["runPlay"].style.display = "none"
-    document["runPlayLoad"].style.display = "none"
+    #document["runPlayLoad"].style.display = "none"
     document["runPause"].style.display = "none"
     document["runResume"].style.display = "none"
     for event in document["run"].events("click"):
@@ -370,7 +370,7 @@ def clear_button_run():
 def button_play(event):    
     #reset()
     clear_button_run()
-    document["runPlayLoad"].style.display = "inherit"
+    #document["runPlayLoad"].style.display = "inherit"
     document["run"].bind("click", button_pause)
     do_play()
     #timer.set_timeout(do_play, 20)

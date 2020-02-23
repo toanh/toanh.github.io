@@ -91,7 +91,7 @@
 				-->
             </div>
         </div>
-        <div class="appWrapper" id="appWrapper">
+       <div class="appWrapper" id="appWrapper">
             <div class="appContainer" id="appContainer">
                 <div class="appLeft">
                     <div class="editorWrapper">
@@ -102,7 +102,7 @@
                             <div class="appSectionEnlarge">
                                 <div class="appSectionBarIconDivider"></div>
                                 <div class="appSectionBarIcon"><h3><a href=""
-                                                                      onclick="document.getElementById('file-input').click(); return false;"><img
+                                                                      onclick="document.getElementById('file-input').click(); alert('hello');return false;"><img
                                         src="images/controls/import.png" width="16" height="16"></a></h3></div>
                                 <div class="appSectionBarIcon"><h3><a href=""
                                                                       onclick="userSaveCode(); return false;"><img
@@ -132,36 +132,25 @@
                                                                        height="20"></div>
                                     <h4>PLAY</h4>
                                 </div>
-                                <div id="runPlayLoad">
-                                    <div class="editorButtonIcon"><img src="images/controls/loading.png"
-                                                                       width="20" height="20"></div>
-                                    <h4>LOADING</h4>
-                                </div>
                                 <div id="runPause">
-                                    <div class="editorButtonIcon"><img src="images/controls/pause.png" width="20"
+                                    <div class="editorButtonIcon"><img src="images/controls/stop.png" width="20"
                                                                        height="20"></div>
-                                    <h4>PAUSE</h4>
+                                    <h4>RESET</h4>
                                 </div>
                                 <div id="runResume">
                                     <div class="editorButtonIcon"><img src="images/controls/play.png" width="20"
                                                                        height="20"></div>
-                                    <h4>RESUME</h4>
+                                    <h4>PLAY</h4>
                                 </div>
-                            </div>
-                            <div id="stop" class="editorButton">
-                                <div class="editorButtonIcon"><img src="images/controls/stop.png" width="20"
-                                                                   height="20"></div>
-                                <h4>STOP</h4>
-                            </div>
-                            <div id="restart" class="editorButton">
-                                <div class="editorButtonIcon"><img src="images/controls/restart.png" width="20"
-                                                                   height="20"></div>
-                                <h4>RESTART</h4>
                             </div>
                             <div class="buttonBarLayoutPanel">
                                 <div id="layout1">
-                                    <div id="layout1On" class="layoutButtonOn" style="display: inherit"><img
-                                            src="images/controls/layoutButton1.png" width="20" height="20"></div>
+                                    <div class="appSectionBarIcon"><h3><a href=""
+                                                                      onclick="document.getElementById('image-input').click(); return false;"><img
+                                        src="images/controls/import.png" width="16" height="16"></a></h3></div>                                
+                                    <div id="layout1On" class="layoutButtonOn" style="display: inherit"><img 
+                                            src="images/controls/layoutButton1.png" width="20" height="20"><a href=""
+                                                                      onclick="document.getElementById('image-input').click(); return false;"></div>
                                     <div id="layout1Off" class="layoutButtonOff" style="display: none"><img
                                             src="images/controls/layoutButton1.png" width="20" height="20"></div>
                                 </div>
@@ -306,45 +295,35 @@
 <!--<script type="text/python" class="webworker" id="executor" src="PyAngelo_EDSim_Worker.py">-->
 </script>
 <script type="text/python3" id="tests_editor">
-
-	#import pyangeloEDSim    
 	import pyangelo
     
 	from browser import window, document, alert
 	document["run"].bind("click", pyangelo.save_code)
 	document["run"].bind("click", pyangelo.button_play)
-	document["stop"].bind("click", pyangelo.button_stop)
-	document["restart"].bind("click", pyangelo.button_restart)
+
+
 </script>
 
 <script>
 
     document.getElementById("run").style.backgroundColor = "#6E6E6E";
-    document.getElementById("stop").style.backgroundColor = "#6E6E6E";
-    document.getElementById("restart").style.backgroundColor = "#6E6E6E";
+
+
     document.getElementById("run").style.cursor = "pointer";
-    document.getElementById("stop").style.cursor = "pointer";
-    document.getElementById("restart").style.cursor = "pointer";
+
     writeOutput("<p style='color:green;'>Done!</p>", true);
 
-    document.getElementById("layout1").onclick = function () {
-        if (document.getElementById("layout1On").style.display === "none") {
-            document.getElementById("layout1On").style.display = "inherit";
-            document.getElementById("layout1Off").style.display = "none";
-            document.getElementById("layout2On").style.display = "none";
-            document.getElementById("layout2Off").style.display = "inherit";
-            set_layout_type()
-        }
-    };
+   
     document.getElementById("layout2").onclick = function () {
         if (document.getElementById("layout2On").style.display === "none") {
             document.getElementById("layout2On").style.display = "inherit";
             document.getElementById("layout2Off").style.display = "none";
             document.getElementById("layout1On").style.display = "none";
             document.getElementById("layout1Off").style.display = "inherit";
-            set_layout_type()
         }
     };
+    
+    
 </script>
 
 <!-- Relevant links that are not directly referenced. Allows website to be properly read with automatic web crawling. -->
