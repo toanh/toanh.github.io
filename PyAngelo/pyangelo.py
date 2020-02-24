@@ -109,6 +109,9 @@ class PyAngelo():
         window.console.log("Attempting to send shared data")
         PyAngeloWorker.send(test_buff)            
         
+        self.pixel_id = self.ctx.createImageData(1, 1)
+        self.pixel_color = self.pixel_id.data
+        
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -185,7 +188,7 @@ class PyAngelo():
         self.loadingResources += 1
         
         img = html.IMG(src = file)
-        #alert("Attempting to draw image");
+
         img.bind('load', self.resourceLoaded)
         jmssImg = PyAngeloImage(img)
         img.jmssImg = jmssImg
@@ -228,7 +231,13 @@ class PyAngelo():
             self.ctx.drawImage(image.img, x, self._convY(y + height), width, height)
 
 
-        self.ctx.restore()           
+        self.ctx.restore()    
+
+    def __drawText(self, text, x, y, fontName = "Arial", fontSize = 10, color = (1, 1, 1, 1), anchorX = "left", anchorY ="bottom"):
+        self.ctx.fillStyle = "rgba(" + str(int(color[0] * 255.0)) + "," + str(int(color[1] * 255.0)) + "," + str(int(color[2] * 255.0)) + "," + str(int(color[3] * 255.0)) + ")"
+        self.ctx.font = str(fontSize) + "pt " + fontName
+        self.ctx.textBaseline = "bottom"
+        self.ctx.fillText(text, x, self.height - y)        
 
     def __clear(self, r = 0, g = 0, b = 0, a = 1):
         global array
@@ -248,6 +257,18 @@ class PyAngelo():
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
         self.ctx.stroke()        
+        
+    def __drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        self.pixel_color[0] = int(r * 255.0)
+        self.pixel_color[1] = int(g * 255.0)
+        self.pixel_color[2] = int(b * 255.0)
+        self.pixel_color[3] = int(a * 255.0)
+        self.ctx.putImageData(self.pixel_id, x, self._convY(y))
         
     def _convY(self, y):
         return self.height - y
@@ -305,7 +326,11 @@ class PyAngelo():
             elif command[0] == "playSound":                
                 command[0] = self.__playSound
             elif command[0] == "pauseSound":                
-                command[0] = self.__pauseSound                
+                command[0] = self.__pauseSound    
+            elif command[0] == "drawText":                
+                command[0] = self.__drawText    
+            elif command[0] == "drawPixel":                
+                command[0] = self.__drawPixel                 
             else:
                 # not a valid command
                 del self.commands[0]

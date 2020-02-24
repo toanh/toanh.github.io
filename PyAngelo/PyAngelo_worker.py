@@ -60,7 +60,13 @@ class PyAngeloWorker():
         if key <= 255:
             return array[key] == 1
             
-        return self.keys[key]        
+        return self.keys[key]      
+
+    def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, color = (1, 1, 1, 1), anchorX = "left", anchorY ="bottom"):
+        kwargs = {"text": text, "x": x, "y": y, "fontName": fontName, "fontSize": fontSize, "color": color,
+                    "anchorX": anchorX, "anchorY": anchorY}
+        self.commands.append(["drawText", kwargs])
+    
                 
     def drawImage(self, image, x, y, width=None, height=None, rotation=0, anchorX=None, anchorY=None, opacity=1.0,
                   r=1.0, g=1.0, b=1.0, rect=None):
@@ -68,6 +74,10 @@ class PyAngeloWorker():
                   "anchorX": anchorX,
                   "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
         self.commands.append(["drawImage", kwargs])   
+        
+    def drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+        kwargs = {"x":x, "y": y, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append(["drawPixel", kwargs])
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
