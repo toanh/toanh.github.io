@@ -1,5 +1,5 @@
-img = "https://i.imgur.com/ww1HtMi.png"
-
+# clears the screen to black
 graphics.clear(0,0,0)
-graphics.drawImage(img, 0, 100)
-graphics.reveal()
+
+# draws the image at that URL on the screen at coordinates (x = 0, y = 100)
+graphics.drawImage("https://i.imgur.com/ww1HtMi.png", 0, 100)
