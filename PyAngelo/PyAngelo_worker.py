@@ -59,7 +59,6 @@ class PyAngeloWorker():
     def clear(self, r=0, g=0, b=0, a=1):
         global array
         
-        #kwargs = {"r": r, "g": g, "b": b, "a": a}
         kwargs = {"r": r, "g": g, "b": b, "a": a}
         
         self.commands.append(["clear", kwargs])
@@ -98,6 +97,11 @@ class PyAngeloWorker():
         self.commands.append(["pauseSound", kwargs])            
         
     def reveal(self):
+    
+        if array[KEY_ESC] == 1:
+            console.log("Escape detected!")
+            array[KEY_ESC] = 0
+            raise Exception("QUIT requested")    
         
         # send and then block
         global array, console, window
@@ -113,16 +117,13 @@ class PyAngeloWorker():
         send_message(["reveal",self.commands])
         self.commands = []
         
-        if array[KEY_ESC] == 1:
-            console.log("Escape detected!")
-            raise Exception("QUIT requested")
+
                
         return True
         
 graphics = PyAngeloWorker()
 array = None
 shared = None
-
 
 @bind(self, "message")
 def onmessage(evt):
@@ -136,11 +137,12 @@ def onmessage(evt):
         array = self.Int8Array.new(evt.data)
         workerResult = f'Result: {array[0]}'
         self.console.log(workerResult)  
+        
+        send_message(["ready"])
         return    
     
     command = evt.data[0]
     if command.lower() == "run":
-        #alert("Executing!")
         self.console.log("Executing on the worker thread!");
         src = evt.data[1]    
         success = True

@@ -59,6 +59,10 @@ class PyAngeloImage():
         self.width = image.naturalWidth
 
 class PyAngelo():
+    STATE_WAIT      =   0
+    STATE_STOP      =   1
+    STATE_RUN       =   2
+    
     def __init__(self):
         global test_buff, PyAngeloWorker, array
         
@@ -85,6 +89,14 @@ class PyAngelo():
         document.bind("keyup", self._keyup)   
 
         self.soundPlayers = {}        
+        
+        self.state = self.STATE_WAIT
+        self.anim_timer = 0
+        self.anim_time = 200        
+        
+        self.starting_text = "Starting up"        
+        
+        timer.set_interval(self.update, 16)   
         
         # clear to cornflower blue (XNA!) by default        
         self.__clear(0.392,0.584,0.929)
@@ -241,67 +253,78 @@ class PyAngelo():
 
     def _convColor(self, c):
         return (int(c[0] * 255.0), int(c[1] * 255.0), int(c[2] * 255.0), int(c[3] * 255.0))                
+        
+    def update(self):
+        self.anim_timer -= 16
+        if self.anim_timer <= 0:
+            self.anim_timer = 0
+            
+        if self.state == self.STATE_WAIT:
+            self.ctx.fillStyle = "#000000"; 
+            self.ctx.fillRect(0, 0, self.width, self.height)   
+            self.ctx.fillStyle = "#ffffff"; 
+            self.ctx.font = "40px Georgia";
+            
+            if self.anim_timer <= 0:
+                self.anim_timer = self.anim_time
+                
+                self.starting_text += "."
+                if self.starting_text.count(".") > 5:
+                    self.starting_text = self.starting_text[:-5]
+            self.ctx.fillText(self.starting_text, 100, 200);             
+        elif self.state == self.STATE_RUN:   
+            self.execute_commands()        
+        if self.state == self.STATE_STOP:
+            self.__clear(0.392,0.584,0.929)	               
        
     def execute_commands(self, do_frame = True):   
-        if not self.stopped:
-            window.console.log("before frame()")
-      
-            while len(self.commands) > 0:
-                command = self.commands[0]
-                
-                if command[0] == "drawLine":
-                    command[0] = self.__drawLine
-                elif command[0] == "clear":
-                    window.console.log("clear command read")
-                    window.console.log(command[1])
-                    command[0] = self.__clear
-                elif command[0] == "drawImage":                
-                    command[0] = self.__drawImage
-                elif command[0] == "loadSound":                
-                    command[0] = self.__loadSound                
-                elif command[0] == "playSound":                
-                    command[0] = self.__playSound
-                elif command[0] == "pauseSound":                
-                    command[0] = self.__pauseSound                
-                else:
-                    # not a valid command
-                    del self.commands[0]
-                    continue
-                    
-                command[0](**command[1])    
+        window.console.log("before frame()")
+  
+        while len(self.commands) > 0:
+            command = self.commands[0]
+            
+            if command[0] == "drawLine":
+                command[0] = self.__drawLine
+            elif command[0] == "clear":
+                window.console.log("clear command read")
+                window.console.log(command[1])
+                command[0] = self.__clear
+            elif command[0] == "drawImage":                
+                command[0] = self.__drawImage
+            elif command[0] == "loadSound":                
+                command[0] = self.__loadSound                
+            elif command[0] == "playSound":                
+                command[0] = self.__playSound
+            elif command[0] == "pauseSound":                
+                command[0] = self.__pauseSound                
+            else:
+                # not a valid command
                 del self.commands[0]
-            window.console.log("before frame()")        
-
-            #timer.set_timeout(self.execute_commands, 16)  
-        # get ready for next frame
-
-    def pause(self):
-        
-        window.console.log("pausing code...")
-        self.stopped = True
-       
-    def resume(self):        
-        window.console.log("resuming code...")
-        self.stopped = False
-
-        timer.set_timeout(self.execute_commands, 16)          
+                continue
+                
+            command[0](**command[1])    
+            del self.commands[0]
+        window.console.log("after frame()")        
 
         
     def start(self):
-        self.commands = []
-        
-        array[KEY_ESC] = 0
-        
-        window.console.log("running code...")
-        self.stopped = False
+        if self.state != self.STATE_RUN:
+            self.state = self.STATE_RUN
+            self.commands = []
+            
+            array[KEY_ESC] = 0
+            
+            window.console.log("running code...")
 
-        timer.set_timeout(self.execute_commands, 16)       
-
+            
     def stop(self):        
-        self.stopped = True        
-        array[KEY_ESC] = 1
-        # clear to cornflower blue (XNA!) by default        
-        self.__clear(0.392,0.584,0.929)		
+        if self.state != self.STATE_STOP:
+            self.state = self.STATE_STOP            
+            # clear to cornflower blue (XNA!) by default        
+            #self.__clear(0.392,0.584,0.929)		
+            self.commands = []
+            
+            array[KEY_ESC] = 0            
         
         
 graphics = PyAngelo()
@@ -313,9 +336,12 @@ def onmessage(e):
     if e.data[0] == "reveal":
         window.console.log("Executing on the main thread...")
         graphics.commands = e.data[1]
-        graphics.execute_commands()
+        graphics.start()
     elif e.data[0] == "error":
-        do_print(e.data[1], "red")     
+        do_print(e.data[1], "red")    
+        graphics.stop()    
+    elif e.data[0] == "ready":
+        graphics.stop()            
 
 def format_string_HTML(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>").replace("\"", "&quot;").replace("'", "&apos;").replace(" ", "&nbsp;")
@@ -323,13 +349,6 @@ def format_string_HTML(s):
 def do_print(s, color=None):
     if color is not None: window.writeOutput("<p style='display:inline;color:" + color + ";'>" + format_string_HTML(s) + "</p>", True)
     else: window.writeOutput("<p style='display:inline;'>" + format_string_HTML(s) + "</p>", True)
-
-def end_playing():
-    if not PynodeCoreGlobals.has_ended:
-        clear_button_run()
-        document["runPlay"].style.display = "inherit"
-        document["run"].bind("click", button_play)
-        do_print("Done\n", color="green")
 
 def clear_button_run():
     document["runPlay"].style.display = "none"
@@ -340,37 +359,26 @@ def clear_button_run():
 
 def button_play(event):    
     clear_button_run()
+    document["runPause"].style.display = "inherit"
     document["run"].bind("click", button_stop)
     do_play()
+    
+def button_stop(event):
+    clear_button_run()
+    document["runPlay"].style.display = "inherit"
+    document["run"].bind("click", button_play)
+    array[KEY_ESC] = 1
 
 def do_play():
     window.console.log("Getting code")
     src = window.getCode()
     
     window.console.log(src)
-    try:
-        success = True
-        try:
-            # try and run the code in the web worker!!!!
-            PyAngeloWorker.send(["run", src])
-            graphics.start()
 
-        except Exception as exc:
-            traceback.print_exc(file=sys.stderr)
-            handle_exception()
-            success = False
-        clear_button_run()
-        document["runPause"].style.display = "inherit"
-        document["runPause"].bind("click", button_stop)
-    except:
-        pass
+    # try and run the code in the web worker!!!!
+    PyAngeloWorker.send(["run", src])
+    graphics.start()
 
-
-def button_stop(event):
-    clear_button_run()
-    document["runPlay"].style.display = "inherit"
-    document["runPlay"].bind("click", button_play)
-    graphics.stop()
 
     
 def save_code(event):
