@@ -35,7 +35,7 @@ def run_code(src, globals, locals):
         exec(src , globals, locals)
     except Exception as e:
         self.console.log(str(e))
-    #graphics.reveal()
+        send_message(["error", "Error: " + str(e) + "\n"])
        
 def send_message(message):
     self.console.log("Worker sending to main thread..")
@@ -144,16 +144,18 @@ def onmessage(evt):
         self.console.log("Executing on the worker thread!");
         src = evt.data[1]    
         success = True
-        try:
-            namespace = globals()
-            namespace["__name__"] = "__main__"
-            graphics.commands = []
-            
-            #exec(src, namespace, namespace)
-            
-            run_code(src, namespace, namespace)                            
-        except Exception as exc:
-            self.console.log("exception attempting to run code:" + str(exc))
-            #self.send(["return",[1, str(exc)]])
-        #self.send(["return",[0, graphics.commands]])     
 
+        namespace = globals()
+        namespace["__name__"] = "__main__"
+        graphics.commands = []
+        
+        run_code(src, namespace, namespace)                            
+   
+
+class ErrorOutput:
+    def write(self, data):
+        send_message(["error", str(data)])
+    def flush(self):
+        pass
+
+sys.stderr = ErrorOutput()

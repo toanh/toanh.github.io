@@ -11,6 +11,7 @@ load("howler.js")
 
 # Cursor control and motion
 KEY_HOME          = 0xff50
+KEY_ESC           = 27
 KEY_LEFT          = 37
 KEY_UP            = 38
 KEY_RIGHT         = 39
@@ -187,8 +188,6 @@ class PyAngelo():
         
         if self.loadingResources > 0:
             return
-            
-        #alert("Attempting to draw image");    
         
         self.ctx.save()
 
@@ -224,14 +223,6 @@ class PyAngelo():
         self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"
         self.ctx.fillRect(0, 0, self.width, self.height)    
         
-        '''
-        # testing the shared memory        
-        if array is not None:
-            array[0] += 1
-            if array[0] >= 255:
-                array[0] = 0
-        '''
-        
     def __drawLine(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0, width = 1):
         r = min(r, 1.0)
         g = min(g, 1.0)
@@ -255,7 +246,6 @@ class PyAngelo():
         if not self.stopped:
             window.console.log("before frame()")
       
-
             while len(self.commands) > 0:
                 command = self.commands[0]
                 
@@ -300,6 +290,8 @@ class PyAngelo():
     def start(self):
         self.commands = []
         
+        array[KEY_ESC] = 0
+        
         window.console.log("running code...")
         self.stopped = False
 
@@ -307,6 +299,7 @@ class PyAngelo():
 
     def stop(self):        
         self.stopped = True        
+        array[KEY_ESC] = 1
         # clear to cornflower blue (XNA!) by default        
         self.__clear(0.392,0.584,0.929)		
         
@@ -321,6 +314,8 @@ def onmessage(e):
         window.console.log("Executing on the main thread...")
         graphics.commands = e.data[1]
         graphics.execute_commands()
+    elif e.data[0] == "error":
+        do_print(e.data[1], "red")     
 
 def format_string_HTML(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>").replace("\"", "&quot;").replace("'", "&apos;").replace(" ", "&nbsp;")
@@ -328,28 +323,6 @@ def format_string_HTML(s):
 def do_print(s, color=None):
     if color is not None: window.writeOutput("<p style='display:inline;color:" + color + ";'>" + format_string_HTML(s) + "</p>", True)
     else: window.writeOutput("<p style='display:inline;'>" + format_string_HTML(s) + "</p>", True)
-
-def do_print_formatted(s):
-    window.writeOutput(s, True)
-
-class PrintOutput:
-    def write(self, data):
-        alert(str(data));
-        #add_event(EventPrint(do_print, [str(data)]))
-        #do_print(data)
-    def flush(self):
-        pass
-
-class ErrorOutput:
-    def write(self, data):
-        #alert(str(data));
-        #PynodeCoreGlobals.error += "<p style='display:inline;color:red;'>" + format_string_HTML(str(data)) + "</p>"
-        document["console"].innerHTML += "<p style='display:inline;color:red;'>" + format_string_HTML(str(data)) + "</p>"
-    def flush(self):
-        pass
-
-sys.stdout = PrintOutput()
-sys.stderr = ErrorOutput()
 
 def end_playing():
     if not PynodeCoreGlobals.has_ended:
@@ -360,57 +333,15 @@ def end_playing():
 
 def clear_button_run():
     document["runPlay"].style.display = "none"
-    #document["runPlayLoad"].style.display = "none"
     document["runPause"].style.display = "none"
-    document["runResume"].style.display = "none"
     for event in document["run"].events("click"):
         document["run"].unbind("click", event)
     document["run"].bind("click", save_code)
 
 def button_play(event):    
-    #reset()
     clear_button_run()
-    #document["runPlayLoad"].style.display = "inherit"
-    document["run"].bind("click", button_pause)
+    document["run"].bind("click", button_stop)
     do_play()
-    #timer.set_timeout(do_play, 20)
-
-# attempt to replace the first while True: loop with a function
-import re
-def preProcess(src):
-    preProcessed = str(src)
-    pos = src.find("while True:")
-    if pos != -1:
-        namespace = globals()
-        namespace["__name__"] = "__main__"
-
-        # execute the code up to the loop
-        # grab all the globals and put them as 'globals' into the first line of the new function
-        exec(src[:pos], namespace, namespace)
-
-        globals_str = ""
-        g = globals()
-        for v in g:
-            if not callable(g[v]) and v[:2] != "__":
-                globals_str += v + ","
-        if len(globals_str) > 0:
-            globals_str = globals_str[:-1]                
-
-        # now find the whitespace sequence after the "while True:\n" substring
-        # => this is the indent sequence
-        match = re.search(r"\s+", src[pos + 12:])
-        window.console.log(match.span())
-
-        indentStr = src[pos + 12 + match.span()[0]:pos + 12 + match.span()[1]]
-
-        
-	
-        replaceStr = "def loop():\n" + indentStr + "global " + globals_str +"\n"
-        window.console.log(replaceStr)
-        # TODO: remember to call the function with setInterval()!
-        preProcessed = preProcessed.replace("while True:", replaceStr, 1)
-        preProcessed = preProcessed + "\ninterval_001 = timer.set_interval(loop, 16)\n"
-    return preProcessed
 
 def do_play():
     window.console.log("Getting code")
@@ -422,54 +353,26 @@ def do_play():
         try:
             # try and run the code in the web worker!!!!
             PyAngeloWorker.send(["run", src])
-            '''
-            # running the code locally 
-            src = preProcess(src)
-            namespace = globals()
-            namespace["__name__"] = "__main__"
-            graphics.commands = []
-            graphics.stopped = False
-            exec(src, namespace, namespace) 
-            graphics.execute_commands(False)
             graphics.start()
-            '''
+
         except Exception as exc:
-            alert("Error!");
             traceback.print_exc(file=sys.stderr)
             handle_exception()
             success = False
         clear_button_run()
         document["runPause"].style.display = "inherit"
-        document["run"].bind("click", button_pause)
+        document["runPause"].bind("click", button_stop)
     except:
         pass
-
-def button_pause(event):
-    clear_button_run()
-    document["runResume"].style.display = "inherit"
-    document["run"].bind("click", button_resume)
-    graphics.pause()
-
-
-def button_resume(event):
-    clear_button_run()
-    document["runPause"].style.display = "inherit"
-    document["run"].bind("click", button_pause)
-    graphics.resume()
 
 
 def button_stop(event):
     clear_button_run()
     document["runPlay"].style.display = "inherit"
-    document["run"].bind("click", button_play)
-
+    document["runPlay"].bind("click", button_play)
     graphics.stop()
-    # only for local execution with preprocessing
-    # timer.clear_interval(interval_001)
-    
-def button_restart(event):
-    button_play(event)
 
+    
 def save_code(event):
     window.saveCode()        
         

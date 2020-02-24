@@ -135,12 +135,7 @@
                                 <div id="runPause">
                                     <div class="editorButtonIcon"><img src="images/controls/stop.png" width="20"
                                                                        height="20"></div>
-                                    <h4>RESET</h4>
-                                </div>
-                                <div id="runResume">
-                                    <div class="editorButtonIcon"><img src="images/controls/play.png" width="20"
-                                                                       height="20"></div>
-                                    <h4>PLAY</h4>
+                                    <h4>STOP</h4>
                                 </div>
                             </div>
                             <div class="buttonBarLayoutPanel">
@@ -292,7 +287,6 @@
 <script type="text/javascript" src="js/brython/brython_stdlib.js?version=0.9.7"></script>
 
 <script type="text/python" class="webworker" id="executor" src="PyAngelo_worker.py">
-<!--<script type="text/python" class="webworker" id="executor" src="PyAngelo_EDSim_Worker.py">-->
 </script>
 <script type="text/python3" id="tests_editor">
 	import pyangelo
@@ -301,13 +295,11 @@
 	document["run"].bind("click", pyangelo.save_code)
 	document["run"].bind("click", pyangelo.button_play)
 
-
 </script>
 
 <script>
 
     document.getElementById("run").style.backgroundColor = "#6E6E6E";
-
 
     document.getElementById("run").style.cursor = "pointer";
 
