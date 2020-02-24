@@ -4,7 +4,6 @@
 import time
 #from browser import bind, self
 import sys
-import time
 import traceback
 import javascript
 import random
@@ -27,20 +26,7 @@ KEY_BEGIN         = 0xff58
 
 console = self.console
 window = self
-
-def run_code(src, globals, locals):
-    global array
-    self.console.log("running code...")
-    try:
-        exec(src , globals, locals)
-    except Exception as e:
-        self.console.log(str(e))
-        send_message(["error", "Error: " + str(e) + "\n"])
-       
-def send_message(message):
-    self.console.log("Worker sending to main thread..")
-    self.send(message)    
-    
+   
 class PyAngeloWorker():
     def __init__(self):
         self.test_data = None
@@ -115,15 +101,27 @@ class PyAngeloWorker():
             self.currTime = window.performance.now()
                                        
         send_message(["reveal",self.commands])
-        self.commands = []
-        
-
+        self.commands = []        
                
         return True
         
 graphics = PyAngeloWorker()
 array = None
 shared = None
+
+def run_code(src, globals, locals):
+    global array
+    self.console.log("running code...")
+    try:
+        exec(src , globals, locals)
+        send_message(["halt"])
+    except Exception as e:
+        self.console.log(str(e))
+        send_message(["error", "Error: " + str(e) + "\n"])
+       
+def send_message(message):
+    self.console.log("Worker sending to main thread..")
+    self.send(message)   
 
 @bind(self, "message")
 def onmessage(evt):

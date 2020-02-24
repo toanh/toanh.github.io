@@ -62,6 +62,7 @@ class PyAngelo():
     STATE_WAIT      =   0
     STATE_STOP      =   1
     STATE_RUN       =   2
+    STATE_HALT      =   3
     
     def __init__(self):
         global test_buff, PyAngeloWorker, array
@@ -259,7 +260,12 @@ class PyAngelo():
         if self.anim_timer <= 0:
             self.anim_timer = 0
             
+        document["runPlay"].style.cursor = "pointer"
+        document["runPause"].style.cursor = "pointer"        
+
+            
         if self.state == self.STATE_WAIT:
+            document["runPlay"].style.cursor = "not-allowed"
             self.ctx.fillStyle = "#000000"; 
             self.ctx.fillRect(0, 0, self.width, self.height)   
             self.ctx.fillStyle = "#ffffff"; 
@@ -274,8 +280,11 @@ class PyAngelo():
             self.ctx.fillText(self.starting_text, 100, 200);             
         elif self.state == self.STATE_RUN:   
             self.execute_commands()        
-        if self.state == self.STATE_STOP:
-            self.__clear(0.392,0.584,0.929)	               
+        elif self.state == self.STATE_STOP:       
+            self.__clear(0.392,0.584,0.929)	  
+        elif self.state == self.STATE_HALT:
+            # program has finished (halted) - just leave the display as is
+            self.execute_commands()               
        
     def execute_commands(self, do_frame = True):   
         window.console.log("before frame()")
@@ -324,7 +333,14 @@ class PyAngelo():
             #self.__clear(0.392,0.584,0.929)		
             self.commands = []
             
-            array[KEY_ESC] = 0            
+            array[KEY_ESC] = 0    
+    def halt(self):        
+        if self.state != self.STATE_HALT:
+            self.state = self.STATE_HALT            
+            # clear to cornflower blue (XNA!) by default        
+            #self.__clear(0.392,0.584,0.929)		
+            
+            array[KEY_ESC] = 0             
         
         
 graphics = PyAngelo()
@@ -341,7 +357,10 @@ def onmessage(e):
         do_print(e.data[1], "red")    
         graphics.stop()    
     elif e.data[0] == "ready":
-        graphics.stop()            
+        graphics.stop()   
+    elif e.data[0] == "halt":
+        window.console.log("Program finished (HALTED)")
+        graphics.halt()         
 
 def format_string_HTML(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>").replace("\"", "&quot;").replace("'", "&apos;").replace(" ", "&nbsp;")
@@ -353,6 +372,7 @@ def do_print(s, color=None):
 def clear_button_run():
     document["runPlay"].style.display = "none"
     document["runPause"].style.display = "none"
+    
     for event in document["run"].events("click"):
         document["run"].unbind("click", event)
     document["run"].bind("click", save_code)
@@ -368,6 +388,8 @@ def button_stop(event):
     document["runPlay"].style.display = "inherit"
     document["run"].bind("click", button_play)
     array[KEY_ESC] = 1
+    if graphics.state == graphics.STATE_HALT:
+        graphics.stop()
 
 def do_play():
     window.console.log("Getting code")
@@ -378,7 +400,6 @@ def do_play():
     # try and run the code in the web worker!!!!
     PyAngeloWorker.send(["run", src])
     graphics.start()
-
 
     
 def save_code(event):
