@@ -124,9 +124,13 @@ def run_code(src, globals, locals):
     self.console.log("running code...")
     try:
         exec(src , globals, locals)
+        
+        # execute the command in the queue (to show the results if they didn't call reveal())
+        graphics.reveal()
         send_message(["halt"])
     except Exception as e:
         self.console.log(str(e))
+        
         send_message(["error", "Error: " + str(e) + "\n"])
        
 def send_message(message):

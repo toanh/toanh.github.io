@@ -305,6 +305,7 @@ class PyAngelo():
             self.__clear(0.392,0.584,0.929)	  
         elif self.state == self.STATE_HALT:
             # program has finished (halted) - just leave the display as is
+            # execute the command in the queue (to show the results if they didn't call reveal())
             self.execute_commands()               
        
     def execute_commands(self, do_frame = True):   
@@ -363,7 +364,7 @@ class PyAngelo():
         if self.state != self.STATE_HALT:
             self.state = self.STATE_HALT            
             # clear to cornflower blue (XNA!) by default        
-            #self.__clear(0.392,0.584,0.929)		
+            #self.__clear(0.392,0.584,0.929)
             
             array[KEY_ESC] = 0             
         
