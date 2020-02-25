@@ -70,7 +70,7 @@
     <div class="pageWholeWrapper">
         <div class="pageTopWrapper">
             <div class="pageTop">
-                <div class="pynodeLogo"><img src="images/logo.png" width="120" height="120"></div>
+                <div class="pynodeLogo"><img src="images/PyAngelo.png" width="128" height="96"></div>
                 <div class="pynodeTitle">PyAngelo</div>
                 <div class="pynodeSubtitle">
                     <h3>Simple Browser Python Graphics Programming</h3>
@@ -169,6 +169,7 @@
                     <li>
                         <p><code>graphics.clear(r, g, b, a)</code></p>
 						<p>Clears the screen with the specified (red, green, blue, alpha) values.</p>
+                        <p>(red, green, blue, alpha) values are from 0.0 to 1.0 inclusive where 0.0 is the lowest intensity, and 1.0 is the highest intensity.</p>
                     </li>
                     <li>
                         <p><code>graphics.drawImage(image, x, y, width, height)</code></p>
@@ -183,15 +184,34 @@
 						<p>Draws text at coordinates (<code class="codeInline">x</code>, <code class="codeInline">y</code>) with the font details specified.</p>
                     </li>
 					<li>
-                        <p><code>graphics.isKeyPressed(key)</code></p>
-						<p>Return whether <code class="codeInline">key</code> was pressed.</p>
-						<p>Keys are specified in the form: <code class="codeInline">KEY_[key name]</code> (eg: KEY_A, KEY_LEFT, KEY_HOME)</p>
-					</li>
-					<li>
                         <p><code>graphics.drawLine(x1, y1, x2, y2, r, g, b, a, width)</code></p>
 						<p>Draws a line from at coordinates (<code class="codeInline">x1</code>, <code class="codeInline">y1</code>) to (<code class="codeInline">x2</code>, <code class="codeInline">y2</code>) with the specified (red, green, blue, alpha) values.</p>
-						<p>The line will have a stroke width of <code class="codeInline">width</code></p>
+						<p><code class="codeInline">width</code> determines the line's stroke width.</p>
 					</li>
+                </ul>
+                <h2>Input</h2>                
+                <ul>  
+                	<li>
+                        <p><code>graphics.isKeyPressed(key)</code></p>
+						<p>Return whether <code class="codeInline">key</code> was pressed.</p>
+						<p>Keys are specified in the form: <code class="codeInline">KEY_[key name]</code> (eg: KEY_A, KEY_LEFT, KEY_HOME).</p>
+					</li>
+                </ul>
+                <h2>Sound</h2>                
+                <ul>
+					<li>
+                        <p><code>graphics.loadSound(soundURL)</code></p>
+						<p>Loads a sound from the given URL.</p>
+						<p>Returns a sound object that is passed into the <code class="codeInline">playSound()</code> and <code class="codeInline">stopSound()</code> methods (see below).</p>
+					</li>  
+					<li>
+                        <p><code>graphics.playSound(sound)</code></p>
+						<p>Plays the sound object returned from <code class="codeInline">graphics.loadSound()</code>.</p>						
+					</li> 
+					<li>
+                        <p><code>graphics.stopSound(sound)</code></p>
+						<p>Stops playing the sound object returned from <code class="codeInline">graphics.loadSound()</code>.</p>						
+					</li>                     
 					<!--
                     <li>
                         <p><code>graph.remove_node(node)</code> - Removes a node from the graph.</p>

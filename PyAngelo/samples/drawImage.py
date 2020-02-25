@@ -1,5 +1,7 @@
 # clears the screen to black
-graphics.clear(0,0,0)
+graphics.clear(0.0, 0.0, 0.0, 1.0)
 
-# draws the image at that URL on the screen at coordinates (x = 0, y = 100)
-graphics.drawImage("https://i.imgur.com/ww1HtMi.png", 0, 100)
+imageURL = "https://i.imgur.com/ww1HtMi.png"
+
+# draws the image on the screen at coordinates (x = 0, y = 100)
+graphics.drawImage(imageURL, 0, 100)
