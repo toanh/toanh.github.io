@@ -60,6 +60,12 @@ class PyAngeloWorker():
         
         self.commands.append(["clear", kwargs])
         
+    def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
+        return not ( ((x1 + width1) < x2) or 
+                     ((x2 + width2) < x1) or
+                     ((y1 + height1) < y2) or
+                     ((y2 + height2) < y1) )
+        
     def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
         kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
                   "a": a, "width": width}
@@ -106,7 +112,17 @@ class PyAngeloWorker():
     # just an alias for pauseSound for now
     def stopSound(self, sound):
         kwargs = {"sound": sound}
-        self.commands.append(["pauseSound", kwargs])            
+        self.commands.append(["pauseSound", kwargs])
+
+    def sleep(self, milliseconds):
+        # flush the command buffer to this point
+        self.reveal()
+        
+        # the sleep happens here
+        currTime = window.performance.now()
+        prevTime = currTime
+        while (currTime - prevTime < milliseconds):
+            currTime = window.performance.now()        
         
     def reveal(self):
     
