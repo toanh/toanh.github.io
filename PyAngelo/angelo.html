@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PyNode</title>
-    <meta name="description" content="Interactive online Graph Theory.">
+    <title>PyAngelo</title>
+    <meta name="description" content="Simple Online Python Graphics Programming">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="css/angelo_style.css?version=0.9.7" rel="stylesheet" type="text/css">
@@ -11,20 +11,20 @@
     <script src="js/resize.js?version=0.9.7"></script>
     <script>
         var editor_exists = false;
-        var pynode_output;
-        var pynode_editor;
-        var pynode_console;
+        var pyangelo_output;
+        var pyangelo_editor;
+        var pyangelo_console;
         var enable_editor = true;
 
         window.onbeforeunload = function () {
-            if (pynode_output !== undefined) {
-                pynode_output.close();
+            if (pyangelo_output !== undefined) {
+                pyangelo_output.close();
             }
-            if (pynode_editor !== undefined) {
-                pynode_editor.close();
+            if (pyangelo_editor !== undefined) {
+                pyangelo_editor.close();
             }
-            if (pynode_console !== undefined) {
-                pynode_console.close();
+            if (pyangelo_console !== undefined) {
+                pyangelo_console.close();
             }
             if (editor_exists) {
                 saveCode();
@@ -41,7 +41,7 @@
                 project_name = pair[1];
                 read_storage = false;
                 var client = new XMLHttpRequest();
-                client.open("GET", "pynode_projects/" + project_name + ".py");
+                client.open("GET", "samples/" + project_name + ".py");
                 client.onreadystatechange = function () {
                     if (client.readyState == 4) {
                         project_src = client.responseText;
@@ -79,7 +79,7 @@
                 <div class="pynodeAuthorSubtitle">
                 </div>
                 <div class="pynodeDescription">
-                    <p>Pyangelo allows you to create simple graphical effects, animation and games with a Simple Python interface all
+                    <p>Pyangelo allows you to create simple graphical effects, animation and games with a simple Python interface all
                         within your browser.<br><br>Try the examples below, or write your own!</p>
                     <ul>
                         <li>
@@ -150,7 +150,6 @@
                         </div>
                         <div class="consoleBox">
                             <div id="console"></div>
-                            <script>document.getElementById("console").innerHTML = "<p>Loading...</p>"</script>
                         </div>
                     </div>
                 </div>
@@ -158,8 +157,159 @@
         </div>
         <script> resize(); </script>
         
+
+
+<!---------------- begin documentation -------------->
+        <div class="pageBottomWrapper">
+            <div class="pageWhole">
+                <h1>Documentation</h1>
+                <h4>&nbsp;</h4>
+                <h2>Graphics</h2>
+                <ul>
+                    <li>
+                        <p><code>graphics.clear(r, g, b, a)</code></p>
+						<p>Clears the screen with the specified (red, green, blue, alpha) values.</p>
+                    </li>
+                    <li>
+                        <p><code>graphics.drawImage(image, x, y, width, height)</code></p>
+						<p>Draws an image found at the URL <code class="codeInline">image</code> at the coordinates (<code class="codeInline">x</code>, <code class="codeInline">y</code>) and with the (optional) dimensions (<code class="codeInline">width</code>, <code class="codeInline">height</code>).</p>
+                    </li>
+                    <li>
+                        <p><code>graphics.drawPixel(x, y, r, g, b, a)</code></p>
+						<p>Draws a pixel at coordinates (<code class="codeInline">x</code>, <code class="codeInline">y</code>) with the specified (red, green, blue, alpha) values.</p>
+                    </li>
+					<li>
+                        <p><code>graphics.drawText(text, x, y, fontName, fontSize, color = (r, g, b, a))</code></p>
+						<p>Draws text at coordinates (<code class="codeInline">x</code>, <code class="codeInline">y</code>) with the font details specified.</p>
+                    </li>
+					<li>
+                        <p><code>graphics.isKeyPressed(key)</code></p>
+						<p>Return whether <code class="codeInline">key</code> was pressed.</p>
+						<p>Keys are specified in the form: <code class="codeInline">KEY_[key name]</code> (eg: KEY_A, KEY_LEFT, KEY_HOME)</p>
+					</li>
+					<li>
+                        <p><code>graphics.drawLine(x1, y1, x2, y2, r, g, b, a, width)</code></p>
+						<p>Draws a line from at coordinates (<code class="codeInline">x1</code>, <code class="codeInline">y1</code>) to (<code class="codeInline">x2</code>, <code class="codeInline">y2</code>) with the specified (red, green, blue, alpha) values.</p>
+						<p>The line will have a stroke width of <code class="codeInline">width</code></p>
+					</li>
+					<!--
+                    <li>
+                        <p><code>graph.remove_node(node)</code> - Removes a node from the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.node(id)</code> - Returns a node in the graph by its <code
+                                class="codeInline">id</code>.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.nodes()</code> - Returns a list of all nodes in the graph.</p>
+                    </li>
+                    <p>&nbsp;</p>
+                    <li>
+                        <p><code>graph.add_edge(edge)</code> - Adds an edge to the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.add_edge(source, target, weight=None, directed=False)</code> - Creates an <code
+                                class="codeInline">Edge(source, target, weight, directed)</code> and adds it to the
+                            graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.remove_edge(edge)</code> - Removes an edge from the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.remove_edge(node1, node2, directed=False)</code> - Removes edge(s) between <code
+                                class="codeInline">node1</code> and <code class="codeInline">node2</code>. If <code
+                                class="codeInline">directed</code> is set, only edges beginning at <code
+                                class="codeInline">node1</code> will be removed.</p>
+                    </li>
+                    <p>&nbsp;</p>
+                    <li>
+                        <p><code>graph.has_node(node)</code> - Checks whether a node has been added to the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.has_edge(edge)</code> - Checks whether an edge has been added to the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.adjacent(node1, node2, directed=False)</code> - Checks whether an edge exists
+                            between <code class="codeInline">node1</code> and <code class="codeInline">node2</code>. If
+                            <code class="codeInline">directed</code> is set, the edge must begin at <code
+                                    class="codeInline">node1</code>.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.edges_between(node1, node2, directed=False)</code> - Returns a list of all edges
+                            between <code class="codeInline">node1</code> and <code class="codeInline">node2</code>. If
+                            <code class="codeInline">directed</code> is set, only edges beginning at <code
+                                    class="codeInline">node1</code> will be included.</p>
+                    </li>
+                    <p>&nbsp;</p>
+                    <li>
+                        <p><code>graph.set_directed(directed=True)</code> - Sets whether all edges in the graph are
+                            directed.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.adjacency_matrix()</code> - Creates and returns an adjacency matrix
+                            (2-dimensional dictionary, using node <code class="codeInline">id</code> values as keys) for
+                            the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.add_all(elements)</code> - Adds a list of <code class="codeInline">Node</code>
+                            and/or <code class="codeInline">Edge</code> elements to the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.remove_all(elements)</code> - Removes a list of <code
+                                class="codeInline">Node</code> and/or <code class="codeInline">Edge</code> elements from
+                            the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.random(order, size, connected=True, multigraph=False, initial_id=0)</code> -
+                            Returns a list of randomly connected nodes and edges, with <code
+                                    class="codeInline">order</code> specifying the amount of nodes and <code
+                                    class="codeInline">size</code> specifying the amount of edges. If <code
+                                    class="codeInline">connected</code> is set, a path will exist between any pair of
+                            nodes (unless the amount of edges makes this impossible). If <code class="codeInline">multigraph</code>
+                            is set, a pair of nodes may be connected by multiple edges. Nodes are assigned incremental
+                            <code class="codeInline">id</code> values starting at <code
+                                    class="codeInline">initial_id</code>.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.order()</code>, <code>graph.size()</code> - Returns the number of nodes/edges in
+                            the graph.</p>
+                    </li>
+                    <li>
+                        <p><code>graph.clear()</code> - Deletes all nodes and edges from the graph.</p>
+                    </li>
+					-->
+                </ul>
+				<!--
+                <p>Note: All functions containing node parameters accept either a <code class="codeInline">Node</code>
+                    instance or node <code class="codeInline">id</code> value.</p>
+				-->
+            </div>
+            <div class="pageWhole">
+                <h1>About</h1>
+                <p>&nbsp;</p>
+                <p>PyAngelo was designed and created by <a href="https://github.com/toanh">Toan Huynh</a>, using the following technologies:</p>
+                <ul>
+                    <li>
+                        <p><a href="https://alexsocha.github.com/pynode">PyNode</a> - Interactive Online Python Node Visualisation (<a href="https://alexsocha.github.com/pynode">GitHub</a>)</p>
+                    </li>
+                    <li>
+                        <p><a href="https://brython.info/" target="_blank">Brython</a> - Kiko Correoso (<a
+                                href="https://github.com/brython-dev/brython">GitHub</a>)</p>
+                    </li>
+                    <li>
+                        <p><a href="https://ace.c9.io/#nav=about" target="_blank">ace</a> - Ajax.org (<a
+                                href="https://github.com/ajaxorg/ace">GitHub</a>)</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
+
+
+
+<!----------------- end documentation --------------->
+
 <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/ace/mode-python.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/ace/ext-language-tools.js" type="text/javascript" charset="utf-8"></script>
@@ -195,7 +345,7 @@
 
     function openCode(name) {
         var client = new XMLHttpRequest();
-        client.open("GET", "pynode_projects/" + name + ".py");
+        client.open("GET", "samples/" + name + ".py");
         client.onreadystatechange = function () {
             if (client.readyState == 4) {
                 if (editor_exists) {
@@ -223,9 +373,9 @@
     });
 
     editor.on("change", function () {
-        if (pynode_editor !== undefined) {
+        if (pyangelo_editor !== undefined) {
             enable_editor = false;
-            if (pynode_editor.enable_editor) pynode_editor.setCode(editor.getValue());
+            if (pyangelo_editor.enable_editor) pyangelo_editor.setCode(editor.getValue());
             enable_editor = true;
         }
     });
@@ -236,7 +386,7 @@
     function writeOutput(data, append) {
         if (append) document.getElementById("console").innerHTML += data;
         else document.getElementById("console").innerHTML = data;
-        if (pynode_output === undefined && pynode_console !== undefined) pynode_console.writeOutput(data, append);
+        if (pyangelo_output === undefined && pyangelo_console !== undefined) pyangelo_console.writeOutput(data, append);
     }
 
 </script>
@@ -279,20 +429,11 @@
 	document["run"].bind("click", pyangelo.save_code)
 	document["run"].bind("click", pyangelo.button_play)
 
-</script>
-
-<script>
-
-    document.getElementById("run").style.backgroundColor = "#6E6E6E";
-
-    document.getElementById("run").style.cursor = "pointer";
-
-    writeOutput("<p style='color:green;'>Done!</p>", true);   
-    
+	document["run"].style.backgroundColor = "#6E6E6E";    
 </script>
 
 <!-- Relevant links that are not directly referenced. Allows website to be properly read with automatic web crawling. -->
 <a hidden style="display:none" href="pyangelo.py">&nbsp</a>
-<a hidden style="display:none" href="pynode_projects/dijkstra.py">&nbsp</a>
+
 </body>
 </html>

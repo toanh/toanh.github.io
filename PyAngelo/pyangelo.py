@@ -106,7 +106,6 @@ class PyAngelo():
         # clear to cornflower blue (XNA!) by default        
         self.__clear(0.392,0.584,0.929)
         
-        
         test_buff = window.SharedArrayBuffer.new(255)
         array = window.Int8Array.new(test_buff)
         array[0] = 0  
@@ -115,7 +114,6 @@ class PyAngelo():
         
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
-        
         
         self.last_frame_commands = []
         
@@ -298,7 +296,6 @@ class PyAngelo():
         document["runPlay"].style.cursor = "pointer"
         document["runPause"].style.cursor = "pointer"        
 
-            
         if self.state == self.STATE_WAIT:
             document["runPlay"].style.cursor = "not-allowed"
             self.ctx.fillStyle = "#000000"; 
@@ -313,20 +310,6 @@ class PyAngelo():
                 if self.starting_text.count(".") > 5:
                     self.starting_text = self.starting_text[:-5]
             self.ctx.fillText(self.starting_text, 100, 200);
-        elif self.state == self.STATE_LOAD:
-            document["runPlay"].style.cursor = "not-allowed"
-            self.ctx.fillStyle = "#00ff00"; 
-            self.ctx.fillRect(0, 0, self.width, self.height)   
-            self.ctx.fillStyle = "#ffffff"; 
-            self.ctx.font = "40px Georgia";
-            
-            if self.anim_timer <= 0:
-                self.anim_timer = self.anim_time
-                
-                self.loading_text += "."
-                if self.loading_text.count(".") > 5:
-                    self.loading_text = self.loading_text[:-5]
-            self.ctx.fillText(self.loading_text, 100, 200);
         elif self.state == self.STATE_RUN:   
             self.execute_commands()        
         elif self.state == self.STATE_STOP:       
@@ -379,10 +362,8 @@ class PyAngelo():
                 continue
                 
             command[0](**command[1])    
-            
-             
-            del self.commands[0]       
 
+            del self.commands[0]       
         
     def start(self):
         if self.state != self.STATE_RUN:
@@ -392,7 +373,6 @@ class PyAngelo():
             array[KEY_ESC] = 0
             
             window.console.log("running code...")
-
             
     def stop(self):        
         if self.state != self.STATE_STOP:
@@ -408,7 +388,6 @@ class PyAngelo():
             array[KEY_ESC] = 0  
                    
         
-        
 graphics = PyAngelo()
 
 @bind(PyAngeloWorker, "message")
@@ -422,6 +401,8 @@ def onmessage(e):
     elif e.data[0] == "error":
         do_print(e.data[1], "red")    
         graphics.stop()    
+    elif e.data[0] == "quit": 
+        graphics.stop()  
     elif e.data[0] == "ready":
         graphics.stop()   
     elif e.data[0] == "halt":

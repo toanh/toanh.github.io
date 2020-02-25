@@ -53,7 +53,7 @@ class PyAngeloWorker():
         if array[KEY_ESC] == 1:
             console.log("Escape detected!")
             array[KEY_ESC] = 0
-            raise Exception("QUIT requested")    
+            raise SystemExit("QUIT requested")    
         global array
         
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -108,7 +108,7 @@ class PyAngeloWorker():
         if array[KEY_ESC] == 1:
             console.log("Escape detected!")
             array[KEY_ESC] = 0
-            raise Exception("QUIT requested")    
+            raise SystemExit("QUIT requested")    
         
         # send and then block
         global array, console, window
@@ -143,6 +143,8 @@ def run_code(src, globals, locals):
         self.console.log(str(e))
         
         send_message(["error", "Error: " + str(e) + "\n"])
+    except SystemExit as se:
+        send_message(["quit"])
        
 def send_message(message):
     self.console.log("Worker sending to main thread..")
