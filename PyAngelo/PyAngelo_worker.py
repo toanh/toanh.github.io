@@ -43,6 +43,12 @@ class PyAngeloWorker():
         self.currTime = self.prevTime
 
     def clear(self, r=0, g=0, b=0, a=1):
+        # TODO: check for escape in every API call?
+        
+        if array[KEY_ESC] == 1:
+            console.log("Escape detected!")
+            array[KEY_ESC] = 0
+            raise Exception("QUIT requested")    
         global array
         
         kwargs = {"r": r, "g": g, "b": b, "a": a}
