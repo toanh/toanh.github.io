@@ -35,6 +35,8 @@ import traceback
 import javascript
 import random
 import json
+import copy
+
 from browser import bind, self, window
 KEY_ESC           = 27
 KEY_HOME          = 0xff50
@@ -63,6 +65,7 @@ class PyAngelo():
     STATE_STOP      =   1
     STATE_RUN       =   2
     STATE_HALT      =   3
+    STATE_LOAD      =   4
     
     def __init__(self):
         global test_buff, PyAngeloWorker, array
@@ -95,7 +98,8 @@ class PyAngelo():
         self.anim_timer = 0
         self.anim_time = 200        
         
-        self.starting_text = "Starting up"        
+        self.starting_text = "Starting up"   
+        self.loading_text = "Loading resources"        
         
         timer.set_interval(self.update, 16)   
         
@@ -112,6 +116,8 @@ class PyAngelo():
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
         
+        
+        self.last_frame_commands = []
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -177,6 +183,10 @@ class PyAngelo():
         
     def resourceLoaded(self, e):
         self.loadingResources -= 1
+        
+        if self.loadingResources <= 0:
+            window.console.log("Resources all loaded!")
+            
         e.target.jmssImg.height = e.target.naturalHeight
         e.target.jmssImg.width = e.target.naturalWidth        
         
@@ -203,7 +213,9 @@ class PyAngelo():
             image = self.loadImage(image)
         
         if self.loadingResources > 0:
-            return
+            return False
+            
+        window.console.log("Calling drawImage for reals")
         
         self.ctx.save()
 
@@ -298,7 +310,21 @@ class PyAngelo():
                 self.starting_text += "."
                 if self.starting_text.count(".") > 5:
                     self.starting_text = self.starting_text[:-5]
-            self.ctx.fillText(self.starting_text, 100, 200);             
+            self.ctx.fillText(self.starting_text, 100, 200);
+        elif self.state == self.STATE_LOAD:
+            document["runPlay"].style.cursor = "not-allowed"
+            self.ctx.fillStyle = "#00ff00"; 
+            self.ctx.fillRect(0, 0, self.width, self.height)   
+            self.ctx.fillStyle = "#ffffff"; 
+            self.ctx.font = "40px Georgia";
+            
+            if self.anim_timer <= 0:
+                self.anim_timer = self.anim_time
+                
+                self.loading_text += "."
+                if self.loading_text.count(".") > 5:
+                    self.loading_text = self.loading_text[:-5]
+            self.ctx.fillText(self.loading_text, 100, 200);
         elif self.state == self.STATE_RUN:   
             self.execute_commands()        
         elif self.state == self.STATE_STOP:       
@@ -306,11 +332,22 @@ class PyAngelo():
         elif self.state == self.STATE_HALT:
             # program has finished (halted) - just leave the display as is
             # execute the command in the queue (to show the results if they didn't call reveal())
-            self.execute_commands()               
+            if self.loadingResources > 0:
+                window.console.log("Halting...")
+                return
+            else:
+                window.console.log("repeating last frame")
+                window.console.log(len(self.last_frame_commands))
+                window.console.log(len(self.commands))
+                
+                if len(self.last_frame_commands) > 0:
+                    self.commands = copy.deepcopy(self.last_frame_commands)
+                self.execute_commands()               
        
-    def execute_commands(self, do_frame = True):   
-        window.console.log("before frame()")
-  
+    def execute_commands(self, do_frame = True): 
+        if len(self.commands) > 0:
+            self.last_frame_commands = copy.deepcopy(self.commands)
+        
         while len(self.commands) > 0:
             command = self.commands[0]
             
@@ -338,8 +375,9 @@ class PyAngelo():
                 continue
                 
             command[0](**command[1])    
-            del self.commands[0]
-        window.console.log("after frame()")        
+            
+             
+            del self.commands[0]       
 
         
     def start(self):
@@ -355,18 +393,16 @@ class PyAngelo():
     def stop(self):        
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
-            # clear to cornflower blue (XNA!) by default        
-            #self.__clear(0.392,0.584,0.929)		
+
             self.commands = []
             
-            array[KEY_ESC] = 0    
-    def halt(self):        
+            array[KEY_ESC] = 1    
+    def halt(self):  
         if self.state != self.STATE_HALT:
             self.state = self.STATE_HALT            
-            # clear to cornflower blue (XNA!) by default        
-            #self.__clear(0.392,0.584,0.929)
             
-            array[KEY_ESC] = 0             
+            array[KEY_ESC] = 0  
+                   
         
         
 graphics = PyAngelo()
@@ -414,7 +450,7 @@ def button_stop(event):
     document["runPlay"].style.display = "inherit"
     document["run"].bind("click", button_play)
     array[KEY_ESC] = 1
-    if graphics.state == graphics.STATE_HALT:
+    if graphics.state == graphics.STATE_HALT or graphics.state == graphics.STATE_LOAD:
         graphics.stop()
 
 def do_play():
