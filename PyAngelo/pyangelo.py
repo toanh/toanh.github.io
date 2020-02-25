@@ -118,6 +118,7 @@ class PyAngelo():
         self.last_frame_commands = []
         
         self.just_halted = False
+        
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -161,6 +162,10 @@ class PyAngelo():
         if sound in self.soundPlayers:
             self.soundPlayers[sound].loop = loop
             self.soundPlayers[sound].play()
+            
+    def __stopAllSounds(self):
+        for sound in self.soundPlayers:
+            self.__pauseSound(sound)
 
     def __pauseSound(self, sound):
         if sound in self.soundPlayers:
@@ -173,14 +178,17 @@ class PyAngelo():
         
         global array
         array[ev.which] = 1
+        
+        # pressing escape when the program has halted
+        if ev.which == KEY_ESC and self.state == self.STATE_HALT:
+            self.stop()
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      
 
         global array
         array[ev.which] = 0
-        
-        
+                
     def resourceLoaded(self, e):
         self.loadingResources -= 1
         
@@ -372,20 +380,23 @@ class PyAngelo():
             
             array[KEY_ESC] = 0
             
-            window.console.log("running code...")
-            
-    def stop(self):        
+    def stop(self):   
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
 
             self.commands = []
+
+            self.__stopAllSounds()
             
-            array[KEY_ESC] = 1    
+            array[KEY_ESC] = 1
+
+            disable_stop_enable_play()        
+            
     def halt(self):  
         if self.state != self.STATE_HALT:
             self.state = self.STATE_HALT            
             self.just_halted = True
-            array[KEY_ESC] = 0  
+            array[KEY_ESC] = 0 
                    
         
 graphics = PyAngelo()
@@ -430,14 +441,17 @@ def button_play(event):
     document["run"].bind("click", button_stop)
     do_play()
     
-def button_stop(event):
+def disable_stop_enable_play():
     clear_button_run()
     document["runPlay"].style.display = "inherit"
-    document["run"].bind("click", button_play)
+    document["run"].bind("click", button_play)    
+    
+def button_stop(event):
     array[KEY_ESC] = 1
-    if graphics.state == graphics.STATE_HALT or graphics.state == graphics.STATE_LOAD:
-        graphics.stop()
+    if graphics.state == graphics.STATE_HALT:
+        graphics.stop()       
 
+    
 def do_play():
     window.console.log("Getting code")
     src = window.getCode()

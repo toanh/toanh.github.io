@@ -49,11 +49,11 @@ class PyAngeloWorker():
         
         if self.reveal_on_clear:
             self.reveal()
-            
-        if array[KEY_ESC] == 1:
-            console.log("Escape detected!")
-            array[KEY_ESC] = 0
-            raise SystemExit("QUIT requested")    
+        elif array[KEY_ESC] == 1:
+                console.log("Escape detected!")
+                array[KEY_ESC] = 0
+                raise SystemExit("QUIT requested")    
+                
         global array
         
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -100,6 +100,11 @@ class PyAngeloWorker():
         self.commands.append(["playSound", kwargs])   
 
     def pauseSound(self, sound):
+        kwargs = {"sound": sound}
+        self.commands.append(["pauseSound", kwargs])        
+
+    # just an alias for pauseSound for now
+    def stopSound(self, sound):
         kwargs = {"sound": sound}
         self.commands.append(["pauseSound", kwargs])            
         
