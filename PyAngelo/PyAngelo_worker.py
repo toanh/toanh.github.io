@@ -41,10 +41,15 @@ class PyAngeloWorker():
                          
         self.prevTime = 0
         self.currTime = self.prevTime
+        
+        self.reveal_on_clear = True
 
     def clear(self, r=0, g=0, b=0, a=1):
         # TODO: check for escape in every API call?
         
+        if self.reveal_on_clear:
+            self.reveal()
+            
         if array[KEY_ESC] == 1:
             console.log("Escape detected!")
             array[KEY_ESC] = 0
