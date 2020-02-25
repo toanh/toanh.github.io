@@ -118,6 +118,8 @@ class PyAngelo():
         
         
         self.last_frame_commands = []
+        
+        self.just_halted = False
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
         kwargs = {"r": r, "g": g, "b": b, "a": a}
@@ -340,7 +342,9 @@ class PyAngelo():
                 window.console.log(len(self.last_frame_commands))
                 window.console.log(len(self.commands))
                 
-                if len(self.last_frame_commands) > 0:
+                if self.just_halted:
+                    self.just_halted = False
+                else:
                     self.commands = copy.deepcopy(self.last_frame_commands)
                 self.execute_commands()               
        
@@ -400,7 +404,7 @@ class PyAngelo():
     def halt(self):  
         if self.state != self.STATE_HALT:
             self.state = self.STATE_HALT            
-            
+            self.just_halted = True
             array[KEY_ESC] = 0  
                    
         
