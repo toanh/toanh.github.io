@@ -1,7 +1,8 @@
 # clears the screen to black
-graphics.clear(0.0, 0.0, 0.0, 1.0)
+graphics.clear(0,0,0)
 
-imageURL = "https://i.imgur.com/ww1HtMi.png"
+# initialising the image URL as a variable
+imageURL = "https://pyangelo.github.io/PyAngelo.png"
 
-# draws the image on the screen at coordinates (x = 0, y = 100)
-graphics.drawImage(imageURL, 0, 100)
+# draws the image at coordinates (x = 0, y = 100)
+graphics.drawImage("imageURL", 0, 100)
