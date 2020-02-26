@@ -1,5 +1,5 @@
 # clears the screen to black
-graphics.clear(0,0,0)
+graphics.clear(0, 0, 0)
 
 # initialising the image URL as a variable
 imageURL = "https://pyangelo.github.io/PyAngelo.png"
