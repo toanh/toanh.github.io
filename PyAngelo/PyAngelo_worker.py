@@ -8,6 +8,9 @@ import traceback
 import javascript
 import random
 import json
+
+import traceback
+
 from browser import bind, self
 KEY_HOME          = 0xff50
 KEY_ESC           = 27
@@ -95,6 +98,10 @@ class PyAngeloWorker():
     def drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
         kwargs = {"x":x, "y": y, "r": r, "g": g, "b": b, "a": a}
         self.commands.append(["drawPixel", kwargs])
+        
+    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
+        kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append(["drawRect", kwargs])    
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
@@ -163,7 +170,8 @@ def run_code(src, globals, locals):
     except Exception as e:
         self.console.log(str(e))
         
-        send_message(["error", "Error: " + str(e) + "\n"])
+        send_message(["error", "Error: " + str(e) + "\n" + traceback.format_exc()])
+        
     except SystemExit as se:
         send_message(["quit"])
        

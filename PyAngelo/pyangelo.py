@@ -238,9 +238,7 @@ class PyAngelo():
         
         if self.loadingResources > 0:
             return False
-            
-        window.console.log("Calling drawImage for reals")
-        
+                   
         self.ctx.save()
 
         if width is None:
@@ -304,6 +302,22 @@ class PyAngelo():
         self.pixel_color[2] = int(b * 255.0)
         self.pixel_color[3] = int(a * 255.0)
         self.ctx.putImageData(self.pixel_id, x, self._convY(y))
+        
+    def __drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        ctx = self.ctx
+        ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"        
+        ctx.beginPath();
+        ctx.moveTo(x1, self._convY(y1))
+        ctx.lineTo(x2, self._convY(y1))
+        ctx.lineTo(x2, self._convY(y2))
+        ctx.lineTo(x1, self._convY(y2))
+        ctx.closePath()
+        ctx.fill()                  
         
     def _convY(self, y):
         return self.height - y
@@ -378,7 +392,9 @@ class PyAngelo():
             elif command[0] == "drawText":                
                 command[0] = self.__drawText    
             elif command[0] == "drawPixel":                
-                command[0] = self.__drawPixel                 
+                command[0] = self.__drawPixel   
+            elif command[0] == "drawRect":
+                command[0] = self.__drawRect
             else:
                 # not a valid command
                 del self.commands[0]
