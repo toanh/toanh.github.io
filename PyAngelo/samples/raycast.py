@@ -182,7 +182,7 @@ while True:
             drawEnd = HEIGHT - 1
 
         # Wall colors 0 to 3
-        wallcolors = [ [], [0.5, 0, 0], [0, 0.5, 0], [0, 0, 0.5] ]
+        wallcolors = [ [], [0.75, 0, 0], [0, 0.75, 0], [0, 0, 0.75] ]
         color = wallcolors[ worldMap[mapX][mapY] ]                                  
 
         # If side == 1 then ton the color down. Gives a "showShadow" an the wall.
