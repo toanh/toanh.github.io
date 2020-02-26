@@ -417,12 +417,21 @@
     });
 
     document.getElementById("editorBox").style.visibility = "visible";
+	
+	
 </script>
 <script>
     function writeOutput(data, append) {
+	
         if (append) document.getElementById("console").innerHTML += data;
         else document.getElementById("console").innerHTML = data;
+		
+		// keep scrolled to the bottom
+		document.getElementById("console").scrollTop = document.getElementById("console").scrollHeight
+		
         if (pyangelo_output === undefined && pyangelo_console !== undefined) pyangelo_console.writeOutput(data, append);
+		
+
     }
 
 </script>
