@@ -189,15 +189,27 @@ class PyAngelo():
         global array
         array[ev.which] = 0
                 
+    def resourceError(self, e):
+        self.stop()
+        do_print("Error loading of resource: " + e.target.src + "\n", "red")
+        #del e.target
+        #e.target.parentElement.removeChild(e.target)
+    
+    def resourceAbort(self, e):
+        self.stop()
+        do_print("Aborted loading of resource: " + e.target.src + "\n", "red")  
+    
     def resourceLoaded(self, e):
         self.loadingResources -= 1
+        
+        window.console.log("Successfully loaded file:" + e.target.src);
         
         if self.loadingResources <= 0:
             window.console.log("Resources all loaded!")
             
         e.target.jmssImg.height = e.target.naturalHeight
         e.target.jmssImg.width = e.target.naturalWidth        
-        
+       
     def loadImage(self, file):
     
         if file in self.resources:
@@ -205,9 +217,13 @@ class PyAngelo():
         
         self.loadingResources += 1
         
+        window.console.log("Attempting to load file:" + file);
         img = html.IMG(src = file)
 
         img.bind('load', self.resourceLoaded)
+        img.bind('error', self.resourceError)
+        img.bind('abort', self.resourceAbort)
+        
         jmssImg = PyAngeloImage(img)
         img.jmssImg = jmssImg
         
@@ -261,7 +277,6 @@ class PyAngelo():
 
     def __clear(self, r = 0, g = 0, b = 0, a = 1):
         global array
-        window.console.log("Clearing for reals!");
         self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"
         self.ctx.fillRect(0, 0, self.width, self.height)    
         
@@ -384,7 +399,10 @@ class PyAngelo():
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
 
+            # TODO: put all these into a Reset() method
             self.commands = []
+            self.resources =  {}
+            self.loadingResources = 0
 
             self.__stopAllSounds()
             
