@@ -109,8 +109,11 @@ while True:
     # Draws roof and floor
     graphics.clear(0.2, 0.2, 0.2)
     
-    graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH * 1.5, HEIGHT * 1.5, 0, 0, 0)
+    graphics.drawRect(WIDTH/2, HEIGHT, WIDTH * 1.5, HEIGHT * 1.5, 0, 0.5, 1)
+    graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH * 1.5, HEIGHT, 0.6, 0.15, 0.15)
 
+
+    graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
     # Starts drawing level from 0 to < WIDTH 
     column = 0        
     while column < WIDTH:
@@ -182,7 +185,7 @@ while True:
             drawEnd = HEIGHT - 1
 
         # Wall colors 0 to 3
-        wallcolors = [ [], [0.5, 0, 0], [0, 0.5, 0], [0, 0, 0.5] ]
+        wallcolors = [ [], [0.75, 0, 0], [0, 0.75, 0], [0, 0, 0.75] ]
         color = wallcolors[ worldMap[mapX][mapY] ]                                  
 
         # If side == 1 then ton the color down. Gives a "showShadow" an the wall.
@@ -193,6 +196,6 @@ while True:
                     color[i] = (v / 1.5)                    
 
         # Drawing the graphics   
-        graphics.drawLine(WIDTH/2 + column, HEIGHT/2 + drawStart, WIDTH/2 + column, HEIGHT/2 + drawEnd, color[0], color[1], color[2], 1, 2)
+        graphics.drawLine(WIDTH/2 + column, HEIGHT/2 + drawStart, WIDTH/2 + column, HEIGHT/2 + drawEnd, color[0], color[1], color[2], 1, 8)
 
-        column += 4
+        column += 8

@@ -45,6 +45,10 @@ class PyAngeloWorker():
         self.prevTime = 0
         self.currTime = self.prevTime
         
+        # hardcoded for now
+        self.width = 500
+        self.height = 400
+        
         self.reveal_on_clear = True
 
     def clear(self, r=0, g=0, b=0, a=1):
