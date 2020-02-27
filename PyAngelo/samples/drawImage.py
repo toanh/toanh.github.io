@@ -5,4 +5,4 @@ graphics.clear(0, 0, 0)
 imageURL = "https://pyangelo.github.io/PyAngelo.png"
 
 # draws the image at coordinates (x = 0, y = 100)
-graphics.drawImage("imageURL", 0, 100)
+graphics.drawImage(imageURL, 0, 100)
