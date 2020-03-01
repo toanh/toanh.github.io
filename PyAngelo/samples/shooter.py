@@ -117,8 +117,7 @@ while True:
                 break
             
     for enemey in enemies:
-        if (player.x < (enemy.x + enemy.width)) and ((player.x + player.width) > enemy.x) and (player.y < (enemy.y + enemy.height)) and ((player.y + player.height) > enemy.y):
-            #if graphics.overlaps(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
+        if graphics.overlaps(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
             # collision!
             enemies.remove(enemy)
             print("asdf")
