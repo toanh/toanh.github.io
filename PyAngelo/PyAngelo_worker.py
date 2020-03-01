@@ -1,140 +1,234 @@
+"""Web Worker script."""
+
+# In web workers, "window" is replaced by "self".
+import time
+#from browser import bind, self
+import sys
+import traceback
+import javascript
 import random
+import json
 
-class Entity:
+import traceback
+
+from browser import bind, self
+KEY_HOME          = 0xff50
+KEY_ESC           = 27
+KEY_LEFT          = 37
+KEY_UP            = 38
+KEY_RIGHT         = 39
+KEY_DOWN          = 40
+KEY_W             = 87
+KEY_A             = 65
+KEY_S             = 83
+KEY_D             = 68
+KEY_Q             = 81
+KEY_J             = 74
+KEY_CTRL          = 17
+KEY_PAGEUP        = 0xff55
+KEY_PAGEDOWN      = 0xff56
+KEY_END           = 0xff57
+KEY_BEGIN         = 0xff58
+
+console = self.console
+window = self
+   
+class PyAngeloWorker():
     def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.width = 32
-        self.height = 32
-        
-        self.r = 0
-        self.g = 0
-        self.b = 0
-        self.a = 1
-        
-        self.speed = 1
-        
-    def draw(self):
-        graphics.drawRect(self.x, self.y, self.x + self.width, self.y + self.height, \
-                            self.r, self.g, self.b, self.a)    
-        
-class Player (Entity):
-    def __init__(self):
-        super(Player, self).__init__()
-        self.r = 0
-        self.g = 1
-        self.b = 0
-        
-        self.cool_down = 10
-        self.cool_down_timer = self.cool_down
-
-    def update(self):
-        self.cool_down_timer -= 1
-        if self.cool_down_timer < 0:
-            self.cool_down_timer = self.cool_down
-            
-        if graphics.isKeyPressed(KEY_A):
-            self.x -= 1
-        if graphics.isKeyPressed(KEY_D):
-            self.x += 1
-        if graphics.isKeyPressed(KEY_W):
-            self.y += 1
-        if graphics.isKeyPressed(KEY_S):
-            self.y -= 1
-            
-        if graphics.isKeyPressed(KEY_J) and self.cool_down_timer == self.cool_down:
-            newBullet = Bullet()
-            newBullet.x = self.x
-            newBullet.y = self.y
-            bullets.append(newBullet)
-            
-        
-class Bullet (Entity):
-    def __init__(self):
-        super(Player, self).__init__()
-        self.r = 1
-        self.g = 0
-        self.b = 0      
-        
-        self.speed = 10
-        
-        self.width = 8
-        self.height = 8
-
-    def update(self):
-        self.y += self.speed
-     
-class Enemy (Entity):
-    def __init__(self):
-        super(Player, self).__init__()
-        self.r = 0
-        self.g = 0
-        self.b = 1      
-        
-        self.speed = -2
-        
-        self.width = 32
-        self.height = 32
-
-    def update(self):
-        self.y += self.speed    
-    
-
-player = Player()
-bullets = []
-enemies = []
-spawnTime = 50
-spawnTimer = spawnTime
-
-while True:
-    graphics.clear(0, 0, 0)
-    
-    spawnTimer -= 1
-    if spawnTimer < 0:
-        spawnTimer = spawnTime
-        newEnemy = Enemy()
-        newEnemy.x = random.randint(0, graphics.width - newEnemy.width)
-        newEnemy.y = graphics.height + newEnemy.height
-        enemies.append(newEnemy)
-
-    for bullet in bullets:
-        if bullet.y > graphics.height:
-            bullets.remove(bullet)
-
-    for enemy in enemies:
-        if enemy.y < -enemy.height:
-            enemies.remove(enemy)    
-            
-    for bullet in bullets:
-        for enemey in enemies:
-            
-            if graphics.overlaps(bullet.x, bullet.y, bullet.width, bullet.height, enemy.x, enemy.y, enemy.width, enemy.height):
-                # collision!
-                enemies.remove(enemy)
-                bullets.remove(bullet)
-                print("asdf")
+        self.test_data = None
+        self.commands = []
+                     
+        self.timer_id = None
                 
-                break
-            
-    for enemey in enemies:
-        if (player.x < (enemy.x + enemy.width)) and ((player.x + player.width) > enemy.x) and (player.y < (enemy.y + enemy.height)) and ((player.y + player.height) > enemy.y):
-            #if graphics.overlaps(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
-            # collision!
-            enemies.remove(enemy)
-            print("asdf")
-            
-            continue            
+        self.revealed = False
+        
+        self.keys = dict([(a, False) for a in range(255)] +
+                         [(a, False) for a in range(0xff00, 0xffff)])         
+                         
+        self.prevTime = 0
+        self.currTime = self.prevTime
+        
+        # hardcoded for now
+        self.width = 500
+        self.height = 400
+        
+        self.reveal_on_clear = True
 
-    for bullet in bullets:
-        bullet.update()
-        bullet.draw()
+    def clear(self, r=0, g=0, b=0, a=1):
+        # TODO: check for escape in every API call?
         
-    for enemy in enemies:
-        enemy.update()
-        enemy.draw()        
+        if self.reveal_on_clear:
+            self.reveal()
+        elif array[KEY_ESC] == 1:
+                console.log("Escape detected!")
+                array[KEY_ESC] = 0
+                raise SystemExit("QUIT requested")    
+                
+        global array
         
-    player.update()
-    player.draw()
+        kwargs = {"r": r, "g": g, "b": b, "a": a}
         
+        self.commands.append(["clear", kwargs])
         
+    '''def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
+        return not ( ((x1 + width1) < x2) or 
+                     ((x2 + width2) < x1) or
+                     ((y1 + height1) < y2) or
+                     ((y2 + height2) < y1) )
+    '''
+                     
+    def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
+        return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))
         
+        '''return not ( ((x1 + width1) < x2) or 
+                     ((x2 + width2) < x1) or
+                     ((y1 + height1) < y2) or
+                     ((y2 + height2) < y1) )                     
+        '''
+        
+    def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
+        kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
+                  "a": a, "width": width}
+        self.commands.append(["drawLine", kwargs])
+        
+    def isKeyPressed(self, key):
+    
+        global array
+        if key <= 255:
+            return array[key] == 1
+            
+        return self.keys[key]      
+
+    def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, color = (1, 1, 1, 1), anchorX = "left", anchorY ="bottom"):
+        kwargs = {"text": text, "x": x, "y": y, "fontName": fontName, "fontSize": fontSize, "color": color,
+                    "anchorX": anchorX, "anchorY": anchorY}
+        self.commands.append(["drawText", kwargs])
+    
+                
+    def drawImage(self, image, x, y, width=None, height=None, rotation=0, anchorX=None, anchorY=None, opacity=1.0,
+                  r=1.0, g=1.0, b=1.0, rect=None):
+        kwargs = {"image": image, "x": x, "y": y, "width": width, "height": height, "rotation": rotation,
+                  "anchorX": anchorX,
+                  "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
+        self.commands.append(["drawImage", kwargs])   
+        
+    def drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+        kwargs = {"x":x, "y": y, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append(["drawPixel", kwargs])
+        
+    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
+        kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append(["drawRect", kwargs])    
+
+    def loadSound(self, filename, streaming = False):
+        kwargs = {"filename": filename, "streaming": streaming}
+        self.commands.append(["loadSound", kwargs])   
+        return filename        
+
+    def playSound(self, sound, loop = False):
+        kwargs = {"sound": sound, "loop": loop}
+        self.commands.append(["playSound", kwargs])   
+
+    def pauseSound(self, sound):
+        kwargs = {"sound": sound}
+        self.commands.append(["pauseSound", kwargs])        
+
+    # just an alias for pauseSound for now
+    def stopSound(self, sound):
+        kwargs = {"sound": sound}
+        self.commands.append(["pauseSound", kwargs])
+
+    def sleep(self, milliseconds):
+        # flush the command buffer to this point
+        self.reveal()
+        
+        # the sleep happens here
+        currTime = window.performance.now()
+        prevTime = currTime
+        while (currTime - prevTime < milliseconds):
+            currTime = window.performance.now()        
+        
+    def reveal(self):
+    
+        if array[KEY_ESC] == 1:
+            console.log("Escape detected!")
+            array[KEY_ESC] = 0
+            raise SystemExit("QUIT requested")    
+        
+        # send and then block
+        global array, console, window
+        console.log("array[0]:" + str(array[0]))
+        
+        self.prevTime = self.currTime
+        
+        self.currTime = window.performance.now()
+        
+        while (self.currTime - self.prevTime < 16):
+            self.currTime = window.performance.now()
+                                       
+        send_message(["reveal",self.commands])
+        self.commands = []        
+               
+        return True
+        
+graphics = PyAngeloWorker()
+array = None
+shared = None
+
+def run_code(src, globals, locals):
+    global array
+    self.console.log("running code...")
+    try:
+        exec(src , globals, locals)
+        
+        # execute the command in the queue (to show the results if they didn't call reveal())
+        graphics.reveal()
+        send_message(["halt"])
+    except Exception as e:
+        self.console.log(str(e))
+        
+        send_message(["error", "Error: " + str(e) + "\n" + traceback.format_exc()])
+        
+    except SystemExit as se:
+        send_message(["quit"])
+       
+def send_message(message):
+    self.console.log("Worker sending to main thread..")
+    self.send(message)   
+
+@bind(self, "message")
+def onmessage(evt):
+    global graphics, clear, array, shared
+    """Handle a message sent by the main script.
+    evt.data is the message body.
+    """
+    if not isinstance(evt.data, list):
+        self.console.log("Receiving shared data...")
+        shared = evt.data
+        array = self.Int8Array.new(evt.data)
+        workerResult = f'Result: {array[0]}'
+        self.console.log(workerResult)  
+        
+        send_message(["ready"])
+        return    
+    
+    command = evt.data[0]
+    if command.lower() == "run":
+        self.console.log("Executing on the worker thread!");
+        src = evt.data[1]    
+        success = True
+
+        namespace = globals()
+        namespace["__name__"] = "__main__"
+        graphics.commands = []
+        
+        run_code(src, namespace, namespace)                            
+   
+
+class ErrorOutput:
+    def write(self, data):
+        send_message(["error", str(data)])
+    def flush(self):
+        pass
+
+sys.stderr = ErrorOutput()
