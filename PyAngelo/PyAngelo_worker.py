@@ -119,6 +119,10 @@ class PyAngeloWorker():
     def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
         kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
         self.commands.append(["drawRect", kwargs])    
+        
+    def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
+        kwargs = {"x": x, "y": y, "radius": radius, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append(["drawCircle", kwargs])
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}

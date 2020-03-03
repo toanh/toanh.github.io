@@ -292,6 +292,23 @@ class PyAngelo():
         self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
+        self.ctx.stroke()
+
+    def __drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.beginPath();
+        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(
+            int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+
+        self.ctx.arc(x, self._convY(y), radius, 0, 2 * 3.1415926535, True);
+
+        self.ctx.fill();
+
         self.ctx.stroke()        
         
     def __drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
@@ -398,6 +415,8 @@ class PyAngelo():
                 command[0] = self.__drawPixel   
             elif command[0] == "drawRect":
                 command[0] = self.__drawRect
+            elif command[0] == "drawCircle":
+                command[0] = self.__drawCircle
             else:
                 # not a valid command
                 del self.commands[0]
