@@ -178,6 +178,11 @@ body.pynode .pageBanner {
 body.pynode .pageTopWrapper {
     height: 450px;
     position: relative;
+	//column-count: 2;
+}
+
+body.pynode .pageTopSamples {
+	column-count: 2;
 }
 
 body.pynode .appWrapper {

@@ -415,20 +415,12 @@ import colorsys
 angle = 0
 camera = Vector(0, 0, -10, 1)
 
-shape = [Vector(0, 1, 0, 1), Vector(-1, -1, -1, 1), Vector(1, -1, -1, 1),
-         Vector(0, 1, 0, 1), Vector(1, -1, -1, 1), Vector(1, -1, 1, 1),
-         Vector(0, 1, 0, 1), Vector(1, -1, 1, 1), Vector(-1, -1, 1, 1),
-         Vector(0, 1, 0, 1), Vector(-1, -1, -1, 1), Vector(-1, -1, 1, 1),
-         #####
+shape = [#####
          Vector(2, 1, 0, 1), Vector(1, -1, -1, 1), Vector(3, -1, -1, 1),
          Vector(2, 1, 0, 1), Vector(3, -1, -1, 1), Vector(3, -1, 1, 1),
          Vector(2, 1, 0, 1), Vector(3, -1, 1, 1), Vector(1, -1, 1, 1),
          Vector(2, 1, 0, 1), Vector(1, -1, -1, 1), Vector(1, -1, 1, 1),
-         #####
-         Vector(-2, 1, 0, 1), Vector(-3, -1, -1, 1), Vector(-1, -1, -1, 1),
-         Vector(-2, 1, 0, 1), Vector(-1, -1, -1, 1), Vector(-1, -1, 1, 1),
-         Vector(-2, 1, 0, 1), Vector(-1, -1, 1, 1), Vector(-3, -1, 1, 1),
-         Vector(-2, 1, 0, 1), Vector(-3, -1, -1, 1), Vector(-3, -1, 1, 1)]
+         #####]
 
 f = 1
 n = -1
