@@ -12,23 +12,7 @@ import json
 import traceback
 
 from browser import bind, self
-KEY_HOME          = 0xff50
-KEY_ESC           = 27
-KEY_LEFT          = 37
-KEY_UP            = 38
-KEY_RIGHT         = 39
-KEY_DOWN          = 40
-KEY_W             = 87
-KEY_A             = 65
-KEY_S             = 83
-KEY_D             = 68
-KEY_Q             = 81
-KEY_J             = 74
-KEY_CTRL          = 17
-KEY_PAGEUP        = 0xff55
-KEY_PAGEDOWN      = 0xff56
-KEY_END           = 0xff57
-KEY_BEGIN         = 0xff58
+from pyangelo_consts import *
 
 console = self.console
 window = self
@@ -68,7 +52,7 @@ class PyAngeloWorker():
         
         kwargs = {"r": r, "g": g, "b": b, "a": a}
         
-        self.commands.append(["clear", kwargs])
+        self.commands.append([CMD_CLEAR, kwargs])
         
     '''def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
         return not ( ((x1 + width1) < x2) or 
@@ -89,7 +73,7 @@ class PyAngeloWorker():
     def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
         kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
                   "a": a, "width": width}
-        self.commands.append(["drawLine", kwargs])
+        self.commands.append([CMD_DRAWLINE, kwargs])
         
     def isKeyPressed(self, key):
     
@@ -102,7 +86,7 @@ class PyAngeloWorker():
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, color = (1, 1, 1, 1), anchorX = "left", anchorY ="bottom"):
         kwargs = {"text": text, "x": x, "y": y, "fontName": fontName, "fontSize": fontSize, "color": color,
                     "anchorX": anchorX, "anchorY": anchorY}
-        self.commands.append(["drawText", kwargs])
+        self.commands.append([CMD_DRAWTEXT, kwargs])
     
                 
     def drawImage(self, image, x, y, width=None, height=None, rotation=0, anchorX=None, anchorY=None, opacity=1.0,
@@ -110,23 +94,23 @@ class PyAngeloWorker():
         kwargs = {"image": image, "x": x, "y": y, "width": width, "height": height, "rotation": rotation,
                   "anchorX": anchorX,
                   "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
-        self.commands.append(["drawImage", kwargs])   
+        self.commands.append([CMD_DRAWIMAGE, kwargs])   
         
     def drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
         kwargs = {"x":x, "y": y, "r": r, "g": g, "b": b, "a": a}
-        self.commands.append(["drawPixel", kwargs])
+        self.commands.append([CMD_DRAWPIXEL, kwargs])
         
     def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
         kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
-        self.commands.append(["drawRect", kwargs])    
+        self.commands.append([CMD_DRAWRECT, kwargs])    
         
     def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
         kwargs = {"x": x, "y": y, "radius": radius, "r": r, "g": g, "b": b, "a": a}
-        self.commands.append(["drawCircle", kwargs])
+        self.commands.append([CMD_DRAWCIRCLE, kwargs])
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
-        self.commands.append(["loadSound", kwargs])   
+        self.commands.append([CMD_LOADSOUND, kwargs])   
         return filename        
 
     def playSound(self, sound, loop = False):
@@ -170,7 +154,7 @@ class PyAngeloWorker():
         while (self.currTime - self.prevTime < 16):
             self.currTime = window.performance.now()
                                        
-        send_message(["reveal",self.commands])
+        send_message([CMD_REVEAL,self.commands])
         self.commands = []        
                
         return True
@@ -187,7 +171,7 @@ def run_code(src, globals, locals):
         
         # execute the command in the queue (to show the results if they didn't call reveal())
         graphics.reveal()
-        send_message(["halt"])
+        send_message([CMD_HALT])
     except Exception as e:
         self.console.log(str(e))
         
@@ -234,5 +218,13 @@ class ErrorOutput:
         send_message(["error", str(data)])
     def flush(self):
         pass
+        
+class PrintOutput:
+    def write(self, data):
+        send_message([CMD_PRINT, str(data)])
+    def flush(self):
+        pass
 
+
+sys.stdout = PrintOutput()
 sys.stderr = ErrorOutput()

@@ -8602,7 +8602,7 @@ Object.keys(obj.$object_dict).length > 0){throw _b_.TypeError.$factory("a dictio
 "keys cannot be sent to or from a Web Worker")}
 var res={}
 for(var key in obj.$string_dict){res[key]=$B.pyobj2structuredclone(obj.$string_dict[key])}
-return res}else{console.log("hello1");console.log(obj,obj.__class__);console.log("hello2");
+return res}else{console.log(obj,obj.__class__);
 return obj}}
 $B.structuredclone2pyobj=function(obj){if(obj===null){return _b_.None}else if(typeof obj=="boolean" ||typeof obj=="number" ||
 typeof obj=="string"){return obj}else if(obj instanceof Number){return obj.valueOf()}else if(Array.isArray(obj)||obj.__class__===_b_.list ||
@@ -8696,6 +8696,7 @@ if(self.__class__===JSObject && attr=="bind" &&
 self.js[attr]===undefined &&
 self.js['addEventListener']!==undefined){
 attr='addEventListener'}
+// support for SharedArrayBuffer
 if(attr=="data" && self.js instanceof MessageEvent)
 {
     if (typeof(self.js.data) == "object" && self.js.data instanceof SharedArrayBuffer)
@@ -8704,6 +8705,7 @@ if(attr=="data" && self.js instanceof MessageEvent)
     }
     return $B.structuredclone2pyobj(self.js.data)
 }
+// end support for SharedArrayBuffer
 var js_attr=self.js[attr]
 if(self.js_func && self.js_func[attr]!==undefined){js_attr=self.js_func[attr]}
 if(js_attr !==undefined){if($test){console.log("jsattr",js_attr)}
