@@ -9,26 +9,6 @@ from browser.local_storage import storage
 
 load("howler.js")
 
-# Cursor control and motion
-KEY_HOME          = 0xff50
-KEY_ESC           = 27
-KEY_LEFT          = 37
-KEY_UP            = 38
-KEY_RIGHT         = 39
-KEY_DOWN          = 40
-KEY_W             = 87
-KEY_A             = 65
-KEY_S             = 83
-KEY_D             = 68
-KEY_Q             = 81
-KEY_J             = 74
-KEY_CTRL          = 17
-KEY_PAGEUP        = 0xff55
-KEY_PAGEDOWN      = 0xff56
-KEY_END           = 0xff57
-KEY_BEGIN         = 0xff58
-
-
 # In web workers, "window" is replaced by "self".
 import time
 #from browser import bind, self
@@ -41,16 +21,10 @@ import json
 import copy
 
 from browser import bind, self, window
-KEY_ESC           = 27
-KEY_HOME          = 0xff50
-KEY_LEFT          = 37
-KEY_UP            = 38
-KEY_RIGHT         = 39
-KEY_DOWN          = 40
-KEY_PAGEUP        = 0xff55
-KEY_PAGEDOWN      = 0xff56
-KEY_END           = 0xff57
-KEY_BEGIN         = 0xff58
+
+import sys
+sys.path.append("/Lib/site-packages")
+from pyangelo_consts import *
 
 PyAngeloWorker = worker.Worker("executor")
 
@@ -292,6 +266,23 @@ class PyAngelo():
         self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
+        self.ctx.stroke()
+
+    def __drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
+        r = min(r, 1.0)
+        g = min(g, 1.0)
+        b = min(b, 1.0)
+        a = min(a, 1.0)
+
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.beginPath();
+        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(
+            int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+
+        self.ctx.arc(x, self._convY(y), radius, 0, 2 * 3.1415926535, True);
+
+        self.ctx.fill();
+
         self.ctx.stroke()        
         
     def __drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
@@ -378,26 +369,26 @@ class PyAngelo():
         while len(self.commands) > 0:
             command = self.commands[0]
             
-            if command[0] == "drawLine":
+            if command[0] == CMD_DRAWLINE:
                 command[0] = self.__drawLine
-            elif command[0] == "clear":
-                window.console.log("clear command read")
-                window.console.log(command[1])
+            elif command[0] == CMD_CLEAR:
                 command[0] = self.__clear
-            elif command[0] == "drawImage":                
+            elif command[0] == CMD_DRAWIMAGE:                
                 command[0] = self.__drawImage
-            elif command[0] == "loadSound":                
+            elif command[0] == CMD_LOADSOUND:                
                 command[0] = self.__loadSound                
-            elif command[0] == "playSound":                
+            elif command[0] == CMD_PLAYSOUND:                
                 command[0] = self.__playSound
-            elif command[0] == "pauseSound":                
+            elif command[0] == CMD_PAUSESOUND:                
                 command[0] = self.__pauseSound    
-            elif command[0] == "drawText":                
+            elif command[0] == CMD_DRAWTEXT:                
                 command[0] = self.__drawText    
-            elif command[0] == "drawPixel":                
+            elif command[0] == CMD_DRAWPIXEL:                
                 command[0] = self.__drawPixel   
-            elif command[0] == "drawRect":
+            elif command[0] == CMD_DRAWRECT:
                 command[0] = self.__drawRect
+            elif command[0] == CMD_DRAWCIRCLE:
+                command[0] = self.__drawCircle
             else:
                 # not a valid command
                 del self.commands[0]
@@ -411,6 +402,7 @@ class PyAngelo():
         if self.state != self.STATE_RUN:
             self.state = self.STATE_RUN
             self.commands = []
+            self.last_frame_commands = []
             
             array[KEY_ESC] = 0
             
@@ -442,7 +434,7 @@ graphics = PyAngelo()
 def onmessage(e):
     """Handles the messages sent by the worker."""
     #result.text = e.data
-    if e.data[0] == "reveal":
+    if e.data[0] == CMD_REVEAL:
         window.console.log("Executing on the main thread...")
         graphics.commands = e.data[1]
         graphics.start()
@@ -453,9 +445,11 @@ def onmessage(e):
         graphics.stop()  
     elif e.data[0] == "ready":
         graphics.stop()   
-    elif e.data[0] == "halt":
+    elif e.data[0] == CMD_HALT:
         window.console.log("Program finished (HALTED)")
-        graphics.halt()         
+        graphics.halt()     
+    elif e.data[0] == CMD_PRINT:
+        do_print(e.data[1], "blue")
 
 def format_string_HTML(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>").replace("\"", "&quot;").replace("'", "&apos;").replace(" ", "&nbsp;")
