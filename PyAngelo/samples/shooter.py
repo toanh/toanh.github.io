@@ -31,8 +31,22 @@ class Player (Entity):
         
         self.cool_down = 10
         self.cool_down_timer = self.cool_down
+        
+        self.images = []
+        self.images.append("https://i.imgur.com/LFQBqx9.png")
+        self.images.append("https://i.imgur.com/dE9HwPZ.png")
+        
+        self.width = 103
+        self.height = 52
+        
+        self.anim_time = 20
+        self.anim_timer = self.anim_time
 
     def update(self):
+        self.anim_timer -= 1
+        if self.anim_timer < 0:
+            self.anim_timer = self.anim_time
+            
         self.cool_down_timer -= 1
         if self.cool_down_timer < 0:
             self.cool_down_timer = self.cool_down
@@ -52,6 +66,9 @@ class Player (Entity):
             newBullet.y = self.y + self.height - newBullet.height
             bullets.append(newBullet)
             
+    def draw(self):
+        graphics.drawImage(self.images[self.anim_timer // (self.anim_time / len(self.images)) - 1], self.x, self.y)             
+            
 
 class Bullet (Entity):
     def __init__(self):
@@ -64,7 +81,9 @@ class Bullet (Entity):
         
         self.width = 8
         self.height = 8
-
+        
+        self.image = "https://i.imgur.com/DxrwkDN.png"
+        
     def update(self):
         if self.state == 0:
             self.y += self.speed
@@ -75,8 +94,11 @@ class Bullet (Entity):
                 self.state = 2
             self.width += 8
             self.x -= 4
-        
-     
+            
+    def draw(self):
+        graphics.drawImage(self.image, self.x, self.y)             
+            
+ 
 class Enemy (Entity):
     def __init__(self):
         super(Player, self).__init__()
@@ -89,15 +111,44 @@ class Enemy (Entity):
         self.width = 32
         self.height = 32
         
+        self.state = 0
+        
+        self.anim_time = 16
+        self.anim_timer = 0
+        
+        self.asteroids = []
+        self.asteroids.append(["https://i.imgur.com/k0qlX2L.png", 42, 21])
+        self.asteroids.append(["https://i.imgur.com/UfQzcaA.png", 81, 73])
+        self.asteroids.append(["https://i.imgur.com/Tsf4FTm.png", 53, 57])
+
+        
+        choice = random.randint(0, len(self.asteroids) - 1)
+        self.image = self.asteroids[choice][0]
+        self.width = self.asteroids[choice][1]
+        self.height = self.asteroids[choice][2]
+        
+        self.explosion_images = []
+        self.explosion_images.append("https://i.imgur.com/HCrQpQy.png")
+        self.explosion_images.append("https://i.imgur.com/71LFhqC.png")        
+        self.explosion_images.append("https://i.imgur.com/DHQDg12.png")  
+        self.explosion_images.append("https://i.imgur.com/ioYnFKv.png")  
+        self.explosion_images.append("https://i.imgur.com/1JZwyhq.png")          
+        
 
     def update(self):
         if self.state == 0:
             self.y += self.speed
         elif self.state == 1:
-            self.b -= 0.2
-            if self.b <= 0:
-                self.b = 0
+            self.anim_timer += 1
+            if self.anim_timer >= self.anim_time:
+                self.anim_timer = 0
                 self.state = 2
+
+    def draw(self):
+        if self.state == 0:
+            graphics.drawImage(self.image, self.x, self.y)
+        elif self.state == 1:
+            graphics.drawImage(self.explosion_images[(self.anim_timer) // (self.anim_time / len(self.explosion_images))], self.x - 20, self.y - 35)                     
          
 
 player = Player()
@@ -147,9 +198,6 @@ while True:
             enemy.state = 1
         e += 1
             
-
-
-        
     for enemy in enemies:
         enemy.update()
         enemy.draw()      
