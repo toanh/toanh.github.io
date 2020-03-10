@@ -22,8 +22,6 @@ import copy
 
 from browser import bind, self, window
 
-import sys
-sys.path.append("/Lib/site-packages")
 from pyangelo_consts import *
 
 PyAngeloWorker = worker.Worker("executor")
@@ -78,7 +76,7 @@ class PyAngelo():
         self.starting_text = "Starting up"   
         self.loading_text = "Loading resources"        
         
-        timer.set_interval(self.update, 16)   
+        #timer.set_interval(self.update, 16)   
         
         # clear to cornflower blue (XNA!) by default        
         self.__clear(0.392,0.584,0.929)
@@ -95,6 +93,9 @@ class PyAngelo():
         self.last_frame_commands = []
         
         self.just_halted = False
+        
+        
+        timer.request_animation_frame(self.update)
         
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
@@ -319,7 +320,7 @@ class PyAngelo():
     def _convColor(self, c):
         return (int(c[0] * 255.0), int(c[1] * 255.0), int(c[2] * 255.0), int(c[3] * 255.0))                
         
-    def update(self):
+    def update(self, deltaTime):
         self.anim_timer -= 16
         if self.anim_timer <= 0:
             self.anim_timer = 0
@@ -360,7 +361,9 @@ class PyAngelo():
                     self.just_halted = False
                 else:
                     self.commands = copy.deepcopy(self.last_frame_commands)
-                self.execute_commands()               
+                self.execute_commands()   
+
+        timer.request_animation_frame(self.update)
        
     def execute_commands(self, do_frame = True): 
         if len(self.commands) > 0:
