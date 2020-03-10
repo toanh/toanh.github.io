@@ -214,8 +214,8 @@ class PyAngelo():
         if (isinstance(image, str)):
             image = self.loadImage(image)
         
-        if self.loadingResources > 0:
-            return False
+        #if self.loadingResources > 0:
+        #    return False
                    
         self.ctx.save()
 

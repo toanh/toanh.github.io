@@ -148,7 +148,7 @@ class Enemy (Entity):
         if self.state == 0:
             graphics.drawImage(self.image, self.x, self.y)
         elif self.state == 1:
-            graphics.drawImage(self.explosion_images[(self.anim_timer) // (self.anim_time / len(self.explosion_images))], self.x - 20, self.y - 35)                     
+            graphics.drawImage(self.explosion_images[(self.anim_timer) // (self.anim_time / len(self.explosion_images))], self.x, self.y)                     
          
 
 player = Player()
