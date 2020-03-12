@@ -116,6 +116,16 @@ class PyAngeloWorker():
         # should now pause until the finish signal is received
         while array[KEY_ENTER] == 0:
             continue
+            
+        returned_string = ""
+        n = len(array) - 1
+        while array[n] != KEY_ENTER:
+            returned_string += chr(array[n])
+            n -= 1
+        return returned_string
+            
+            
+        
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
@@ -201,7 +211,7 @@ def onmessage(evt):
     """
     if not isinstance(evt.data, list):
         self.console.log("Receiving shared data...")
-        shared = evt.data
+        
         array = self.Int8Array.new(evt.data)
         workerResult = f'Result: {array[0]}'
         self.console.log(workerResult)  

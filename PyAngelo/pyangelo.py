@@ -26,8 +26,11 @@ from pyangelo_consts import *
 
 PyAngeloWorker = worker.Worker("executor")
 
-test_buff = None
+keys_buff = None
 array = None
+
+input_buff = None
+inputs = None
 
 class PyAngeloImage():
     def __init__(self, image):
@@ -82,11 +85,14 @@ class PyAngelo():
         # clear to cornflower blue (XNA!) by default        
         self.__clear(0.392,0.584,0.929)
         
-        test_buff = window.SharedArrayBuffer.new(255)
-        array = window.Int8Array.new(test_buff)
-        array[0] = 0  
+        keys_buff = window.SharedArrayBuffer.new(512)
+        array = window.Int8Array.new(keys_buff)
+        
+        
         window.console.log("Attempting to send shared data")
-        PyAngeloWorker.send(test_buff)            
+        
+        PyAngeloWorker.send(keys_buff) 
+        #PyAngeloWorker.send(input_buff)           
         
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
@@ -94,6 +100,10 @@ class PyAngelo():
         self.last_frame_commands = []
         
         self.just_halted = False
+        
+        self.input_concluded = False
+        
+        self.input_buffer_index = 0
         
         
         timer.request_animation_frame(self.update)
@@ -162,10 +172,13 @@ class PyAngelo():
         if ev.which == KEY_ESC and self.state == self.STATE_HALT:
             self.stop()
             
-        if ev.which == KEY_ENTER and self.state == self.STATE_INPUT:
-            self.input_concluded = True
-        else:
-            self.__drawText(chr(ev.which), 0, 0)
+        if self.state == self.STATE_INPUT:
+            array[len(array) - 1 - self.input_buffer_index] = ev.which
+            if ev.which == KEY_ENTER:
+                self.input_concluded = True
+            else:
+                self.input_buffer_index += 1
+                self.__drawText(chr(ev.which), 0, 0)
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      
@@ -330,6 +343,7 @@ class PyAngelo():
         # input mode triggered
         self.state = self.STATE_INPUT
         self.input_concluded = False
+        self.input_buffer_index = 0
 
         
     def update(self, deltaTime):
@@ -382,8 +396,7 @@ class PyAngelo():
                 self.input_concluded = False
                 # TODO: now need to send the user input back to the worker thread!
                 # TODO: another sharedarraybuffer perhaps?
-                # or the worker can add each keypress to it's own buffer
-                # need to keep track of it's own INPUT mode
+
             
 
         timer.request_animation_frame(self.update)
