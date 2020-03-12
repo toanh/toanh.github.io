@@ -86,8 +86,7 @@ class PyAngelo():
         self.__clear(0.392,0.584,0.929)
         
         keys_buff = window.SharedArrayBuffer.new(512)
-        array = window.Int8Array.new(keys_buff)
-        
+        array = window.Int8Array.new(keys_buff)        
         
         window.console.log("Attempting to send shared data")
         
@@ -104,7 +103,6 @@ class PyAngelo():
         self.input_concluded = False
         
         self.input_buffer_index = 0
-        
         
         timer.request_animation_frame(self.update)
         
@@ -172,13 +170,21 @@ class PyAngelo():
         if ev.which == KEY_ESC and self.state == self.STATE_HALT:
             self.stop()
             
+        # TODO: support stopping during INPUT state
+            
         if self.state == self.STATE_INPUT:
             array[len(array) - 1 - self.input_buffer_index] = ev.which
             if ev.which == KEY_ENTER:
                 self.input_concluded = True
             else:
+                returned_string = ""
+                n = self.input_buffer_index
+                while n >= 0:
+                    returned_string = chr(array[len(array) - 1 - n]) + returned_string
+                    n -= 1
+                
                 self.input_buffer_index += 1
-                self.__drawText(chr(ev.which), 0, 0)
+                self.__drawText(returned_string, 0, 0)
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      
@@ -392,12 +398,10 @@ class PyAngelo():
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
             if self.input_concluded:
+                # TODO: if the program's last halts after the input, then this causes
+                # Pyangelo to keep looping in it's run state ===> FIX!
                 self.state = self.STATE_RUN
                 self.input_concluded = False
-                # TODO: now need to send the user input back to the worker thread!
-                # TODO: another sharedarraybuffer perhaps?
-
-            
 
         timer.request_animation_frame(self.update)
        
@@ -521,7 +525,8 @@ def disable_stop_enable_play():
 def button_stop(event):
     array[KEY_ESC] = 1
     if graphics.state == graphics.STATE_HALT:
-        graphics.stop()       
+        graphics.stop()     
+    # TODO: support stopping during INPUT state
 
     
 def do_play():
@@ -539,7 +544,3 @@ def save_code(event):
     window.saveCode()        
         
 ###################################################################################        
-
-
-
-

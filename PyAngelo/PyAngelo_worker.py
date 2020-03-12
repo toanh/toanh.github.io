@@ -115,7 +115,11 @@ class PyAngeloWorker():
         self.reveal()
         # should now pause until the finish signal is received
         while array[KEY_ENTER] == 0:
-            continue
+            if array[KEY_ESC] == 1:
+                console.log("Escape detected!")
+                array[KEY_ESC] = 0
+                raise SystemExit("QUIT requested")    
+
             
         returned_string = ""
         n = len(array) - 1
@@ -172,6 +176,10 @@ class PyAngeloWorker():
         
         while (self.currTime - self.prevTime < 16):
             self.currTime = window.performance.now()
+            if array[KEY_ESC] == 1:
+                console.log("Escape detected!")
+                array[KEY_ESC] = 0
+                raise SystemExit("QUIT requested")    
                                        
         send_message([CMD_REVEAL,self.commands])
         self.commands = []        
