@@ -365,6 +365,7 @@ class PyAngelo():
             self.ctx.fillStyle = "#000000"; 
             self.ctx.fillRect(0, 0, self.width, self.height)   
             self.ctx.fillStyle = "#ffffff"; 
+            self.ctx.fillStyle = "#ffffff"; 
             self.ctx.font = "40px Georgia";
             
             if self.anim_timer <= 0:
@@ -381,24 +382,36 @@ class PyAngelo():
         elif self.state == self.STATE_HALT:
             # program has finished (halted) - just leave the display as is
             # execute the command in the queue (to show the results if they didn't call reveal())
+            
+            # TODO: fix this??? should this be == 0 instead of > 0
+            # we would like to keep repeating if there are resources to be loaded
+            # this is to ensure that the images etc. will eventually be displayed
+            # HOWEVER, watch if the current frame contains an 'input' this could result in
+            # an infinite loop
             if self.loadingResources > 0:
                 window.console.log("Halting...")
+                #self.commands = copy.deepcopy(self.last_frame_commands)
                 return
             else:
-                window.console.log("repeating last frame")
-                window.console.log(len(self.last_frame_commands))
-                window.console.log(len(self.commands))
+                # repeating is required in case not all the resources have loaded yet
+                
+                # window.console.log("repeating last frame")
+                # window.console.log(len(self.last_frame_commands))
+                # window.console.log(len(self.commands))
                 
                 if self.just_halted:
+                    # just_halted is used to send the KEY_ESC signal to the worker only once
                     self.just_halted = False
-                else:
+                #else:
+                    
                     # keep repeating the commands from the last frame before halting
-                    self.commands = copy.deepcopy(self.last_frame_commands)
+                    
+                    #self.commands = copy.deepcopy(self.last_frame_commands)
                 self.execute_commands()   
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
             if self.input_concluded:
-                # TODO: if the program's last halts after the input, then this causes
+                # TODO: if the program halts after the input, then this causes
                 # Pyangelo to keep looping in it's run state ===> FIX!
                 self.state = self.STATE_RUN
                 self.input_concluded = False

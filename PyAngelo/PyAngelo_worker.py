@@ -125,11 +125,10 @@ class PyAngeloWorker():
         n = len(array) - 1
         while array[n] != KEY_ENTER:
             returned_string += chr(array[n])
+            #array[n] = KEY_A
             n -= 1
         return returned_string
             
-            
-        
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
