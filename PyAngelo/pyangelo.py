@@ -389,9 +389,9 @@ class PyAngelo():
             # HOWEVER, watch if the current frame contains an 'input' this could result in
             # an infinite loop
             if self.loadingResources > 0:
-                window.console.log("Halting...")
-                #self.commands = copy.deepcopy(self.last_frame_commands)
-                return
+                window.console.log("Repeating last frame...")
+                self.commands = copy.deepcopy(self.last_frame_commands)
+                #return
             else:
                 # repeating is required in case not all the resources have loaded yet
                 
@@ -407,7 +407,7 @@ class PyAngelo():
                     # keep repeating the commands from the last frame before halting
                     
                     #self.commands = copy.deepcopy(self.last_frame_commands)
-                self.execute_commands()   
+            self.execute_commands()   
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
             if self.input_concluded:
