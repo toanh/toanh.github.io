@@ -107,6 +107,15 @@ class PyAngeloWorker():
     def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
         kwargs = {"x": x, "y": y, "radius": radius, "r": r, "g": g, "b": b, "a": a}
         self.commands.append([CMD_DRAWCIRCLE, kwargs])
+        
+    def input(self, msg):
+        kwargs = {"msg": msg}
+        self.commands.append([CMD_INPUT, kwargs])
+        
+        self.reveal()
+        # should now pause until the finish signal is received
+        while array[KEY_ENTER] == 0:
+            continue
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}

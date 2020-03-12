@@ -1,4 +1,5 @@
 KEY_HOME          = 0xff50
+KEY_ENTER         = 13
 KEY_ESC           = 27
 KEY_LEFT          = 37
 KEY_UP            = 38
@@ -29,3 +30,4 @@ CMD_DRAWCIRCLE    = 10
 CMD_REVEAL        = 11
 CMD_HALT          = 12
 CMD_PRINT         = 13
+CMD_INPUT         = 14

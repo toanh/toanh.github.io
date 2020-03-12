@@ -41,6 +41,7 @@ class PyAngelo():
     STATE_RUN       =   2
     STATE_HALT      =   3
     STATE_LOAD      =   4
+    STATE_INPUT     =   5
     
     def __init__(self):
         global test_buff, PyAngeloWorker, array
@@ -160,6 +161,11 @@ class PyAngelo():
         # pressing escape when the program has halted
         if ev.which == KEY_ESC and self.state == self.STATE_HALT:
             self.stop()
+            
+        if ev.which == KEY_ENTER and self.state == self.STATE_INPUT:
+            self.input_concluded = True
+        else:
+            self.__drawText(chr(ev.which), 0, 0)
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      
@@ -318,7 +324,13 @@ class PyAngelo():
         return self.height - y
 
     def _convColor(self, c):
-        return (int(c[0] * 255.0), int(c[1] * 255.0), int(c[2] * 255.0), int(c[3] * 255.0))                
+        return (int(c[0] * 255.0), int(c[1] * 255.0), int(c[2] * 255.0), int(c[3] * 255.0))      
+
+    def __input(self, msg):
+        # input mode triggered
+        self.state = self.STATE_INPUT
+        self.input_concluded = False
+
         
     def update(self, deltaTime):
         self.anim_timer -= 16
@@ -360,8 +372,19 @@ class PyAngelo():
                 if self.just_halted:
                     self.just_halted = False
                 else:
+                    # keep repeating the commands from the last frame before halting
                     self.commands = copy.deepcopy(self.last_frame_commands)
                 self.execute_commands()   
+        elif self.state == self.STATE_INPUT:
+            # display the commands in the queue to date
+            if self.input_concluded:
+                self.state = self.STATE_RUN
+                self.input_concluded = False
+                # TODO: now need to send the user input back to the worker thread!
+                # TODO: another sharedarraybuffer perhaps?
+                # or the worker can add each keypress to it's own buffer
+                # need to keep track of it's own INPUT mode
+            
 
         timer.request_animation_frame(self.update)
        
@@ -392,6 +415,8 @@ class PyAngelo():
                 command[0] = self.__drawRect
             elif command[0] == CMD_DRAWCIRCLE:
                 command[0] = self.__drawCircle
+            elif command[0] == CMD_INPUT:
+                command[0] = self.__input
             else:
                 # not a valid command
                 del self.commands[0]
