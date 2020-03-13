@@ -209,6 +209,11 @@ class PyAngelo():
         
         if self.loadingResources <= 0:
             window.console.log("Resources all loaded!")
+            # TODO: perhaps check if we're in the halting state here,
+            # if so, copy over the last frame's commands? (i.e. move that logic
+            # from the update method to here)
+            if self.state == self.STATE_HALT:
+                self.commands = copy.deepcopy(self.last_frame_commands)
             
         e.target.jmssImg.height = e.target.naturalHeight
         e.target.jmssImg.width = e.target.naturalWidth        
@@ -270,8 +275,8 @@ class PyAngelo():
 
         self.ctx.restore()    
 
-    def __drawText(self, text, x, y, fontName = "Arial", fontSize = 10, color = (1, 1, 1, 1), anchorX = "left", anchorY ="bottom"):
-        self.ctx.fillStyle = "rgba(" + str(int(color[0] * 255.0)) + "," + str(int(color[1] * 255.0)) + "," + str(int(color[2] * 255.0)) + "," + str(int(color[3] * 255.0)) + ")"
+    def __drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
         self.ctx.font = str(fontSize) + "pt " + fontName
         self.ctx.textBaseline = "bottom"
         self.ctx.fillText(text, x, self.height - y)        
@@ -388,9 +393,10 @@ class PyAngelo():
             # this is to ensure that the images etc. will eventually be displayed
             # HOWEVER, watch if the current frame contains an 'input' this could result in
             # an infinite loop
+            #self.commands = copy.deepcopy(self.last_frame_commands)
             if self.loadingResources > 0:
-                window.console.log("Repeating last frame...")
-                self.commands = copy.deepcopy(self.last_frame_commands)
+                window.console.log("Still loading resources...")
+                #self.commands = copy.deepcopy(self.last_frame_commands)
                 #return
             else:
                 # repeating is required in case not all the resources have loaded yet
