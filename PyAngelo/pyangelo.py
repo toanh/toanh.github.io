@@ -173,6 +173,8 @@ class PyAngelo():
         # TODO: support stopping during INPUT state
             
         if self.state == self.STATE_INPUT:
+            if ev.which != KEY_ENTER and (ev.which < 32 or ev.which > KEY_A + 26):
+                return
             array[len(array) - 1 - self.input_buffer_index] = ev.which
             if ev.which == KEY_ENTER:
                 self.input_concluded = True
@@ -180,11 +182,12 @@ class PyAngelo():
                 returned_string = ""
                 n = self.input_buffer_index
                 while n >= 0:
+                
                     returned_string = chr(array[len(array) - 1 - n]) + returned_string
                     n -= 1
                 
                 self.input_buffer_index += 1
-                self.__drawText(returned_string, 0, 0)
+                self.__drawText(returned_string + "_", 0, 0)
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      

@@ -88,8 +88,7 @@ class PyAngeloWorker():
         self.commands.append([CMD_DRAWTEXT, kwargs])
     
                 
-    def drawImage(self, image, x, y, width=None, height=None, rotation=0, anchorX=None, anchorY=None, opacity=1.0,
-                  r=1.0, g=1.0, b=1.0, rect=None):
+    def drawImage(self, image, x, y, width = None, height = None, rotation = 0, anchorX = None, anchorY = None, opacity = 1.0, r = 1.0, g = 1.0, b = 1.0, rect = None):
         kwargs = {"image": image, "x": x, "y": y, "width": width, "height": height, "rotation": rotation,
                   "anchorX": anchorX,
                   "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
