@@ -10,6 +10,13 @@
     
     <script src="js/resize.js?version=0.9.7"></script>
     <script>
+		var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+		if (!isChrome)
+		{
+			window.location.href = "browser.html";
+		}
+
+
         var editor_exists = false;
         var pyangelo_output;
         var pyangelo_editor;
@@ -233,92 +240,6 @@
                         <p><code>graphics.stopSound(sound)</code></p>
 						<p>Stops playing the sound object returned from <code class="codeInline">graphics.loadSound()</code>.</p>						
 					</li>                     
-					<!--
-                    <li>
-                        <p><code>graph.remove_node(node)</code> - Removes a node from the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.node(id)</code> - Returns a node in the graph by its <code
-                                class="codeInline">id</code>.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.nodes()</code> - Returns a list of all nodes in the graph.</p>
-                    </li>
-                    <p>&nbsp;</p>
-                    <li>
-                        <p><code>graph.add_edge(edge)</code> - Adds an edge to the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.add_edge(source, target, weight=None, directed=False)</code> - Creates an <code
-                                class="codeInline">Edge(source, target, weight, directed)</code> and adds it to the
-                            graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.remove_edge(edge)</code> - Removes an edge from the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.remove_edge(node1, node2, directed=False)</code> - Removes edge(s) between <code
-                                class="codeInline">node1</code> and <code class="codeInline">node2</code>. If <code
-                                class="codeInline">directed</code> is set, only edges beginning at <code
-                                class="codeInline">node1</code> will be removed.</p>
-                    </li>
-                    <p>&nbsp;</p>
-                    <li>
-                        <p><code>graph.has_node(node)</code> - Checks whether a node has been added to the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.has_edge(edge)</code> - Checks whether an edge has been added to the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.adjacent(node1, node2, directed=False)</code> - Checks whether an edge exists
-                            between <code class="codeInline">node1</code> and <code class="codeInline">node2</code>. If
-                            <code class="codeInline">directed</code> is set, the edge must begin at <code
-                                    class="codeInline">node1</code>.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.edges_between(node1, node2, directed=False)</code> - Returns a list of all edges
-                            between <code class="codeInline">node1</code> and <code class="codeInline">node2</code>. If
-                            <code class="codeInline">directed</code> is set, only edges beginning at <code
-                                    class="codeInline">node1</code> will be included.</p>
-                    </li>
-                    <p>&nbsp;</p>
-                    <li>
-                        <p><code>graph.set_directed(directed=True)</code> - Sets whether all edges in the graph are
-                            directed.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.adjacency_matrix()</code> - Creates and returns an adjacency matrix
-                            (2-dimensional dictionary, using node <code class="codeInline">id</code> values as keys) for
-                            the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.add_all(elements)</code> - Adds a list of <code class="codeInline">Node</code>
-                            and/or <code class="codeInline">Edge</code> elements to the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.remove_all(elements)</code> - Removes a list of <code
-                                class="codeInline">Node</code> and/or <code class="codeInline">Edge</code> elements from
-                            the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.random(order, size, connected=True, multigraph=False, initial_id=0)</code> -
-                            Returns a list of randomly connected nodes and edges, with <code
-                                    class="codeInline">order</code> specifying the amount of nodes and <code
-                                    class="codeInline">size</code> specifying the amount of edges. If <code
-                                    class="codeInline">connected</code> is set, a path will exist between any pair of
-                            nodes (unless the amount of edges makes this impossible). If <code class="codeInline">multigraph</code>
-                            is set, a pair of nodes may be connected by multiple edges. Nodes are assigned incremental
-                            <code class="codeInline">id</code> values starting at <code
-                                    class="codeInline">initial_id</code>.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.order()</code>, <code>graph.size()</code> - Returns the number of nodes/edges in
-                            the graph.</p>
-                    </li>
-                    <li>
-                        <p><code>graph.clear()</code> - Deletes all nodes and edges from the graph.</p>
-                    </li>
-					-->
                 </ul>
                 <h2>Miscellaneous</h2>                
                 <ul>  
@@ -390,7 +311,7 @@
     function loadCode() {
         src = localStorage.getItem("code");
         if (src === null || src == "") {
-            openCode("first");
+            openCode("clear");
         }
         else {
             editor.setValue(src, -1);
