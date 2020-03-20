@@ -181,6 +181,11 @@ body.pynode .pageTopWrapper {
 	//column-count: 2;
 }
 
+body.pynode .pageTopWrapperNoBrowser {
+    height: 300px;
+    position: relative;
+}
+
 body.pynode .pageTopSamples {
 	column-count: 2;
 }
