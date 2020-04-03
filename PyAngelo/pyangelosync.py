@@ -410,29 +410,94 @@ def button_stop(event):
     graphics.stop()
     
 def do_play():
+    start_tag = "@animation_start"
+    end_tag = "@animation_end"
+    
     src = window.getCode()
     
+    #window.console.log(src)
+
+    #namespace = globals()
+    #namespace["__name__"] = "__main__"
+    
+    #run_code(src, namespace, namespace) 
+    
+    lines = src.split("\n")
+    
+    non_frame_code = []
+    
+    frame_code = []
+
+    line_num = 0
+    while line_num < len(lines):
+        line = lines[line_num]
+        line_num += 1
+        if line.lower()[:len(start_tag)] != start_tag:
+            non_frame_code.append(line)            
+        else:            
+            break
+        
+            
+    while line_num < len(lines):
+        line = lines[line_num]
+        line_num += 1
+        if line.lower()[:len(end_tag)] != end_tag:
+            frame_code.append(" " + line)
+        else:
+            break
+                
+    while line_num < len(lines):
+        line = lines[line_num]
+        non_frame_code.append(line)
+        line_num += 1        
+        
+    src = "\n".join(non_frame_code)
+    
+    window.console.log("Non frame code:")
     window.console.log(src)
+        
+    pre_globals = list(globals().keys())
 
     namespace = globals()
-    namespace["__name__"] = "__main__"
-    
-    
-    #pre_globals = list(globals().keys())
-    
-    run_code(src, namespace, namespace)        
-    
-    #post_globals = list(globals().keys())
+    namespace["__name__"] = "__main__"        
 
-    #for g in post_globals:
-    #    if g not in pre_globals:
-    #        print(g)
+    # TODO: issue with globals hanging around between subsequent executions
+    # results in 2nd+ runs having no delta globals and hence no injections
     
-def run_code(src, globals, locals):
+    if len(frame_code) > 0:   
+
+        run_code(src, namespace, namespace, False)    
+        
+        post_globals = list(globals().keys())
+               
+        if len(pre_globals) != len(post_globals):
+            global_code = " global _"
+            for g in post_globals:
+                if g not in pre_globals:
+                    global_code += ", " + g
+            frame_code.insert(0, global_code)
+        
+        frame_code.insert(0, "def frame_code():")
+        frame_code.insert(0, "@graphics.loop")
+        
+        
+        src = "\n".join(frame_code)
+        window.console.log("Frame code:")
+        window.console.log(src)
+               
+        run_code(src, namespace, namespace, True)    
+    else:
+        run_code(src, namespace, namespace, True)
+              
+            
+    
+def run_code(src, globals, locals, is_frame_code = True):
     #self.console.log("running code...")
     try:
         exec(src , globals, locals)
-        graphics.start()
+        if is_frame_code:
+            graphics.start()  
+        
     except Exception as e:
         do_print("Error in parsing: " + str(e) + "\n" + traceback.format_exc(), "red") 
         graphics.stop()

@@ -110,8 +110,8 @@ def Game():
     # Draws roof and floor
     graphics.clear(0.2, 0.2, 0.2)
     
-    graphics.drawRect(WIDTH/2, HEIGHT, WIDTH * 1.5, HEIGHT * 1.5, 0, 0.5, 1)
-    graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH * 1.5, HEIGHT, 0.6, 0.15, 0.15)
+    graphics.drawRect(WIDTH/2, HEIGHT, WIDTH , HEIGHT/2 , 0, 0.5, 1)
+    graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH , HEIGHT/2, 0.6, 0.15, 0.15)
 
 
     graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
