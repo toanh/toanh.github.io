@@ -101,7 +101,16 @@ class PyAngelo():
 
     def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
         kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
-        self.commands.append([CMD_DRAWRECT, kwargs])           
+        self.commands.append([CMD_DRAWRECT, kwargs])    
+
+    def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
+        kwargs = {"text": text, "x": x, "y": y, "fontName": fontName, "fontSize": fontSize, "r": r, "g": g, "b": b, "a": a, "anchorX": anchorX, "anchorY": anchorY}
+        self.commands.append([CMD_DRAWTEXT, kwargs])   
+
+    def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
+        kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
+                  "a": a, "width": width}
+        self.commands.append([CMD_DRAWLINE, kwargs])            
 
     def isKeyPressed(self, key):
         return self.keys[key]             
@@ -111,10 +120,7 @@ class PyAngelo():
     
     ########################################################################################
         
-    def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
-        kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
-                  "a": a, "width": width}
-        self.commands.append(["drawLine", kwargs])        
+    
 
     def loadSound(self, filename, streaming = False):
         kwargs = {"filename": filename, "streaming": streaming}
@@ -338,7 +344,9 @@ class PyAngelo():
         
     def update(self, deltaTime):           
         document["runPlay"].style.cursor = "pointer"
-        document["runPause"].style.cursor = "pointer"        
+        document["runPause"].style.cursor = "pointer"   
+        document["output_runPlay"].style.cursor = "pointer"
+        document["output_runPause"].style.cursor = "pointer"          
 
         if self.state == self.STATE_STOP:       
             self.__clear(0.392,0.584,0.929)
@@ -446,17 +454,33 @@ def clear_button_run():
     for event in document["run"].events("click"):
         document["run"].unbind("click", event)
     document["run"].bind("click", save_code)
+    
+    document["output_runPlay"].style.display = "none"
+    document["output_runPause"].style.display = "none"    
+    for event in document["output_run"].events("click"):
+        document["output_run"].unbind("click", event)
+    document["output_run"].bind("click", save_code)    
 
 def button_play(event):   
     clear_button_run()
     document["runPause"].style.display = "inherit"
     document["run"].bind("click", button_stop)
+    document["run"].style.backgroundColor = "#FF0000"; 
+
+    document["output_runPause"].style.display = "inherit"
+    document["output_run"].bind("click", button_stop)
+    document["output_run"].style.backgroundColor = "#FF0000";     
     do_play()
     
 def disable_stop_enable_play():
     clear_button_run()
     document["runPlay"].style.display = "inherit"
     document["run"].bind("click", button_play)    
+    document["run"].style.backgroundColor = "#00FF00";   
+
+    document["output_runPlay"].style.display = "inherit"
+    document["output_run"].bind("click", button_play)    
+    document["output_run"].style.backgroundColor = "#00FF00";       
     
 def button_stop(event):
     graphics.stop()
