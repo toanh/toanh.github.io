@@ -4,7 +4,7 @@ import traceback
 import javascript
 import random
 import json
-from browser import document, window, alert, timer, worker, bind, html, load
+from browser import document, window, alert, timer, bind, html, load
 from browser.local_storage import storage
 
 load("howler.js")
@@ -24,8 +24,6 @@ from browser import bind, self, window
 
 from pyangelo_consts import *
 
-
-
 class PyAngeloImage():
     def __init__(self, image):
         self.img = image
@@ -40,8 +38,7 @@ class PyAngelo():
     STATE_INPUT     =   5
     
     def __init__(self):
-        global test_buff, PyAngeloWorker, array
-        
+       
         self.commands = []
         
         # get the canvas element
@@ -344,6 +341,7 @@ class PyAngelo():
         elif self.state == self.STATE_RUN:   
             try:
                 self.main_loop()
+                self.refresh()
             except Exception as e:
                 do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
                 self.stop()
