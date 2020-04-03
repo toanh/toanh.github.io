@@ -1,7 +1,7 @@
 function resize() {
-    document.getElementById("appContainer").style.marginLeft = (document.getElementById("appWrapper").offsetWidth / 2 - (document.getElementById("appContainer").offsetWidth / 2)) + "px";
+    //document.getElementById("appContainer").style.marginLeft = (document.getElementById("appWrapper").offsetWidth / 2 - (document.getElementById("appContainer").offsetWidth / 2)) + "px";
     document.getElementById("appContainer").style.visibility = "visible";
-    document.getElementById("editor").style.width = (document.getElementById("appContainer").offsetWidth - 560) + "px";
+    //document.getElementById("editor").style.width = (document.getElementById("appContainer").offsetWidth - 560) + "px";
 }
 
 function editor_resize() {

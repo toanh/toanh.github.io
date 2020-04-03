@@ -5,7 +5,7 @@
     <meta name="description" content="Simple Online Python Graphics Programming">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link href="css/angelo_style.css?version=0.9.7" rel="stylesheet" type="text/css">
+    <link href="css/angelosync_style.css?version=0.9.7" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
     <script src="js/resize.js?version=0.9.7"></script>
@@ -65,7 +65,7 @@
     </script>
 </head>
 
-<body class="pynode" onload="resize();brython({debug:1})" onresize="resize()">
+<body class="pynode" onload="brython({debug:1})">
 <div class="pynodeContainer">
     <div class="pageWholeWrapper">
         <div class="pageTopWrapper">
@@ -114,10 +114,13 @@
 				
             </div>
         </div>
-       <div class="appWrapper" id="appWrapper">
-            <div class="appContainer" id="appContainer">
-                <div class="appLeft">
+        <div class="appWrapper" id="appWrapper">
+            <div class="appContainer" id="appContainer">            
+                
+                <div class="appTop">
+                    
                     <div class="editorWrapper">
+                    
                         <div class="appSectionTitle">
                             <div class="floatLeft">
                                 <h3>Source</h3>
@@ -131,13 +134,19 @@
                                                                       onclick="userSaveCode(); return false;"><img
                                         src="images/controls/save.png" width="16" height="16"></a></h3></div>
                             </div>
+                        
                         </div>
-                        <div id="editorBox">
-                            <div id="editor"></div>
+                        
+                        <div id="editorBox">                            
+                            <div id="editor"></div>                            
                         </div>
+                        
+                         
                     </div>
+                   
                 </div>
-                <div class="appRight">
+                
+                <div class="appBottom">
                     <div class="outputWrapper">
                         <div class="appSectionTitle">
                             <div class="floatLeft">
@@ -176,7 +185,6 @@
                 </div>
             </div>
         </div>
-        <script> resize(); </script>
         
 
 
