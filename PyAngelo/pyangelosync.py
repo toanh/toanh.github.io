@@ -96,39 +96,32 @@ class PyAngelo():
     
     ########################################################################################
         
-    
-
     def loadSound(self, filename, streaming = False):
-        kwargs = {"filename": filename, "streaming": streaming}
-        self.commands.append(["loadSound", kwargs])   
-        return filename        
-
-    def playSound(self, sound, loop = False):
-        kwargs = {"sound": sound, "loop": loop}
-        self.commands.append(["playSound", kwargs])   
-
-    def pauseSound(self, sound):
-        kwargs = {"sound": sound}
-        self.commands.append(["pauseSound", kwargs])             
-        
-    def __loadSound(self, filename, streaming = False):
         howl = window.Howl
         sound = howl.new({"src": [filename]})
         self.soundPlayers[filename] = sound
         return filename
 
-    def __playSound(self, sound, loop = False):
+    def playSound(self, sound, loop = False):
         if sound in self.soundPlayers:
             self.soundPlayers[sound].loop = loop
             self.soundPlayers[sound].play()
+        else:
+            self.loadSound(sound)
+            self.soundPlayers[sound].loop = loop
+            self.soundPlayers[sound].play()            
             
-    def __stopAllSounds(self):
+    def stopAllSounds(self):
         for sound in self.soundPlayers:
-            self.__pauseSound(sound)
+            self.pauseSound(sound)
 
-    def __pauseSound(self, sound):
+    def pauseSound(self, sound):
         if sound in self.soundPlayers:
-            self.soundPlayers[sound].pause()        
+            self.soundPlayers[sound].pause()       
+
+    # alias for pauseSound
+    def stopSound(self, sound):
+        self.pauseSound(sound)
         
     def _keydown(self, ev):
        
@@ -155,7 +148,7 @@ class PyAngelo():
                     n -= 1
                 
                 self.input_buffer_index += 1
-                self.__drawText(returned_string + "_", 0, 0)
+                self.drawText(returned_string + "_", 0, 0)
 
     def _keyup(self, ev):
         self.keys[ev.which] = False      
@@ -356,7 +349,7 @@ class PyAngelo():
             self.resources =  {}
             self.loadingResources = 0
 
-            self.__stopAllSounds()
+            self.stopAllSounds()
             
             disable_stop_enable_play()   
 
