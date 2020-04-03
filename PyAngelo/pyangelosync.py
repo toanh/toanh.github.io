@@ -73,7 +73,7 @@ class PyAngelo():
         #timer.set_interval(self.update, 16)   
         
         # clear to cornflower blue (XNA!) by default        
-        self.__clear(0.392,0.584,0.929)
+        self.clear(0.392,0.584,0.929)
         
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
@@ -86,31 +86,7 @@ class PyAngelo():
         
         self.input_buffer_index = 0
         
-        timer.request_animation_frame(self.update)
-        
-    def clear(self, r=0, g=0, b=0, a=1):
-        kwargs = {"r": r, "g": g, "b": b, "a": a}
-        self.commands.append([CMD_CLEAR, kwargs])  
-
-    def drawImage(self, image, x, y, width=None, height=None, rotation=0, anchorX=None, anchorY=None, opacity=1.0,
-                  r=1.0, g=1.0, b=1.0, rect=None):
-        kwargs = {"image": image, "x": x, "y": y, "width": width, "height": height, "rotation": rotation,
-                  "anchorX": anchorX,
-                  "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
-        self.commands.append([CMD_DRAWIMAGE, kwargs])    
-
-    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
-        kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
-        self.commands.append([CMD_DRAWRECT, kwargs])    
-
-    def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
-        kwargs = {"text": text, "x": x, "y": y, "fontName": fontName, "fontSize": fontSize, "r": r, "g": g, "b": b, "a": a, "anchorX": anchorX, "anchorY": anchorY}
-        self.commands.append([CMD_DRAWTEXT, kwargs])   
-
-    def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
-        kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
-                  "a": a, "width": width}
-        self.commands.append([CMD_DRAWLINE, kwargs])            
+        timer.request_animation_frame(self.update)     
 
     def isKeyPressed(self, key):
         return self.keys[key]             
@@ -223,7 +199,7 @@ class PyAngelo():
         
         return jmssImg
 
-    def __drawImage(self, image, x, y, width = None, height = None, rotation=0, anchorX = None, anchorY = None, opacity=None, r=1.0, g=1.0, b=1.0, rect=None):        
+    def drawImage(self, image, x, y, width = None, height = None, rotation=0, anchorX = None, anchorY = None, opacity=None, r=1.0, g=1.0, b=1.0, rect=None):        
         
         window.console.log("attempting to draw image")
         if (isinstance(image, str)):
@@ -257,18 +233,18 @@ class PyAngelo():
 
         self.ctx.restore()    
 
-    def __drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
+    def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
         self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
         self.ctx.font = str(fontSize) + "pt " + fontName
         self.ctx.textBaseline = "bottom"
         self.ctx.fillText(text, x, self.height - y)        
 
-    def __clear(self, r = 0, g = 0, b = 0, a = 1):
+    def clear(self, r = 0, g = 0, b = 0, a = 1):
         global array
         self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"
         self.ctx.fillRect(0, 0, self.width, self.height)    
         
-    def __drawLine(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0, width = 1):
+    def drawLine(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0, width = 1):
         r = min(r, 1.0)
         g = min(g, 1.0)
         b = min(b, 1.0)
@@ -281,7 +257,7 @@ class PyAngelo():
         self.ctx.lineTo(x2, self._convY(y2))
         self.ctx.stroke()
 
-    def __drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
+    def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
         r = min(r, 1.0)
         g = min(g, 1.0)
         b = min(b, 1.0)
@@ -298,7 +274,7 @@ class PyAngelo():
 
         self.ctx.stroke()        
         
-    def __drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+    def drawPixel(self, x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
         r = min(r, 1.0)
         g = min(g, 1.0)
         b = min(b, 1.0)
@@ -310,7 +286,7 @@ class PyAngelo():
         self.pixel_color[3] = int(a * 255.0)
         self.ctx.putImageData(self.pixel_id, x, self._convY(y))
         
-    def __drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
         r = min(r, 1.0)
         g = min(g, 1.0)
         b = min(b, 1.0)
@@ -349,11 +325,10 @@ class PyAngelo():
         document["output_runPause"].style.cursor = "pointer"          
 
         if self.state == self.STATE_STOP:       
-            self.__clear(0.392,0.584,0.929)
+            self.clear(0.392,0.584,0.929)
         elif self.state == self.STATE_RUN:   
             try:
                 self.main_loop()
-                self.refresh()
             except Exception as e:
                 do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
                 self.stop()
@@ -368,56 +343,16 @@ class PyAngelo():
         
         timer.request_animation_frame(self.update)
        
-    def execute_commands(self, do_frame = True): 
-        if len(self.commands) > 0:
-            self.last_frame_commands = copy.deepcopy(self.commands)
-        
-        while len(self.commands) > 0:
-            command = self.commands[0]
-            
-            if command[0] == CMD_DRAWLINE:
-                command[0] = self.__drawLine
-            elif command[0] == CMD_CLEAR:
-                command[0] = self.__clear
-            elif command[0] == CMD_DRAWIMAGE:                
-                command[0] = self.__drawImage
-            elif command[0] == CMD_LOADSOUND:                
-                command[0] = self.__loadSound                
-            elif command[0] == CMD_PLAYSOUND:                
-                command[0] = self.__playSound
-            elif command[0] == CMD_PAUSESOUND:                
-                command[0] = self.__pauseSound    
-            elif command[0] == CMD_DRAWTEXT:                
-                command[0] = self.__drawText    
-            elif command[0] == CMD_DRAWPIXEL:                
-                command[0] = self.__drawPixel   
-            elif command[0] == CMD_DRAWRECT:
-                command[0] = self.__drawRect
-            elif command[0] == CMD_DRAWCIRCLE:
-                command[0] = self.__drawCircle
-            elif command[0] == CMD_INPUT:
-                command[0] = self.__input
-            else:
-                # not a valid command
-                del self.commands[0]
-                continue
-                
-            command[0](**command[1])    
-
-            del self.commands[0]       
         
     def start(self):
         if self.state != self.STATE_RUN:
             self.state = self.STATE_RUN
-            self.commands = []
-            self.last_frame_commands = []
                         
     def stop(self):   
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
 
             # TODO: put all these into a Reset() method
-            self.commands = []
             self.resources =  {}
             self.loadingResources = 0
 
@@ -426,9 +361,6 @@ class PyAngelo():
             disable_stop_enable_play()   
 
     def sleep(self, milliseconds):
-        # flush the command buffer to this point
-        self.refresh()
-        
         # the sleep happens here
         currTime = window.performance.now()
         prevTime = currTime
@@ -492,7 +424,6 @@ def do_play():
 
     namespace = globals()
     namespace["__name__"] = "__main__"
-    graphics.commands = []
     
     run_code(src, namespace, namespace)        
     
