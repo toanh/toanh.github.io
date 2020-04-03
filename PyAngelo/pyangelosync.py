@@ -70,7 +70,6 @@ class PyAngelo():
         self.starting_text = "Starting up"   
         self.loading_text = "Loading resources"        
         
-        #timer.set_interval(self.update, 16)   
         
         # clear to cornflower blue (XNA!) by default        
         self.clear(0.392,0.584,0.929)
@@ -279,7 +278,7 @@ class PyAngelo():
         self.pixel_color[3] = int(a * 255.0)
         self.ctx.putImageData(self.pixel_id, x, self._convY(y))
         
-    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+    def drawRect(self, x, y, w, h, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
         r = min(r, 1.0)
         g = min(g, 1.0)
         b = min(b, 1.0)
@@ -288,10 +287,10 @@ class PyAngelo():
         ctx = self.ctx
         ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"        
         ctx.beginPath();
-        ctx.moveTo(x1, self._convY(y1))
-        ctx.lineTo(x2, self._convY(y1))
-        ctx.lineTo(x2, self._convY(y2))
-        ctx.lineTo(x1, self._convY(y2))
+        ctx.moveTo(x, self._convY(y))
+        ctx.lineTo(x + w, self._convY(y))
+        ctx.lineTo(x + w, self._convY(y + h))
+        ctx.lineTo(x, self._convY(y + h))
         ctx.closePath()
         ctx.fill()                  
         
@@ -324,7 +323,7 @@ class PyAngelo():
                 self.main_loop()
             except Exception as e:
                 do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
-                self.stop()
+                #self.stop()
             	   
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
@@ -354,7 +353,7 @@ class PyAngelo():
             disable_stop_enable_play()   
 
     def sleep(self, milliseconds):
-        # the sleep happens here
+        # the sleep happens here, it's a tight loop - may hang the browser!
         currTime = window.performance.now()
         prevTime = currTime
         while (currTime - prevTime < milliseconds):
@@ -418,7 +417,16 @@ def do_play():
     namespace = globals()
     namespace["__name__"] = "__main__"
     
+    
+    #pre_globals = list(globals().keys())
+    
     run_code(src, namespace, namespace)        
+    
+    #post_globals = list(globals().keys())
+
+    #for g in post_globals:
+    #    if g not in pre_globals:
+    #        print(g)
     
 def run_code(src, globals, locals):
     #self.console.log("running code...")
@@ -427,6 +435,7 @@ def run_code(src, globals, locals):
         graphics.start()
     except Exception as e:
         do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red") 
+        graphics.stop()
 
             
 def save_code(event):
