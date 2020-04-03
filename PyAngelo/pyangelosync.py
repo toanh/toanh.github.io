@@ -341,6 +341,7 @@ class PyAngelo():
             self.state = self.STATE_RUN
                         
     def stop(self):   
+        disable_stop_enable_play() 
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
 
@@ -348,9 +349,8 @@ class PyAngelo():
             self.resources =  {}
             self.loadingResources = 0
 
-            self.stopAllSounds()
-            
-            disable_stop_enable_play()   
+            self.stopAllSounds()            
+              
 
     def sleep(self, milliseconds):
         # the sleep happens here, it's a tight loop - may hang the browser!
@@ -434,7 +434,7 @@ def run_code(src, globals, locals):
         exec(src , globals, locals)
         graphics.start()
     except Exception as e:
-        do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red") 
+        do_print("Error in parsing: " + str(e) + "\n" + traceback.format_exc(), "red") 
         graphics.stop()
 
             
