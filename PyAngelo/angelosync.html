@@ -41,7 +41,7 @@
                 project_name = pair[1];
                 read_storage = false;
                 var client = new XMLHttpRequest();
-                client.open("GET", "samples/" + project_name + ".py");
+                client.open("GET", "samples_sync/" + project_name + ".py");
                 client.onreadystatechange = function () {
                     if (client.readyState == 4) {
                         project_src = client.responseText;
@@ -313,7 +313,7 @@
 
     function openCode(name) {
         var client = new XMLHttpRequest();
-        client.open("GET", "samples/" + name + ".py");
+        client.open("GET", "samples_sync/" + name + ".py");
         client.onreadystatechange = function () {
             if (client.readyState == 4) {
                 if (editor_exists) {

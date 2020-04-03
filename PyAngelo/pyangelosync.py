@@ -97,7 +97,11 @@ class PyAngelo():
         kwargs = {"image": image, "x": x, "y": y, "width": width, "height": height, "rotation": rotation,
                   "anchorX": anchorX,
                   "anchorY": anchorY, "opacity": opacity, "r": r, "g": g, "b": b, "rect": rect}
-        self.commands.append([CMD_DRAWIMAGE, kwargs])           
+        self.commands.append([CMD_DRAWIMAGE, kwargs])    
+
+    def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
+        kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
+        self.commands.append([CMD_DRAWRECT, kwargs])           
 
     def isKeyPressed(self, key):
         return self.keys[key]             
@@ -411,7 +415,20 @@ class PyAngelo():
 
             self.__stopAllSounds()
             
-            disable_stop_enable_play()        
+            disable_stop_enable_play()   
+
+    def sleep(self, milliseconds):
+        # flush the command buffer to this point
+        self.refresh()
+        
+        # the sleep happens here
+        currTime = window.performance.now()
+        prevTime = currTime
+        while (currTime - prevTime < milliseconds):
+            currTime = window.performance.now()      
+            
+    def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
+        return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))            
                               
 graphics = PyAngelo()
 
