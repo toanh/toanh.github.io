@@ -114,7 +114,7 @@ def Game():
     graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH * 1.5, HEIGHT, 0.6, 0.15, 0.15)
 
 
-    #graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
+    graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
     # Starts drawing level from 0 to < WIDTH 
     column = 0        
     while column < WIDTH:
