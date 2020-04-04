@@ -49,6 +49,7 @@ class PyAngelo():
         self.height = self.canvas.height
         
         self.timer_id = None
+        self.main_loop = None
         
         self.stopped = False
         
@@ -319,11 +320,12 @@ class PyAngelo():
         if self.state == self.STATE_STOP:       
             self.clear(0.392,0.584,0.929)
         elif self.state == self.STATE_RUN:   
-            try:
-                self.main_loop()
-            except Exception as e:
-                do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
-                #self.stop()
+            if self.main_loop is not None:
+                try:
+                    self.main_loop()
+                except Exception as e:
+                    do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
+                    #self.stop()
             	   
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
@@ -412,9 +414,11 @@ def button_stop(event):
 pre_globals = []
 def do_play():
     global pre_globals
+    
+    graphics.main_loop = None
 
-    start_tag = "@animation_start"
-    end_tag = "@animation_end"
+    start_tag = "@animate_loop_start"
+    end_tag = "@animate_loop_end"
     
     src = window.getCode()
         
