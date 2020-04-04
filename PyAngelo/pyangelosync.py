@@ -409,19 +409,15 @@ def disable_stop_enable_play():
 def button_stop(event):
     graphics.stop()
     
+pre_globals = []
 def do_play():
+    global pre_globals
+    # TODO: tags still get recongised within block comments
     start_tag = "@animation_start"
     end_tag = "@animation_end"
     
     src = window.getCode()
-    
-    #window.console.log(src)
-
-    #namespace = globals()
-    #namespace["__name__"] = "__main__"
-    
-    #run_code(src, namespace, namespace) 
-    
+        
     lines = src.split("\n")
     
     non_frame_code = []
@@ -456,35 +452,33 @@ def do_play():
     window.console.log("Non frame code:")
     window.console.log(src)
         
-    pre_globals = list(globals().keys())
+    if len(pre_globals) == 0:
+        pre_globals = list(globals().keys())
 
     namespace = globals()
     namespace["__name__"] = "__main__"        
 
-    # TODO: issue with globals hanging around between subsequent executions
-    # results in 2nd+ runs having no delta globals and hence no injections
-    
+   
     if len(frame_code) > 0:   
 
         run_code(src, namespace, namespace, False)    
         
         post_globals = list(globals().keys())
-               
-        if len(pre_globals) != len(post_globals):
-            global_code = " global _"
-            for g in post_globals:
-                if g not in pre_globals:
-                    global_code += ", " + g
-            frame_code.insert(0, global_code)
+        global_code = ""
+        for g in post_globals:
+            if g not in pre_globals:
+                global_code += g + ","
+        frame_code.insert(0, " global " + global_code[:-1])
         
         frame_code.insert(0, "def frame_code():")
+        
         frame_code.insert(0, "@graphics.loop")
         
         
         src = "\n".join(frame_code)
         window.console.log("Frame code:")
         window.console.log(src)
-               
+       
         run_code(src, namespace, namespace, True)    
     else:
         run_code(src, namespace, namespace, True)
@@ -494,9 +488,10 @@ def do_play():
 def run_code(src, globals, locals, is_frame_code = True):
     #self.console.log("running code...")
     try:
-        exec(src , globals, locals)
+        
         if is_frame_code:
             graphics.start()  
+        exec(src , globals, locals)
         
     except Exception as e:
         do_print("Error in parsing: " + str(e) + "\n" + traceback.format_exc(), "red") 
