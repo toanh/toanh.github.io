@@ -212,7 +212,7 @@ body.pynode .appContainer {
 body.pynode .appTop {
     width: 100%;
     padding-bottom: 20px;
-    float: top;
+    float: bottom;
     height: calc(100% - 540px);
 }
 
@@ -220,7 +220,7 @@ body.pynode .appBottom {
     width: 100%;
     //float: bottom;
     //padding-right: 20px;
-    //height: 500px;
+    height: 500px;
 }
 
 body.pynode .editorWrapper {

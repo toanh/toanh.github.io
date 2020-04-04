@@ -412,7 +412,7 @@ def button_stop(event):
 pre_globals = []
 def do_play():
     global pre_globals
-    # TODO: tags still get recongised within block comments
+
     start_tag = "@animation_start"
     end_tag = "@animation_end"
     
