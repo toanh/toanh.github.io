@@ -16,6 +16,11 @@ KEY_PAGEUP        = 0xff55
 KEY_PAGEDOWN      = 0xff56
 KEY_END           = 0xff57
 KEY_BEGIN         = 0xff58
+KEY_V_LEFT        = "v_left"
+KEY_V_RIGHT       = "v_right"
+KEY_V_UP          = "v_up"
+KEY_V_DOWN        = "v_down"
+KEY_V_FIRE        = "v_fire"
 
 CMD_DRAWLINE      = 1
 CMD_CLEAR         = 2

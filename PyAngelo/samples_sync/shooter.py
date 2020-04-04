@@ -51,16 +51,16 @@ class Player (Entity):
         if self.cool_down_timer < 0:
             self.cool_down_timer = self.cool_down
             
-        if graphics.isKeyPressed(KEY_A):
+        if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
             self.x -= self.speed
-        if graphics.isKeyPressed(KEY_D):
+        if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
             self.x += self.speed
-        if graphics.isKeyPressed(KEY_W):
+        if graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
             self.y += self.speed
-        if graphics.isKeyPressed(KEY_S):
+        if graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
             self.y -= self.speed
             
-        if graphics.isKeyPressed(KEY_J) and self.cool_down_timer == self.cool_down:
+        if (graphics.isKeyPressed(KEY_J)  or graphics.isKeyPressed(KEY_V_FIRE)) and self.cool_down_timer == self.cool_down:
             newBullet = Bullet()
             newBullet.x = self.x + (self.width - newBullet.width) / 2
             newBullet.y = self.y + self.height - newBullet.height
@@ -92,8 +92,6 @@ class Bullet (Entity):
             if self.r <= 0:
                 self.b = 0
                 self.state = 2
-            self.width += 8
-            self.x -= 4
             
     def draw(self):
         graphics.drawImage(self.image, self.x, self.y)             

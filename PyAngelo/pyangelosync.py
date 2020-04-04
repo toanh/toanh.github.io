@@ -29,7 +29,12 @@ class PyAngeloImage():
         self.img = image
         self.height = image.naturalHeight
         self.width = image.naturalWidth
-
+        
+class Point():
+    def __init__(self, x = 0, y = 0):
+        self.x = x
+        self.y = y
+        
 class PyAngelo():
     STATE_STOP      =   1
     STATE_RUN       =   2
@@ -61,6 +66,12 @@ class PyAngelo():
 
         document.bind("keydown", self._keydown)
         document.bind("keyup", self._keyup)   
+        
+        self.mouse_x = 0
+        self.mouse_y = 0
+        document.bind("mousedown", self._mousedown)
+        document.bind("mouseup", self._mouseup)
+        document.bind("mousemove", self._mousemove)
 
         self.soundPlayers = {}        
         
@@ -151,7 +162,53 @@ class PyAngelo():
                 self.drawText(returned_string + "_", 0, 0)
 
     def _keyup(self, ev):
-        self.keys[ev.which] = False      
+        self.keys[ev.which] = False   
+
+    def _mousemove(self, ev):
+        self.mouse_x = ev.clientX             
+        self.mouse_y = ev.clientY
+        
+    def _mousedown(self, ev):
+        self.mouse_x = ev.clientX             
+        self.mouse_y = ev.clientY
+        
+        boundingRect = self.canvas.getBoundingClientRect()    
+        
+        x = int(self.mouse_x - boundingRect.left)
+        y = int(self.height - (self.mouse_y - boundingRect.top))
+        
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False
+        
+        if x < 0 and y < self.height * 0.75 and y > self.height * 0.25:
+            self.keys[KEY_V_LEFT] = True
+        if x > self.width and y < self.height * 0.75 and y > self.height * 0.25:
+            self.keys[KEY_V_RIGHT] = True
+        if y < 0 and x < self.width * 0.75 and x > self.width * 0.25:
+            self.keys[KEY_V_DOWN] = True
+        if y > self.height and x < self.width * 0.75 and x > self.width * 0.25:
+            self.keys[KEY_V_UP] = True
+        if x > 0 and x < self.width and y > 0 and y < self.height:
+            self.keys[KEY_V_FIRE] = True            
+        
+    def _mouseup(self, ev):
+        self.mouse_x = -1
+        self.mouse_y = -1
+        
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False     
+    
+    def getMousePos(self):
+        boundingRect = self.canvas.getBoundingClientRect()    
+        
+        return Point(int(self.mouse_x - boundingRect.left), int(self.height - (self.mouse_y - boundingRect.top)))
+        
                 
     def resourceError(self, e):
         self.stop()
