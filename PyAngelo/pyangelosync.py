@@ -170,8 +170,10 @@ class PyAngelo():
 
 
     def _touchstart(self, ev):
-        self.mouse_x = ev.clientX             
-        self.mouse_y = ev.clientY
+    
+        touch = ev.changedTouches[0]
+        self.mouse_x = touch.clientX             
+        self.mouse_y = touch.clientY
         
         boundingRect = self.canvas.getBoundingClientRect()    
         
@@ -205,13 +207,16 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False  
         
+        
+
+    def _touchmove(self, ev):
+        touch = ev.changedTouches[0]
+        self.mouse_x = touch.clientX             
+        self.mouse_y = touch.clientY
+        
     def _mousemove(self, ev):
         self.mouse_x = ev.clientX             
         self.mouse_y = ev.clientY            
-
-    def _touchmove(self, ev):
-        self.mouse_x = ev.clientX             
-        self.mouse_y = ev.clientY       
         
     def _mousedown(self, ev):
         self.mouse_x = ev.clientX             
