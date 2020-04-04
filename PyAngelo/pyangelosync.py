@@ -72,6 +72,10 @@ class PyAngelo():
         document.bind("mousedown", self._mousedown)
         document.bind("mouseup", self._mouseup)
         document.bind("mousemove", self._mousemove)
+        
+        document.bind("touchstart", self._touchstart)
+        document.bind("touchend", self._touchend)
+        document.bind("touchmove", self._touchmove)        
 
         self.soundPlayers = {}        
         
@@ -164,9 +168,50 @@ class PyAngelo():
     def _keyup(self, ev):
         self.keys[ev.which] = False   
 
-    def _mousemove(self, ev):
+
+    def _touchstart(self, ev):
         self.mouse_x = ev.clientX             
         self.mouse_y = ev.clientY
+        
+        boundingRect = self.canvas.getBoundingClientRect()    
+        
+        x = int(self.mouse_x - boundingRect.left)
+        y = int(self.height - (self.mouse_y - boundingRect.top))
+        
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False
+        
+        if x < 0 and y < self.height * 0.75 and y > self.height * 0.25:
+            self.keys[KEY_V_LEFT] = True
+        if x > self.width and y < self.height * 0.75 and y > self.height * 0.25:
+            self.keys[KEY_V_RIGHT] = True
+        if y < 0 and x < self.width * 0.75 and x > self.width * 0.25:
+            self.keys[KEY_V_DOWN] = True
+        if y > self.height and x < self.width * 0.75 and x > self.width * 0.25:
+            self.keys[KEY_V_UP] = True
+        if x > 0 and x < self.width and y > 0 and y < self.height:
+            self.keys[KEY_V_FIRE] = True            
+        
+    def _touchend(self, ev):
+        self.mouse_x = -1
+        self.mouse_y = -1
+        
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False  
+        
+    def _mousemove(self, ev):
+        self.mouse_x = ev.clientX             
+        self.mouse_y = ev.clientY            
+
+    def _touchmove(self, ev):
+        self.mouse_x = ev.clientX             
+        self.mouse_y = ev.clientY       
         
     def _mousedown(self, ev):
         self.mouse_x = ev.clientX             
