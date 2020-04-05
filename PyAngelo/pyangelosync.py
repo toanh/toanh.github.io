@@ -186,15 +186,17 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False
         
-        if x < 0 and y < self.height * 0.75 and y > self.height * 0.25:
+        if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
             self.keys[KEY_V_LEFT] = True
-        if x > self.width and y < self.height * 0.75 and y > self.height * 0.25:
+        if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
             self.keys[KEY_V_RIGHT] = True
-        if y < 0 and x < self.width * 0.75 and x > self.width * 0.25:
+
+        if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
             self.keys[KEY_V_DOWN] = True
-        if y > self.height and x < self.width * 0.75 and x > self.width * 0.25:
+        if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
             self.keys[KEY_V_UP] = True
-        if x > 0 and x < self.width and y > 0 and y < self.height:
+
+        if x > self.width and y < self.height and y > 0:
             self.keys[KEY_V_FIRE] = True            
         
     def _touchend(self, ev):
@@ -233,16 +235,18 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False
         
-        if x < 0 and y < self.height * 0.75 and y > self.height * 0.25:
+        if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
             self.keys[KEY_V_LEFT] = True
-        if x > self.width and y < self.height * 0.75 and y > self.height * 0.25:
+        if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
             self.keys[KEY_V_RIGHT] = True
-        if y < 0 and x < self.width * 0.75 and x > self.width * 0.25:
+
+        if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
             self.keys[KEY_V_DOWN] = True
-        if y > self.height and x < self.width * 0.75 and x > self.width * 0.25:
+        if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
             self.keys[KEY_V_UP] = True
-        if x > 0 and x < self.width and y > 0 and y < self.height:
-            self.keys[KEY_V_FIRE] = True            
+
+        if x > self.width and y < self.height and y > 0:
+            self.keys[KEY_V_FIRE] = True         
         
     def _mouseup(self, ev):
         self.mouse_x = -1

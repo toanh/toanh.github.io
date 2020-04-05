@@ -121,7 +121,7 @@
         <div class="appWrapper" id="appWrapper">
             <div class="appContainer" id="appContainer">     
 			
-                <div class="appBottom">
+                <div class="appOutputs">
                     <div class="outputWrapper">
                         <div class="appSectionTitle">
                             <div class="floatLeft">
@@ -130,11 +130,9 @@
                         </div>
                         <div id="outputBox">
 							<canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
+                                <!-- force virtual keyboard to trigger when focus is on canvas -->
                                 <input type="text" id="v_key_trigger" style="z-index: -1;">
                             </canvas>
-                            
-                            
-                            <!--<div id="output"></div>-->
                         </div>
                         <div class="editorButtonBar">
                         
@@ -149,8 +147,7 @@
                                                                        height="20"></div>
                                     <h4>STOP</h4>
                                 </div>
-                            </div>
-                        
+                            </div>                        
                         </div>
                     </div>
                     <div class="consoleWrapper">
@@ -165,7 +162,7 @@
                     </div>
                 </div>
                 
-                <div class="appTop">
+                <div class="appEditor">
                     
                     <div class="editorWrapper">
                     
