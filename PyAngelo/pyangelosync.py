@@ -197,9 +197,11 @@ class PyAngelo():
             self.keys[KEY_V_UP] = True
 
         if x > self.width and y < self.height and y > 0:
-            self.keys[KEY_V_FIRE] = True    
+            self.keys[KEY_V_FIRE] = True
 
-        ev.returnValue = False
+        return False
+
+        #ev.returnValue = False
         
     def _touchend(self, ev):
         self.mouse_x = -1
@@ -211,7 +213,9 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False  
         
-        ev.returnValue = False
+        #ev.returnValue = False
+        
+        return False
         
         
 

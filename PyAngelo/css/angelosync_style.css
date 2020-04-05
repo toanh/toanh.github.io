@@ -27,6 +27,8 @@ html, body {
     margin: 0;
     padding: 0;
     background-color: #525252;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
 }
 
 /* GENERAL
@@ -197,13 +199,17 @@ body.pynode .appWrapper {
     //padding-bottom: 20px;
     padding-top: 20px;
     box-shadow: inset 0 16px 20px -20px rgba(0, 0, 0, 0.75), inset 0 -16px 20px -20px rgba(0, 0, 0, 0.5);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
 }
 
 body.pynode .appContainer {
     height: 100%;
     width: 850px;
     visibility: visible;
-    margin-left: calc(50% - 425px);    
+    margin-left: calc(50% - 425px);   
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  	
     //max-width: 1500px;
 }
 
@@ -512,6 +518,8 @@ body.pynode li {
     padding-top: 50px;
     padding-bottom: 50px;
     margin-top: 30px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
 }
 
 body .floatLeft {
