@@ -172,6 +172,11 @@ class PyAngelo():
     def _touchstart(self, ev):
     
         #touch = ev.changedTouches
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False        
         
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
@@ -182,11 +187,7 @@ class PyAngelo():
             x = int(self.mouse_x - boundingRect.left)
             y = int(self.height - (self.mouse_y - boundingRect.top))
             
-            self.keys[KEY_V_LEFT] = False
-            self.keys[KEY_V_RIGHT] = False
-            self.keys[KEY_V_UP] = False
-            self.keys[KEY_V_DOWN] = False
-            self.keys[KEY_V_FIRE] = False
+
             
             if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
                 self.keys[KEY_V_LEFT] = True
@@ -203,7 +204,6 @@ class PyAngelo():
 
         return False
 
-        #ev.returnValue = False
         
     def _touchend(self, ev):
         self.mouse_x = -1
@@ -215,12 +215,9 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False  
         
-        #ev.returnValue = False
-        
+       
         return False
         
-        
-
     def _touchmove(self, ev):
         touch = ev.changedTouches[0]
         self.mouse_x = touch.clientX             
