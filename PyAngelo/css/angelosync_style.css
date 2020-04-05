@@ -377,6 +377,7 @@ body.pynode .dpadWrapper {
     display: table-cell;
     background-color: red; 
     //visibility: hidden;
+    background-image: url("../images/PyAngelo.png");
 }
 
 body.pynode .buttonsWrapper {
@@ -392,6 +393,7 @@ body.pynode .buttonsWrapper {
     display: table-cell;
     background-color: blue; 
     //visibility: hidden;
+    background-image: url("../images/PyAngelo.png");
 }
 
 body.pynode #outputBox {
