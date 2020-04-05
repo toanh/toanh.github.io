@@ -350,8 +350,8 @@ body.pynode #editor {
 }
 
 body #canvas {
-    background-color: black;
-    background-image: url("../images/pyangelo.png");
+    background-color: white;
+    background-image: url("../images/starting.png");
     background-repeat: no-repeat;
     background-position: center;    
 }
