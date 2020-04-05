@@ -119,36 +119,40 @@
             </div>
         </div>
         <div class="appWrapper" id="appWrapper">
-            <div class="appContainer" id="appContainer">     
-			
+            <div class="appContainer" id="appContainer">     			
                 <div class="appOutputs">
-                    <div class="outputWrapper">
-                        <div class="appSectionTitle">
-                            <div class="floatLeft">
-                                <h3>Output</h3>
+                    <div class="appOutputControlsWrapper">
+                        <div class="dpadWrapper">
+                        </div>
+                        <div class="outputWrapper">
+                            <div class="appSectionTitle">
+                                <div class="floatLeft">
+                                    <h3>Output</h3>
+                                </div>
+                            </div>
+                            <div id="outputBox">
+                                <canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
+                                    <!-- force virtual keyboard to trigger when focus is on canvas -->
+                                    <input type="text" id="v_key_trigger" style="z-index: -1;">
+                                </canvas>
+                            </div>
+                            <div class="editorButtonBar">                        
+                                <div id="output_run" class="outputButton">
+                                    <div id="output_runPlay">
+                                        <div class="editorButtonIcon"><img src="images/controls/play.png" width="20"
+                                                                           height="20"></div>
+                                        <h4>PLAY</h4>
+                                    </div>
+                                    <div id="output_runPause">
+                                        <div class="editorButtonIcon"><img src="images/controls/stop.png" width="20"
+                                                                           height="20"></div>
+                                        <h4>STOP</h4>
+                                    </div>
+                                </div>                        
                             </div>
                         </div>
-                        <div id="outputBox">
-							<canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
-                                <!-- force virtual keyboard to trigger when focus is on canvas -->
-                                <input type="text" id="v_key_trigger" style="z-index: -1;">
-                            </canvas>
-                        </div>
-                        <div class="editorButtonBar">
-                        
-                            <div id="output_run" class="outputButton">
-                                <div id="output_runPlay">
-                                    <div class="editorButtonIcon"><img src="images/controls/play.png" width="20"
-                                                                       height="20"></div>
-                                    <h4>PLAY</h4>
-                                </div>
-                                <div id="output_runPause">
-                                    <div class="editorButtonIcon"><img src="images/controls/stop.png" width="20"
-                                                                       height="20"></div>
-                                    <h4>STOP</h4>
-                                </div>
-                            </div>                        
-                        </div>
+                        <div class="buttonsWrapper">
+                        </div>    
                     </div>
                     <div class="consoleWrapper">
                         <div class="appSectionTitle">
@@ -159,7 +163,7 @@
                         <div class="consoleBox">
                             <div id="console"></div>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
                 
                 <div class="appEditor">

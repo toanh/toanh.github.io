@@ -231,6 +231,13 @@ body.pynode .appOutputs {
     
 }
 
+body.pynode .appOutputControlsWrapper {
+    display: table;
+    //width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    //border-spacing: 10px; /*Optional*/
+}
+
 body.pynode .editorWrapper {
     width: 100%;
     height: 100%;
@@ -350,7 +357,41 @@ body.pynode .outputWrapper {
     border-bottom: 10px solid #525252;
     box-sizing: border-box;
     position: relative;
-    margin-left: calc(50% - 250px);
+    margin-left: 5px;
+    margin-right: 5px;
+    //margin-left: calc(50% - 250px);
+    display: table-cell;
+    //float: none;
+}
+
+body.pynode .dpadWrapper {
+    width: 175px;
+    height: 490px;
+    //background-color: white;
+    //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    //border-bottom: 10px solid #525252;
+    //box-sizing: border-box;
+    position: relative;
+    //float: left;
+    //margin-left: calc(50% - 250px - 180px);
+    display: table-cell;
+    background-color: red; 
+    //visibility: hidden;
+}
+
+body.pynode .buttonsWrapper {
+    width: 175px;
+    height: 490px;
+    //background-color: white;
+    //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    //border-bottom: 10px solid #525252;
+    //box-sizing: border-box;
+    position: relative;
+    //float: right;
+    //margin-left: calc(50% + 250px + 5px);
+    display: table-cell;
+    background-color: blue; 
+    //visibility: hidden;
 }
 
 body.pynode #outputBox {
