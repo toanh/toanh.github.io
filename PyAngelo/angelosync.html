@@ -429,6 +429,20 @@
     }
 
     document.getElementById('file-input').addEventListener('change', userLoadCode, false);
+    
+    // disabling touch behaviours on the controller divs
+    document.querySelector(".dpadWrapper").addEventListener("touchstart", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".dpadWrapper").addEventListener("touchmove", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".buttonsWrapper").addEventListener("touchstart", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".buttonsWrapper").addEventListener("touchmove", function(event) {
+             event.preventDefault();
+    }, false);      
 </script>
 
 <script type="text/javascript" src="js/brython/brython.js?version=0.9.7"></script>
