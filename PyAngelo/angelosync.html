@@ -419,8 +419,11 @@
         reader.onload = (function (theFile) {
             return function (e) {
                 setCode(e.target.result);
+                window.doneLoading();
             };
+            
         })(file);
+        window.startLoading(file.name);
         reader.readAsText(file);
     }
 
