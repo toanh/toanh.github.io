@@ -47,6 +47,13 @@ class Circle():
         self.x = x
         self.y = y
         self.radius = radius
+        
+class Colour():
+    def __init__(self, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
        
         
 class Sprite:
@@ -396,7 +403,9 @@ class PyAngelo():
         self.loadingResources += 1
         
         window.console.log("Attempting to load file:" + file);
-        img = html.IMG(src = file)
+        img = html.IMG()
+        img.crossOrigin = "Anonymous"
+        img.src = file
 
         img.bind('load', self.resourceLoaded)
         img.bind('error', self.resourceError)
@@ -599,7 +608,14 @@ class PyAngelo():
             self.resources =  {}
             self.loadingResources = 0
 
-            self.stopAllSounds()            
+            self.stopAllSounds()     
+
+    def getPixelColour(self, x, y):
+        pixel = window.Int8Array.new(4)      
+                   
+        imageData = self.ctx.getImageData(x, self._convY(y), 1, 1)
+        
+        return Colour(imageData.data[0]/255.0, imageData.data[1]/255.0, imageData.data[2]/255.0, imageData.data[3]/255.0)            
               
 
     def sleep(self, milliseconds):
