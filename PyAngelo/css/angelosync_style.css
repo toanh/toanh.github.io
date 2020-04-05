@@ -375,9 +375,11 @@ body.pynode .dpadWrapper {
     //float: left;
     //margin-left: calc(50% - 250px - 180px);
     display: table-cell;
-    background-color: red; 
+    //background-color: red; 
     //visibility: hidden;
-    background-image: url("../images/PyAngelo.png");
+    background-image: url("../images/controls/dpad.png");
+    background-repeat: no-repeat;
+    background-position: center;    
 }
 
 body.pynode .buttonsWrapper {
@@ -391,9 +393,11 @@ body.pynode .buttonsWrapper {
     //float: right;
     //margin-left: calc(50% + 250px + 5px);
     display: table-cell;
-    background-color: blue; 
+    //background-color: blue; 
     //visibility: hidden;
-    background-image: url("../images/PyAngelo.png");
+    background-image: url("../images/controls/fire_button.png");
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 body.pynode #outputBox {
@@ -424,7 +428,7 @@ body.pynode .consoleWrapper {
 
 
 body.pynode .consoleBox {
-    background-color: #F0F0F0;
+    background-color: #F0F0F0;         
     width: calc(100% - 25px);
     height: calc(100% - 62px);
     padding-top: 10px;
@@ -441,6 +445,7 @@ body.pynode #console {
     padding-left: 2px;
     font-family: monospace;
     overflow-y: auto;
+    background-color: #202020;
 }
 
 body.pynode .appSectionTitle {

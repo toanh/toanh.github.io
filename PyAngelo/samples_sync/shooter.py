@@ -41,6 +41,8 @@ class Player (Entity):
         
         self.anim_time = 20
         self.anim_timer = self.anim_time
+        
+        self.fires = 0
 
     def update(self):
         self.anim_timer -= 1
@@ -49,7 +51,7 @@ class Player (Entity):
             
         self.cool_down_timer -= 1
         if self.cool_down_timer < 0:
-            self.cool_down_timer = self.cool_down
+            self.cool_down_timer = 0
             
         if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
             self.x -= self.speed
@@ -59,12 +61,14 @@ class Player (Entity):
             self.y += self.speed
         if graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
             self.y -= self.speed
+        
+        if ((graphics.isKeyPressed(KEY_J)  or graphics.isKeyPressed(KEY_V_FIRE))) and self.cool_down_timer == 0:
             
-        if (graphics.isKeyPressed(KEY_J)  or graphics.isKeyPressed(KEY_V_FIRE)) and self.cool_down_timer == self.cool_down:
             newBullet = Bullet()
             newBullet.x = self.x + (self.width - newBullet.width) / 2
             newBullet.y = self.y + self.height - newBullet.height
             bullets.append(newBullet)
+            self.cool_down_timer = self.cool_down
             
     def draw(self):
         graphics.drawImage(self.images[self.anim_timer // (self.anim_time / len(self.images)) - 1], self.x, self.y)             
@@ -154,6 +158,8 @@ bullets = []
 enemies = []
 spawnTime = 50
 spawnTimer = spawnTime
+
+print("Starting")
 
 @graphics.loop
 def Game():

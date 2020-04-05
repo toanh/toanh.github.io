@@ -656,7 +656,7 @@ class ErrorOutput:
         
 class PrintOutput:
     def write(self, data):
-        do_print(data, "blue") 
+        do_print(data, "green") 
     def flush(self):
         pass
 
