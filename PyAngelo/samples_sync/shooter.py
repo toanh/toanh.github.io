@@ -159,61 +159,57 @@ enemies = []
 spawnTime = 50
 spawnTimer = spawnTime
 
-print("Starting")
+@loop_animation
+graphics.clear(0, 0, 0)
 
-@graphics.loop
-def Game():
-    global player, bullets, enemies, spawnTimer
-    graphics.clear(0, 0, 0)
-    
-    spawnTimer -= 1
-    if spawnTimer < 0:
-        spawnTimer = spawnTime
-        newEnemy = Enemy()
-        newEnemy.x = random.randint(0, graphics.width - newEnemy.width)
-        newEnemy.y = graphics.height + newEnemy.height
-        enemies.append(newEnemy)
+spawnTimer -= 1
+if spawnTimer < 0:
+    spawnTimer = spawnTime
+    newEnemy = Enemy()
+    newEnemy.x = random.randint(0, graphics.width - newEnemy.width)
+    newEnemy.y = graphics.height + newEnemy.height
+    enemies.append(newEnemy)
 
-    for bullet in bullets:
-        if bullet.y > graphics.height or bullet.state == 2:
-            bullets.remove(bullet)
+for bullet in bullets:
+    if bullet.y > graphics.height or bullet.state == 2:
+        bullets.remove(bullet)
 
-    for enemy in enemies:
-        if enemy.y < -enemy.height or enemy.state == 2:
-            enemies.remove(enemy)    
+for enemy in enemies:
+    if enemy.y < -enemy.height or enemy.state == 2:
+        enemies.remove(enemy)    
 
-    b = 0
-    while b < len(bullets):
-        bullet = bullets[b]
-        e = 0
-        while e < len(enemies):
-            enemy = enemies[e]
-
-            if enemy.state == 0 and graphics.overlaps(bullet.x, bullet.y, bullet.width, bullet.height, enemy.x, enemy.y, enemy.width, enemy.height):
-                # collision!
-                enemy.state = 1
-                bullet.state = 1
-            e += 1
-        b += 1
-
+b = 0
+while b < len(bullets):
+    bullet = bullets[b]
     e = 0
     while e < len(enemies):
         enemy = enemies[e]
-        if enemy.state == 0 and graphics.overlaps(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
+
+        if enemy.state == 0 and graphics.overlaps(bullet.x, bullet.y, bullet.width, bullet.height, enemy.x, enemy.y, enemy.width, enemy.height):
             # collision!
             enemy.state = 1
+            bullet.state = 1
         e += 1
-            
-    for enemy in enemies:
-        enemy.update()
-        enemy.draw()      
+    b += 1
+
+e = 0
+while e < len(enemies):
+    enemy = enemies[e]
+    if enemy.state == 0 and graphics.overlaps(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
+        # collision!
+        enemy.state = 1
+    e += 1
         
-    for bullet in bullets:
-        bullet.update()
-        bullet.draw()        
-        
-    player.update()
-    player.draw()
-        
-        
-        
+for enemy in enemies:
+    enemy.update()
+    enemy.draw()      
+    
+for bullet in bullets:
+    bullet.update()
+    bullet.draw()        
+    
+player.update()
+player.draw()
+    
+    
+    

@@ -5,9 +5,11 @@ pyangelo = Sprite("https://pyangelo.github.io/PyAngelo.png", 0, 0)
 @loop_animation
 mousePos = graphics.getMousePos()
 
+# check if the mouse/touch coordinates are within the sprite
 if pyangelo.contains(mousePos):
-    pyangelo.x = randint(0, graphics.width - pyangelo.image.width) 
-    pyangelo.y = randint(0, graphics.height - pyangelo.image.height) 
+    # if so, move the sprite to a new random location
+    pyangelo.x = randint(0, 400) 
+    pyangelo.y = randint(0, 300) 
     
 # clears the screen to black
 graphics.clear(0.0, 0.0, 0.0, 1.0)

@@ -1,9 +1,13 @@
-pyangelo = Sprite("https://pyangelo.github.io/PyAngelo.png", 0, 100)
+imageURL = "https://pyangelo.github.io/PyAngelo.png"
 
-@graphics.loop
-def Game():
-    # clears the screen to black
-    graphics.clear(0, 0, 0)
-    
-    # draws the sprite at coordinates (x = 0, y = 100)
-    graphics.drawSprite(pyangelo)
+# the sprite will be using the image from the URL above
+# and it's starting (x, y) coordinates will be (0, 100)
+pyangelo = Sprite(imageURL, x = 0, y = 100)
+
+@loop_animation
+
+# clears the screen to black
+graphics.clear(0, 0, 0)
+
+# draws the sprite at the coordinates it was set up with
+graphics.drawSprite(pyangelo)

@@ -60,16 +60,14 @@ def viewportTransform(triList2D, width, height):
         transformedList.append(newTri)
     return transformedList        
 
-@graphics.loop
-def Game():
-    global angle, triList, shape, camera, widht, height
-    angle = angle + 0.05   
+@loop_animation
+angle = angle + 0.05   
 
-    graphics.clear(0, 0, 0)
-    triList = rotateTransform(shape, angle)    
-    triList = translateTransform(triList, camera)
-    
-    triList = perspectiveTransform(triList)
-    triList = viewportTransform(triList, width, height)
+graphics.clear(0, 0, 0)
+triList = rotateTransform(shape, angle)    
+triList = translateTransform(triList, camera)
 
-    drawTriangleList(triList)
+triList = perspectiveTransform(triList)
+triList = viewportTransform(triList, width, height)
+
+drawTriangleList(triList)

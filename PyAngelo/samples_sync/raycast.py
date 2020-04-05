@@ -71,132 +71,130 @@ TGM = (math.cos(ROTATIONSPEED), math.sin(ROTATIONSPEED))
 ITGM = (math.cos(-ROTATIONSPEED), math.sin(-ROTATIONSPEED))
 COS, SIN = (0,1)
 
-@graphics.loop
-def Game():
-    global directionX, directionY, positionX, positionY, planeX, planeY, COS, SIN
-    # Checks with keys are pressed by the user
-    # Uses if so that more than one button at a time can be pressed.  
+@loop_animation
+# Checks with keys are pressed by the user
+# Uses if so that more than one button at a time can be pressed.  
 
-    if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
-        oldDirectionX = directionX
-        directionX = directionX * ITGM[COS] - directionY * ITGM[SIN]
-        directionY = oldDirectionX * ITGM[SIN] + directionY * ITGM[COS]
-        oldPlaneX = planeX
-        planeX = planeX * ITGM[COS] - planeY * ITGM[SIN]
-        planeY = oldPlaneX * ITGM[SIN] + planeY * ITGM[COS]
+if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
+    oldDirectionX = directionX
+    directionX = directionX * ITGM[COS] - directionY * ITGM[SIN]
+    directionY = oldDirectionX * ITGM[SIN] + directionY * ITGM[COS]
+    oldPlaneX = planeX
+    planeX = planeX * ITGM[COS] - planeY * ITGM[SIN]
+    planeY = oldPlaneX * ITGM[SIN] + planeY * ITGM[COS]
 
-    if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
-        oldDirectionX = directionX
-        directionX = directionX * TGM[COS] - directionY * TGM[SIN]
-        directionY = oldDirectionX * TGM[SIN] + directionY * TGM[COS]
-        oldPlaneX = planeX
-        planeX = planeX * TGM[COS] - planeY * TGM[SIN]
-        planeY = oldPlaneX * TGM[SIN] + planeY * TGM[COS]    
+if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
+    oldDirectionX = directionX
+    directionX = directionX * TGM[COS] - directionY * TGM[SIN]
+    directionY = oldDirectionX * TGM[SIN] + directionY * TGM[COS]
+    oldPlaneX = planeX
+    planeX = planeX * TGM[COS] - planeY * TGM[SIN]
+    planeY = oldPlaneX * TGM[SIN] + planeY * TGM[COS]    
 
-    if graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
-        if not worldMap[int(positionX + directionX * MOVESPEED)][int(positionY)]:
-            positionX += directionX * MOVESPEED
-        if not worldMap[int(positionX)][int(positionY + directionY * MOVESPEED)]:
-            positionY += directionY * MOVESPEED
+if graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
+    if not worldMap[int(positionX + directionX * MOVESPEED)][int(positionY)]:
+        positionX += directionX * MOVESPEED
+    if not worldMap[int(positionX)][int(positionY + directionY * MOVESPEED)]:
+        positionY += directionY * MOVESPEED
+        
+if graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
+    if not worldMap[int(positionX - directionX * MOVESPEED)][int(positionY)]:
+        positionX -= directionX * MOVESPEED
+    if not worldMap[int(positionX)][int(positionY - directionY * MOVESPEED)]:
+        positionY -= directionY * MOVESPEED
+
+showShadow = True
+
+# Draws roof and floor
+graphics.clear(0.2, 0.2, 0.2)
+
+graphics.drawRect(WIDTH/2, HEIGHT, WIDTH , HEIGHT/2 , 0, 0.5, 1)
+graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH , HEIGHT/2, 0.6, 0.15, 0.15)
+
+
+graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
+# Starts drawing level from 0 to < WIDTH 
+column = 0        
+while column < WIDTH:
+    cameraX = 2.0 * column / WIDTH - 1.0
+    rayPositionX = positionX
+    rayPositionY = positionY
+    rayDirectionX = directionX + planeX * cameraX
+    rayDirectionY = directionY + planeY * cameraX + .000000000000001 # avoiding ZDE 
+
+    # In what square is the ray?
+    mapX = int(rayPositionX)
+    mapY = int(rayPositionY)
+
+    # Delta distance calculation
+    # Delta = square ( raydir * raydir) / (raydir * raydir)
+    deltaDistanceX = math.sqrt(1.0 + (rayDirectionY * rayDirectionY) / (rayDirectionX * rayDirectionX))
+    deltaDistanceY = math.sqrt(1.0 + (rayDirectionX * rayDirectionX) / (rayDirectionY * rayDirectionY))
+
+    # We need sideDistanceX and Y for distance calculation. Checks quadrant
+    if (rayDirectionX < 0):
+        stepX = -1
+        sideDistanceX = (rayPositionX - mapX) * deltaDistanceX
+
+    else:
+        stepX = 1
+        sideDistanceX = (mapX + 1.0 - rayPositionX) * deltaDistanceX
+
+    if (rayDirectionY < 0):
+        stepY = -1
+        sideDistanceY = (rayPositionY - mapY) * deltaDistanceY
+
+    else:
+        stepY = 1
+        sideDistanceY = (mapY + 1.0 - rayPositionY) * deltaDistanceY
+
+    # Finding distance to a wall
+    hit = 0
+    while  (hit == 0):
+        if (sideDistanceX < sideDistanceY):
+            sideDistanceX += deltaDistanceX
+            mapX += stepX
+            side = 0
             
-    if graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
-        if not worldMap[int(positionX - directionX * MOVESPEED)][int(positionY)]:
-            positionX -= directionX * MOVESPEED
-        if not worldMap[int(positionX)][int(positionY - directionY * MOVESPEED)]:
-            positionY -= directionY * MOVESPEED
-
-    showShadow = True
-
-    # Draws roof and floor
-    graphics.clear(0.2, 0.2, 0.2)
-    
-    graphics.drawRect(WIDTH/2, HEIGHT, WIDTH , HEIGHT/2 , 0, 0.5, 1)
-    graphics.drawRect(WIDTH/2, HEIGHT/2, WIDTH , HEIGHT/2, 0.6, 0.15, 0.15)
-
-
-    graphics.drawText("Use the W,A,S,D keys to move", 140, 80, fontSize = 12)
-    # Starts drawing level from 0 to < WIDTH 
-    column = 0        
-    while column < WIDTH:
-        cameraX = 2.0 * column / WIDTH - 1.0
-        rayPositionX = positionX
-        rayPositionY = positionY
-        rayDirectionX = directionX + planeX * cameraX
-        rayDirectionY = directionY + planeY * cameraX + .000000000000001 # avoiding ZDE 
-
-        # In what square is the ray?
-        mapX = int(rayPositionX)
-        mapY = int(rayPositionY)
-
-        # Delta distance calculation
-        # Delta = square ( raydir * raydir) / (raydir * raydir)
-        deltaDistanceX = math.sqrt(1.0 + (rayDirectionY * rayDirectionY) / (rayDirectionX * rayDirectionX))
-        deltaDistanceY = math.sqrt(1.0 + (rayDirectionX * rayDirectionX) / (rayDirectionY * rayDirectionY))
-
-        # We need sideDistanceX and Y for distance calculation. Checks quadrant
-        if (rayDirectionX < 0):
-            stepX = -1
-            sideDistanceX = (rayPositionX - mapX) * deltaDistanceX
-
         else:
-            stepX = 1
-            sideDistanceX = (mapX + 1.0 - rayPositionX) * deltaDistanceX
+            sideDistanceY += deltaDistanceY
+            mapY += stepY
+            side = 1
+            
+        if (worldMap[mapX][mapY] > 0):
+            hit = 1
 
-        if (rayDirectionY < 0):
-            stepY = -1
-            sideDistanceY = (rayPositionY - mapY) * deltaDistanceY
+    # Correction against fish eye effect
+    if (side == 0):
+        perpWallDistance = abs((mapX - rayPositionX + ( 1.0 - stepX ) / 2.0) / rayDirectionX)
+    else:
+        perpWallDistance = abs((mapY - rayPositionY + ( 1.0 - stepY ) / 2.0) / rayDirectionY)
 
-        else:
-            stepY = 1
-            sideDistanceY = (mapY + 1.0 - rayPositionY) * deltaDistanceY
+    # Calculating HEIGHT of the line to draw
+    lineHEIGHT = abs(int(HEIGHT / (perpWallDistance+.0000001)))
+    drawStart = -lineHEIGHT / 2.0 + HEIGHT / 2.0
 
-        # Finding distance to a wall
-        hit = 0
-        while  (hit == 0):
-            if (sideDistanceX < sideDistanceY):
-                sideDistanceX += deltaDistanceX
-                mapX += stepX
-                side = 0
-                
-            else:
-                sideDistanceY += deltaDistanceY
-                mapY += stepY
-                side = 1
-                
-            if (worldMap[mapX][mapY] > 0):
-                hit = 1
+    # if drawStat < 0 it would draw outside the screen
+    if (drawStart < 0):
+        drawStart = 0
 
-        # Correction against fish eye effect
-        if (side == 0):
-            perpWallDistance = abs((mapX - rayPositionX + ( 1.0 - stepX ) / 2.0) / rayDirectionX)
-        else:
-            perpWallDistance = abs((mapY - rayPositionY + ( 1.0 - stepY ) / 2.0) / rayDirectionY)
+    drawEnd = lineHEIGHT / 2.0 + HEIGHT / 2.0
 
-        # Calculating HEIGHT of the line to draw
-        lineHEIGHT = abs(int(HEIGHT / (perpWallDistance+.0000001)))
-        drawStart = -lineHEIGHT / 2.0 + HEIGHT / 2.0
+    if (drawEnd >= HEIGHT):
+        drawEnd = HEIGHT - 1
 
-        # if drawStat < 0 it would draw outside the screen
-        if (drawStart < 0):
-            drawStart = 0
+    # Wall colors 0 to 3
+    wallcolors = [ [], [0.75, 0, 0], [0, 0.75, 0], [0, 0, 0.75] ]
+    color = wallcolors[ worldMap[mapX][mapY] ]                                  
 
-        drawEnd = lineHEIGHT / 2.0 + HEIGHT / 2.0
+    # If side == 1 then ton the color down. Gives a "showShadow" an the wall.
+    # Draws showShadow if showShadow is True
+    if showShadow:
+        if side == 1:
+            for i,v in enumerate(color):
+                color[i] = (v / 1.5)                    
 
-        if (drawEnd >= HEIGHT):
-            drawEnd = HEIGHT - 1
+    # Drawing the graphics   
+    graphics.drawLine(WIDTH/2 + column, HEIGHT/2 + drawStart, WIDTH/2 + column, HEIGHT/2 + drawEnd, color[0], color[1], color[2], 1, 8)
 
-        # Wall colors 0 to 3
-        wallcolors = [ [], [0.75, 0, 0], [0, 0.75, 0], [0, 0, 0.75] ]
-        color = wallcolors[ worldMap[mapX][mapY] ]                                  
-
-        # If side == 1 then ton the color down. Gives a "showShadow" an the wall.
-        # Draws showShadow if showShadow is True
-        if showShadow:
-            if side == 1:
-                for i,v in enumerate(color):
-                    color[i] = (v / 1.5)                    
-
-        # Drawing the graphics   
-        graphics.drawLine(WIDTH/2 + column, HEIGHT/2 + drawStart, WIDTH/2 + column, HEIGHT/2 + drawEnd, color[0], color[1], color[2], 1, 8)
-
-        column += 8
+    column += 8

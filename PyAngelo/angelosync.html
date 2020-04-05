@@ -87,8 +87,14 @@
                             <p><a href="#" onclick="openCode('clear'); return false;">Clearing the screen</a></p>
                         </li>
                         <li>
+                            <p><a href="#" onclick="openCode('animate_clear'); return false;">Animate the screen colour</a></p>
+                        </li>                        
+                        <li>
                             <p><a href="#" onclick="openCode('drawImage'); return false;">Drawing an image</a></p>
                         </li>
+                        <li>
+                            <p><a href="#" onclick="openCode('animate_image'); return false;">Animate (move) an image</a></p>
+                        </li>                        
                         <li>
                             <p><a href="#" onclick="openCode('keyboardControls'); return false;">Checking for key presses</a></p>
                         </li>
@@ -136,7 +142,7 @@
                             <div id="outputBox">
                                 <canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
                                     <!-- force virtual keyboard to trigger when focus is on canvas -->
-                                    <input type="text" id="v_key_trigger" style="z-index: -1;">
+                                    <!-- <input type="text" id="v_key_trigger" style="z-index: -1;"> -->
                                 </canvas>
                             </div>
                             <div class="editorButtonBar">                        

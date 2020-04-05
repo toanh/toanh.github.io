@@ -46,70 +46,67 @@ graphics.clear()
 
 playing = True
 
-@graphics.loop
-def Game():
-    global speed, score, scroll, scroll_win, direction, snake, food, playing
+@loop_animation
+if not playing: 
+    graphics.drawText("Game Over!", 150, 190, fontSize = 30)
+else:
+    score += 5
+    # check for keys
+    if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
+      direction = [1, 0]
+    elif graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
+        direction = [-1, 0]
+    elif graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
+      direction = [0, -1]
+    elif graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
+      direction = [0, 1]      
     
-    if not playing: 
-        graphics.drawText("Game Over!", 150, 190, fontSize = 30)
-    else:
-        score += 5
-        # check for keys
-        if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
-          direction = [1, 0]
-        elif graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
-            direction = [-1, 0]
-        elif graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
-          direction = [0, -1]
-        elif graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
-          direction = [0, 1]      
-        
-        # save last pos of snake
-        drawBlock(snake[-1][0], snake[-1][1], 0, 0, 0)
-           
-        # move the snake body
-        for n in range(len(snake) - 1, 0, -1):
-          snake[n][0] = snake[n - 1][0]
-          snake[n][1] = snake[n - 1][1]      
-        
-          # move snake head
-        snake[0][0] += direction[0]
-        snake[0][1] += direction[1]
-        
-        # snake dies if it touches the edge
-        if snake[0][0] < 0: 
-          playing = False
-        if snake[0][1] < 0: 
-          playing = False
-        if snake[0][0] >= width: 
-          playing = False
-        if snake[0][1] >= height: 
-          playing = False    
-        
-        # show score  
-        graphics.drawRect(200, 370, 300, 30, 0, 0, 0)
-        graphics.drawText("Score: "  + str(score), 200, 370, fontSize = 15)          
-        
-        # draw food
-        drawBlock(food[0], food[1], 1, 0, 0)
+    # save last pos of snake
+    drawBlock(snake[-1][0], snake[-1][1], 0, 0, 0)
+       
+    # move the snake body
+    for n in range(len(snake) - 1, 0, -1):
+      snake[n][0] = snake[n - 1][0]
+      snake[n][1] = snake[n - 1][1]      
     
-        # draw snake
-        for n, body in enumerate(snake):
-          drawBlock(body[0], body[1], 0, 1, 0)
-          
-        # snake ate itself
-        if snake[0] in snake[1:]:
-          playing = False
-        
-        # snake eats food
-        if snake[0] == food:
-          # grow snake
-          snake.append([snake[-1][0], snake[-1][1]])
-          score += 100
-        
-          # generate new food
-          # can't be located in the snake
-          while food in snake:
-            food = [randint(0, width), randint(0, height)] 
-        
-        graphics.sleep(50)
+      # move snake head
+    snake[0][0] += direction[0]
+    snake[0][1] += direction[1]
+    
+    # snake dies if it touches the edge
+    if snake[0][0] < 0: 
+      playing = False
+    if snake[0][1] < 0: 
+      playing = False
+    if snake[0][0] >= width: 
+      playing = False
+    if snake[0][1] >= height: 
+      playing = False    
+    
+    # show score  
+    graphics.drawRect(200, 370, 300, 30, 0, 0, 0)
+    graphics.drawText("Score: "  + str(score), 200, 370, fontSize = 15)          
+    
+    # draw food
+    drawBlock(food[0], food[1], 1, 0, 0)
+
+    # draw snake
+    for n, body in enumerate(snake):
+      drawBlock(body[0], body[1], 0, 1, 0)
+      
+    # snake ate itself
+    if snake[0] in snake[1:]:
+      playing = False
+    
+    # snake eats food
+    if snake[0] == food:
+      # grow snake
+      snake.append([snake[-1][0], snake[-1][1]])
+      score += 100
+    
+      # generate new food
+      # can't be located in the snake
+      while food in snake:
+        food = [randint(0, width), randint(0, height)] 
+    
+    graphics.sleep(50)
