@@ -220,7 +220,7 @@ class PyAngelo():
                 self.keys[KEY_V_FIRE] = True            
 
     def _touchstart(self, ev):
-        ev.preventDefault()
+        #ev.preventDefault()
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
@@ -239,7 +239,7 @@ class PyAngelo():
         
 
     def _touchend(self, ev):   
-        ev.preventDefault()
+        #ev.preventDefault()
 
         self.mouse_x = -1
         self.mouse_y = -1
@@ -253,7 +253,7 @@ class PyAngelo():
         return False
         
     def _touchmove(self, ev):   
-        ev.preventDefault()
+        #ev.preventDefault()
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
