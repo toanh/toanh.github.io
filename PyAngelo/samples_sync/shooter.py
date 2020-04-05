@@ -159,6 +159,8 @@ enemies = []
 spawnTime = 50
 spawnTimer = spawnTime
 
+graphics.playSound("sounds/outrun.mp3")
+
 @loop_animation
 graphics.clear(0, 0, 0)
 
