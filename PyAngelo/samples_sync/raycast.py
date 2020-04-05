@@ -77,7 +77,7 @@ def Game():
     # Checks with keys are pressed by the user
     # Uses if so that more than one button at a time can be pressed.  
 
-    if graphics.isKeyPressed(KEY_A):
+    if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
         oldDirectionX = directionX
         directionX = directionX * ITGM[COS] - directionY * ITGM[SIN]
         directionY = oldDirectionX * ITGM[SIN] + directionY * ITGM[COS]
@@ -85,7 +85,7 @@ def Game():
         planeX = planeX * ITGM[COS] - planeY * ITGM[SIN]
         planeY = oldPlaneX * ITGM[SIN] + planeY * ITGM[COS]
 
-    if graphics.isKeyPressed(KEY_D):
+    if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
         oldDirectionX = directionX
         directionX = directionX * TGM[COS] - directionY * TGM[SIN]
         directionY = oldDirectionX * TGM[SIN] + directionY * TGM[COS]
@@ -93,13 +93,13 @@ def Game():
         planeX = planeX * TGM[COS] - planeY * TGM[SIN]
         planeY = oldPlaneX * TGM[SIN] + planeY * TGM[COS]    
 
-    if graphics.isKeyPressed(KEY_W):
+    if graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
         if not worldMap[int(positionX + directionX * MOVESPEED)][int(positionY)]:
             positionX += directionX * MOVESPEED
         if not worldMap[int(positionX)][int(positionY + directionY * MOVESPEED)]:
             positionY += directionY * MOVESPEED
             
-    if graphics.isKeyPressed(KEY_S):
+    if graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
         if not worldMap[int(positionX - directionX * MOVESPEED)][int(positionY)]:
             positionX -= directionX * MOVESPEED
         if not worldMap[int(positionX)][int(positionY - directionY * MOVESPEED)]:

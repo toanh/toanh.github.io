@@ -35,6 +35,30 @@ class Point():
         self.x = x
         self.y = y
         
+class Sprite:
+    def __init__(self, image, x, y):
+        if (isinstance(image, str)):
+            image = graphics.loadImage(image)
+        self.image = image
+        self.x = x
+        self.y = y
+        
+    def overlaps(self, other):
+        x1 = self.x
+        y1 = self.y
+        width1 = self.image.width
+        height1 = self.image.height
+
+        x2 = other.x
+        y2 = other.y
+        width2 = other.image.width
+        height2 = other.image.height
+        
+        return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))   
+
+    def contains(self, point):       
+        return point.x >= self.x and point.x <= self.x + self.image.width and point.y >= self.y and point.y <= self.y + self.image.height
+        
 class PyAngelo():
     STATE_STOP      =   1
     STATE_RUN       =   2
@@ -72,6 +96,8 @@ class PyAngelo():
         document.bind("mousedown", self._mousedown)
         document.bind("mouseup", self._mouseup)
         document.bind("mousemove", self._mousemove)
+        
+        self.touches = {}
         
         document.bind("touchstart", self._touchstart)
         document.bind("touchend", self._touchend)
@@ -166,63 +192,35 @@ class PyAngelo():
                 self.drawText(returned_string + "_", 0, 0)
 
     def _keyup(self, ev):
-        self.keys[ev.which] = False   
+        self.keys[ev.which] = False  
 
+
+    def _updateTouchedKeys(self):
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False      
+        
+        for touch in self.touches.values():
+            x = touch[0]
+            y = touch[1]
+            
+            if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
+                self.keys[KEY_V_LEFT] = True
+            if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
+                self.keys[KEY_V_RIGHT] = True
+
+            if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
+                self.keys[KEY_V_DOWN] = True
+            if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
+                self.keys[KEY_V_UP] = True
+
+            if x > self.width and y < self.height and y > 0:
+                self.keys[KEY_V_FIRE] = True            
 
     def _touchstart(self, ev):
-    
-        #touch = ev.changedTouches
-        self.keys[KEY_V_LEFT] = False
-        self.keys[KEY_V_RIGHT] = False
-        self.keys[KEY_V_UP] = False
-        self.keys[KEY_V_DOWN] = False
-        self.keys[KEY_V_FIRE] = False        
-        
-        for touch in ev.changedTouches:
-            self.mouse_x = touch.clientX             
-            self.mouse_y = touch.clientY
-            
-            boundingRect = self.canvas.getBoundingClientRect()    
-            
-            x = int(self.mouse_x - boundingRect.left)
-            y = int(self.height - (self.mouse_y - boundingRect.top))
-            
-
-            
-            if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
-                self.keys[KEY_V_LEFT] = True
-            if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
-                self.keys[KEY_V_RIGHT] = True
-
-            if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-                self.keys[KEY_V_DOWN] = True
-            if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-                self.keys[KEY_V_UP] = True
-
-            if x > self.width and y < self.height and y > 0:
-                self.keys[KEY_V_FIRE] = True
-
-        return False
-
-        
-    def _touchend(self, ev):
-        #self.mouse_x = -1        
-        #self.mouse_y = -1
-        
-        self.keys[KEY_V_LEFT] = False
-        self.keys[KEY_V_RIGHT] = False
-        self.keys[KEY_V_UP] = False
-        self.keys[KEY_V_DOWN] = False
-        self.keys[KEY_V_FIRE] = False  
-        
        
-        return False
-        
-    def _touchmove(self, ev):
-        #touch = ev.changedTouches[0]
-        #self.mouse_x = touch.clientX             
-        #self.mouse_y = touch.clientY
-        
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
@@ -232,20 +230,37 @@ class PyAngelo():
             x = int(self.mouse_x - boundingRect.left)
             y = int(self.height - (self.mouse_y - boundingRect.top))
             
-
+            self.touches[ev.identifier] = [x, y]
             
-            if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
-                self.keys[KEY_V_LEFT] = True
-            if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
-                self.keys[KEY_V_RIGHT] = True
+        self._updateTouchedKeys()
+                        
+        return False
 
-            if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-                self.keys[KEY_V_DOWN] = True
-            if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-                self.keys[KEY_V_UP] = True
+        
+    def _touchend(self, ev):   
+        del self.touches[ev.identifier]
+        
+        self.mouse_x = -1
+        self.mouse_y = -1
+        
+        self._updateTouchedKeys()
 
-            if x > self.width and y < self.height and y > 0:
-                self.keys[KEY_V_FIRE] = True  
+        return False
+        
+    def _touchmove(self, ev):              
+        for touch in ev.changedTouches:
+            self.mouse_x = touch.clientX             
+            self.mouse_y = touch.clientY
+            
+            boundingRect = self.canvas.getBoundingClientRect()    
+            
+            x = int(self.mouse_x - boundingRect.left)
+            y = int(self.height - (self.mouse_y - boundingRect.top))
+            
+            self.touches[ev.identifier] = [x, y]
+            
+        self._updateTouchedKeys()            
+                        
         return False
         
     def _mousemove(self, ev):
@@ -368,6 +383,9 @@ class PyAngelo():
 
 
         self.ctx.restore()    
+        
+    def drawSprite(self, sprite):
+        self.drawImage(sprite.image, sprite.x, sprite.y)
 
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
         self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
