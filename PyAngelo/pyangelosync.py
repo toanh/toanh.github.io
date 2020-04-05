@@ -173,7 +173,7 @@ class PyAngelo():
     
         #touch = ev.changedTouches
         
-        for touch in ev.changeTouches:
+        for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
             
