@@ -219,6 +219,8 @@ body.pynode .appOutputs {
     //float: bottom;
     //padding-right: 20px;
     height: 760px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;    
     //margin-left: calc(50% - 250px)    
     
 }
