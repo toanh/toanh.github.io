@@ -624,6 +624,11 @@ def startLoading(filename):
 def doneLoading():
     window.console.log("finish load")
     graphics.state = graphics.STATE_LOADED
+    
+    disable_stop_enable_play() 
+    self.resources =  {}
+    self.loadingResources = 0
+    self.stopAllSounds()       
 
 window.startLoading = startLoading
 window.doneLoading = doneLoading
