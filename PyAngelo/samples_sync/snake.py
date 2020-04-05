@@ -20,8 +20,8 @@ from random import *
 def drawBlock(x, y, r = 1.0, g = 1.0, b = 1.0, a = 1.0):
     graphics.drawRect(x * block_width, \
                      (height - y) * block_height, \
-                     (x+1) * block_width, \
-                     (height - (y+1)) * block_height,
+                     block_width, \
+                     block_height,
                      r, g, b, a)
 
 # setting up the screen
@@ -87,7 +87,7 @@ def Game():
           playing = False    
         
         # show score  
-        graphics.drawRect(200, 370, 500, 400, 0, 0, 0)
+        graphics.drawRect(200, 370, 300, 30, 0, 0, 0)
         graphics.drawText("Score: "  + str(score), 200, 370, fontSize = 15)          
         
         # draw food

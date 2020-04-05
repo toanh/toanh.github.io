@@ -349,6 +349,13 @@ body.pynode #editor {
     height: 90%;
 }
 
+body #canvas {
+    background-color: black;
+    background-image: url("../images/pyangelo.png");
+    background-repeat: no-repeat;
+    background-position: center;    
+}
+
 body.pynode .outputWrapper {
     width: 500px;
     height: 490px;
@@ -365,11 +372,14 @@ body.pynode .outputWrapper {
 }
 
 body.pynode .dpadWrapper {
-    width: 175px;
-    height: 490px;
+    width: 160px;
+    height: 470px;
     //background-color: white;
     //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
-    //border-bottom: 10px solid #525252;
+    border-bottom: 10px solid #525252;
+    border-top: 10px solid #525252;
+    border-left: 10px solid #525252;
+    border-right: 5px solid #676767;
     //box-sizing: border-box;
     position: relative;
     //float: left;
@@ -379,15 +389,19 @@ body.pynode .dpadWrapper {
     //visibility: hidden;
     background-image: url("../images/controls/dpad.png");
     background-repeat: no-repeat;
-    background-position: center;    
+    background-position: center; 
+    background-color: #828282;    
 }
 
 body.pynode .buttonsWrapper {
-    width: 175px;
-    height: 490px;
-    //background-color: white;
+    width: 160px;
+    height: 470px;
+    background-color: #828282;    
     //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
-    //border-bottom: 10px solid #525252;
+    border-bottom: 10px solid #525252;
+    border-top: 10px solid #525252;
+    border-right: 10px solid #525252;
+    border-left: 5px solid #676767;
     //box-sizing: border-box;
     position: relative;
     //float: right;

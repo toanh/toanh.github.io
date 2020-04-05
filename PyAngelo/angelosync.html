@@ -338,10 +338,10 @@
         localStorage.setItem("code", getCode())
     }
 
-    function loadCode() {
+    function loadCode() {       
         src = localStorage.getItem("code");
         if (src === null || src == "") {
-            openCode("clear");
+            openCode("shooter");
         }
         else {
             editor.setValue(src, -1);
@@ -351,13 +351,15 @@
     function openCode(name) {
         var client = new XMLHttpRequest();
         client.open("GET", "samples_sync/" + name + ".py");
+        window.startLoading(name)
         client.onreadystatechange = function () {
             if (client.readyState == 4) {
                 if (editor_exists) {
                     editor.setValue(client.responseText, -1);
                     saveCode();
                 }
-            }
+                window.doneLoading()
+            }      
         };
         client.send();
     }
@@ -460,7 +462,8 @@
     
 	document["output_run"].bind("click", pyangelosync.save_code)
 	document["output_run"].bind("click", pyangelosync.button_play)
-	document["output_run"].style.backgroundColor = "#00FF00";      
+	document["output_run"].style.backgroundColor = "#00FF00";    
+
 </script>
 
 <!-- Relevant links that are not directly referenced. Allows website to be properly read with automatic web crawling. -->

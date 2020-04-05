@@ -115,6 +115,7 @@ class PyAngelo():
     STATE_HALT      =   3
     STATE_LOAD      =   4
     STATE_INPUT     =   5
+    STATE_LOADED    =   6
     
     def __init__(self):
        
@@ -176,6 +177,8 @@ class PyAngelo():
         self.input_concluded = False
         
         self.input_buffer_index = 0
+        
+        self.loading_filename = ""
         
         timer.request_animation_frame(self.update)     
 
@@ -447,6 +450,12 @@ class PyAngelo():
             self.drawCircle(sprite.x, sprite.y, sprite.radius, sprite.r, sprite.g, sprite.b)
         else:
             self.drawImage(sprite.image, sprite.x, sprite.y)
+            
+    def measureText(self, text, fontName = "Arial", fontSize = 10):
+        self.ctx.font = str(fontSize) + "pt " + fontName
+        textMetrics = self.ctx.measureText(text)
+
+        return abs(textMetrics.actualBoundingBoxLeft) + abs(textMetrics.actualBoundingBoxRight)
 
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
         self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
@@ -541,6 +550,8 @@ class PyAngelo():
 
         if self.state == self.STATE_STOP:       
             self.clear(0.392,0.584,0.929)
+            width = self.measureText("Ready", fontSize = 30)
+            self.drawText("Ready", 250 - width/2, 170, fontSize = 30)
         elif self.state == self.STATE_RUN:   
             if self.main_loop is not None:
                 try:
@@ -556,6 +567,21 @@ class PyAngelo():
                 # Pyangelo to keep looping in it's run state ===> FIX!
                 self.state = self.STATE_RUN
                 self.input_concluded = False
+        elif self.state == self.STATE_LOAD:
+            self.clear(0.192,0.384,0.729)
+            text = "Loading: " + self.loading_filename
+            width = self.measureText(text, fontSize = 20)
+            self.drawText(text, 250 - width/2, 170, fontSize = 20)            
+        elif self.state == self.STATE_LOADED:
+            self.clear(0.192,0.384,0.729)
+            
+            text = "Successfully Loaded:"
+            width = self.measureText(text, fontSize = 20)
+            self.drawText(text, 250 - width/2, 200, fontSize = 20)            
+            
+            text = self.loading_filename
+            width = self.measureText(text, fontSize = 20)
+            self.drawText(text, 250 - width/2, 170, fontSize = 20)            
         
         timer.request_animation_frame(self.update)
        
@@ -584,9 +610,23 @@ class PyAngelo():
             currTime = window.performance.now()      
             
     def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
-        return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))            
+        return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))     
+
+
                               
 graphics = PyAngelo()
+
+def startLoading(filename):
+    window.console.log("starting load")
+    graphics.state = graphics.STATE_LOAD
+    graphics.loading_filename = filename
+    
+def doneLoading():
+    window.console.log("finish load")
+    graphics.state = graphics.STATE_LOADED
+
+window.startLoading = startLoading
+window.doneLoading = doneLoading
 
 def format_string_HTML(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>").replace("\"", "&quot;").replace("'", "&apos;").replace(" ", "&nbsp;")
