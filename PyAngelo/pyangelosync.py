@@ -35,25 +35,75 @@ class Point():
         self.x = x
         self.y = y
         
-class Sprite:
-    def __init__(self, image, x, y):
-        if (isinstance(image, str)):
-            image = graphics.loadImage(image)
-        self.image = image
+class Rectangle():
+    def __init__(self, x = 0, y = 0, width = 0, height = 0):
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
+        
+class Circle():
+    def __init__(self, x = 0, y = 0, radius = 0):
+        self.x = x
+        self.y = y
+        self.radius = radius
+       
+        
+class Sprite:
+    def __init__(self, image, x = 0, y = 0, r = 1, g = 1, b = 1):
+        if (isinstance(image, str)):
+            image = graphics.loadImage(image)            
+        self.image = image
+        self.r = r
+        self.g = g
+        self.b = b
+        
+        if isinstance(image, Circle):
+            self.x = self.image.x
+            self.y = self.image.y
+            self.radius = self.image.radius
+        elif isinstance(image, Rectangle):
+            self.x = self.image.x
+            self.y = self.image.y
+            self.width = self.image.width
+            self.height = self.image.height
+        else:
+            self.x = x
+            self.y = y
         
     def overlaps(self, other):
-        x1 = self.x
-        y1 = self.y
-        width1 = self.image.width
-        height1 = self.image.height
-
-        x2 = other.x
-        y2 = other.y
-        width2 = other.image.width
-        height2 = other.image.height
-        
+        if isinstance(self.image, PyAngeloImage):
+            x1 = self.x
+            y1 = self.y
+            width1 = self.image.width
+            height1 = self.image.height
+        elif isinstance(self.image, Rectangle):
+            x1 = self.x
+            y1 = self.y
+            width1 = self.width
+            height1 = self.height
+        elif (isinstance(self.image, Circle)):
+            x1 = self.x - self.radius
+            y1 = self.y - self.radius
+            width1 = self.radius * 2
+            height1 = self.radius * 2
+            
+        if (isinstance(other.image, PyAngeloImage)):
+            x2 = other.x
+            y2 = other.y
+            width2 = other.image.width
+            height2 = other.image.height
+        elif isinstance(other.image, Rectangle):
+            x2 = other.x
+            y2 = other.y
+            width2 = other.width
+            height2 = other.height            
+        elif (isinstance(other.image, Circle)):
+            x2 = other.x - other.radius
+            y2 = other.y - other.radius
+            width2 = other.radius * 2
+            height2 = other.radius * 2
+            
         return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))   
 
     def contains(self, point):       
@@ -391,7 +441,12 @@ class PyAngelo():
         self.ctx.restore()    
         
     def drawSprite(self, sprite):
-        self.drawImage(sprite.image, sprite.x, sprite.y)
+        if isinstance(sprite.image, Rectangle):
+            self.drawRect(sprite.x, sprite.y, sprite.width, sprite.height, sprite.r, sprite.g, sprite.b)
+        elif isinstance(sprite.image, Circle):
+            self.drawCircle(sprite.x, sprite.y, sprite.radius, sprite.r, sprite.g, sprite.b)
+        else:
+            self.drawImage(sprite.image, sprite.x, sprite.y)
 
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
         self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"

@@ -55,13 +55,13 @@ def Game():
     else:
         score += 5
         # check for keys
-        if graphics.isKeyPressed(KEY_D):
+        if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
           direction = [1, 0]
-        elif graphics.isKeyPressed(KEY_A):
+        elif graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
             direction = [-1, 0]
-        elif graphics.isKeyPressed(KEY_W):
+        elif graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP):
           direction = [0, -1]
-        elif graphics.isKeyPressed(KEY_S):
+        elif graphics.isKeyPressed(KEY_S) or graphics.isKeyPressed(KEY_V_DOWN):
           direction = [0, 1]      
         
         # save last pos of snake
