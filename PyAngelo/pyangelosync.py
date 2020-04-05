@@ -674,6 +674,7 @@ def do_play():
         line_num += 1                
         
     src = "\n".join(non_frame_code)
+    src += "\n"
     
     window.console.log("Non frame code:")
     window.console.log(src)

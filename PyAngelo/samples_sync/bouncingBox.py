@@ -1,52 +1,44 @@
 # set up box position and size
-x = 0
-y = 0
-width = 32
-height = 32
+box_sprite = Sprite(Rectangle(0, 0, 32, 32), r = 1, g = 0, b = 0)
 
 # set up box direction (and speed)
 dir_x = 4
 dir_y = 4
 
-# loop forever
-@graphics.loop
-def Game():
-    global x, y, width, height, dir_x, dir_y
+@loop_animation:
+# update the position based on direction (and speed)
+box_sprite.x += dir_x
+box_sprite.y += dir_y
+
+# check if the box passes the left edge
+if box_sprite.x < 0:
+    # snap it back to place
+    box_sprite.x = 0
+    # reverse direction
+    dir_x *= -1
     
-    # update the position based on direction (and speed)
-    x = x + dir_x
-    y = y + dir_y
+# check if the box passes the bottom edge
+if box_sprite.y < 0:
+    # snap it back to place
+    box_sprite.y = 0
+    # reverse direction
+    dir_y *= -1
     
-    # check if the box passes the left edge
-    if x < 0:
-        # snap it back to place
-        x = 0
-        # reverse direction
-        dir_x *= -1
-        
-    # check if the box passes the bottom edge
-    if y < 0:
-        # snap it back to place
-        y = 0
-        # reverse direction
-        dir_y *= -1
-        
-    # check if the box passes the right edge
-    if x > graphics.width - width:
-        # snap it back to place
-        x = graphics.width - width
-        # reverse direction
-        dir_x *= -1
-        
-    # check if the box passes the top edge
-    if y > graphics.height - height:
-        # snap it back to place
-        y = graphics.height - height
-        # reverse direction
-        dir_y *= -1
+# check if the box passes the right edge
+if box_sprite.x > graphics.width - box_sprite.width:
+    # snap it back to place
+    box_sprite.x = graphics.width - box_sprite.width
+    # reverse direction
+    dir_x *= -1
     
-    # clears the screen to black
-    graphics.clear(0.0, 0.0, 0.0, 1.0)
-    # draw the rectangle
-    graphics.drawRect(x, y, x + width, y + height, 1, 0, 0)
-    
+# check if the box passes the top edge
+if box_sprite.y > graphics.height - box_sprite.height:
+    # snap it back to place
+    box_sprite.y = graphics.height - box_sprite.height
+    # reverse direction
+    dir_y *= -1
+
+# clears the screen to black
+graphics.clear(0.0, 0.0, 0.0, 1.0)
+# draw the rectangle
+graphics.drawSprite(box_sprite)
