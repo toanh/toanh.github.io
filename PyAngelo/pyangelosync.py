@@ -220,7 +220,7 @@ class PyAngelo():
                 self.keys[KEY_V_FIRE] = True            
 
     def _touchstart(self, ev):
-       
+        ev.preventDefault()
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
@@ -238,6 +238,7 @@ class PyAngelo():
 
         
     def _touchend(self, ev):   
+        ev.preventDefault()
         del self.touches[ev.identifier]
         
         self.mouse_x = -1
@@ -247,7 +248,8 @@ class PyAngelo():
 
         return False
         
-    def _touchmove(self, ev):              
+    def _touchmove(self, ev):   
+        ev.preventDefault()
         for touch in ev.changedTouches:
             self.mouse_x = touch.clientX             
             self.mouse_y = touch.clientY
@@ -352,7 +354,7 @@ class PyAngelo():
 
     def drawImage(self, image, x, y, width = None, height = None, rotation=0, anchorX = None, anchorY = None, opacity=None, r=1.0, g=1.0, b=1.0, rect=None):        
         
-        window.console.log("attempting to draw image")
+        #window.console.log("attempting to draw image")
         if (isinstance(image, str)):
             image = self.loadImage(image)
                    
@@ -486,7 +488,7 @@ class PyAngelo():
                     self.main_loop()
                 except Exception as e:
                     do_print("Error: " + str(e) + "\n" + traceback.format_exc(), "red")       
-                    #self.stop()
+                    self.stop()
             	   
         elif self.state == self.STATE_INPUT:
             # display the commands in the queue to date
@@ -578,8 +580,8 @@ def do_play():
     
     graphics.main_loop = None
 
-    start_tag = "@animate_loop_start"
-    end_tag = "@animate_loop_end"
+    start_tag = "@loop_animation"
+    end_tag = "@loop_animation"
     
     src = window.getCode()
         
@@ -603,14 +605,14 @@ def do_play():
         line = lines[line_num]
         line_num += 1
         if line.lower()[:len(end_tag)] != end_tag:
-            frame_code.append(" " + line)
+            frame_code.append(" " + line +"\n")
         else:
             break
                 
     while line_num < len(lines):
         line = lines[line_num]
-        non_frame_code.append(line)
-        line_num += 1        
+        non_frame_code.append(line + "\n")
+        line_num += 1                
         
     src = "\n".join(non_frame_code)
     
@@ -633,7 +635,8 @@ def do_play():
         for g in post_globals:
             if g not in pre_globals:
                 global_code += g + ","
-        frame_code.insert(0, " global " + global_code[:-1])
+        if len(global_code) > 0:
+            frame_code.insert(0, " global " + global_code[:-1] + "\n")
         
         frame_code.insert(0, "def frame_code():")
         
