@@ -171,33 +171,35 @@ class PyAngelo():
 
     def _touchstart(self, ev):
     
-        touch = ev.changedTouches[0]
-        self.mouse_x = touch.clientX             
-        self.mouse_y = touch.clientY
+        #touch = ev.changedTouches
         
-        boundingRect = self.canvas.getBoundingClientRect()    
-        
-        x = int(self.mouse_x - boundingRect.left)
-        y = int(self.height - (self.mouse_y - boundingRect.top))
-        
-        self.keys[KEY_V_LEFT] = False
-        self.keys[KEY_V_RIGHT] = False
-        self.keys[KEY_V_UP] = False
-        self.keys[KEY_V_DOWN] = False
-        self.keys[KEY_V_FIRE] = False
-        
-        if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
-            self.keys[KEY_V_LEFT] = True
-        if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
-            self.keys[KEY_V_RIGHT] = True
+        for touch in ev.changeTouches:
+            self.mouse_x = touch.clientX             
+            self.mouse_y = touch.clientY
+            
+            boundingRect = self.canvas.getBoundingClientRect()    
+            
+            x = int(self.mouse_x - boundingRect.left)
+            y = int(self.height - (self.mouse_y - boundingRect.top))
+            
+            self.keys[KEY_V_LEFT] = False
+            self.keys[KEY_V_RIGHT] = False
+            self.keys[KEY_V_UP] = False
+            self.keys[KEY_V_DOWN] = False
+            self.keys[KEY_V_FIRE] = False
+            
+            if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
+                self.keys[KEY_V_LEFT] = True
+            if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
+                self.keys[KEY_V_RIGHT] = True
 
-        if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-            self.keys[KEY_V_DOWN] = True
-        if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
-            self.keys[KEY_V_UP] = True
+            if y < self.height * 0.4 and y > 0 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
+                self.keys[KEY_V_DOWN] = True
+            if y < self.height and y > self.height * 0.6 and x < -self.width * 0.33 * 0.33 and x > -self.width * 0.33 * 0.67:
+                self.keys[KEY_V_UP] = True
 
-        if x > self.width and y < self.height and y > 0:
-            self.keys[KEY_V_FIRE] = True
+            if x > self.width and y < self.height and y > 0:
+                self.keys[KEY_V_FIRE] = True
 
         return False
 
