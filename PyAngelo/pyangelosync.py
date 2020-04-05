@@ -230,18 +230,21 @@ class PyAngelo():
             x = int(self.mouse_x - boundingRect.left)
             y = int(self.height - (self.mouse_y - boundingRect.top))
             
-            self.touches[ev.identifier] = [x, y]
+            self.touches[touch.identifier] = [x, y]
             
         self._updateTouchedKeys()
                         
         return False
 
         
-    def _touchend(self, ev):   
-        del self.touches[ev.identifier]
-        
+    def _touchend(self, ev): 
+
         self.mouse_x = -1
         self.mouse_y = -1
+        
+        for touch in ev.changedTouches:
+            del self.touches[touch.identifier]
+        
         
         self._updateTouchedKeys()
 
@@ -257,7 +260,7 @@ class PyAngelo():
             x = int(self.mouse_x - boundingRect.left)
             y = int(self.height - (self.mouse_y - boundingRect.top))
             
-            self.touches[ev.identifier] = [x, y]
+            self.touches[touch.identifier] = [x, y]
             
         self._updateTouchedKeys()            
                         
