@@ -54,6 +54,15 @@ class Colour():
         self.g = g
         self.b = b
         self.a = a
+        
+class Text():
+    def __init__(self, text, fontSize = 20, fontName = "Arial"):
+        self.text = text
+        self.fontSize = fontSize
+        self.fontName = fontName
+        self.width = graphics.measureText(text, fontName, fontSize)[0]
+        self.height = graphics.measureText(text, fontName, fontSize)[1]
+        
        
         
 class Sprite:
@@ -74,6 +83,11 @@ class Sprite:
             self.y = self.image.y
             self.width = self.image.width
             self.height = self.image.height
+        elif isinstance(image, Text):
+            self.x = x
+            self.y = y
+            self.width = self.image.width
+            self.height = self.image.height            
         else:
             self.x = x
             self.y = y
@@ -84,7 +98,7 @@ class Sprite:
             y1 = self.y
             width1 = self.image.width
             height1 = self.image.height
-        elif isinstance(self.image, Rectangle):
+        elif isinstance(self.image, Rectangle) or isinstance(self.image, Text):
             x1 = self.x
             y1 = self.y
             width1 = self.width
@@ -100,7 +114,7 @@ class Sprite:
             y2 = other.y
             width2 = other.image.width
             height2 = other.image.height
-        elif isinstance(other.image, Rectangle):
+        elif isinstance(other.image, Rectangle) or isinstance(self.image, Text):
             x2 = other.x
             y2 = other.y
             width2 = other.width
@@ -115,6 +129,11 @@ class Sprite:
 
     def contains(self, point):       
         return point.x >= self.x and point.x <= self.x + self.image.width and point.y >= self.y and point.y <= self.y + self.image.height
+        
+class TextSprite(Sprite):
+    def __init__(self, text, fontSize = 20, fontName = "Arial", x = 0, y = 0, r = 1, g = 1, b = 1):
+        textObject = Text(text, fontSize, fontName)
+        Sprite.__init__(self, textObject, x, y, r, g, b)
         
 class PyAngelo():
     STATE_STOP      =   1
@@ -457,6 +476,8 @@ class PyAngelo():
             self.drawRect(sprite.x, sprite.y, sprite.width, sprite.height, sprite.r, sprite.g, sprite.b)
         elif isinstance(sprite.image, Circle):
             self.drawCircle(sprite.x, sprite.y, sprite.radius, sprite.r, sprite.g, sprite.b)
+        elif isinstance(sprite.image, Text):
+            self.drawText(sprite.image.text, sprite.x, sprite.y, sprite.image.fontName, sprite.image.fontSize, sprite.r, sprite.g, sprite.b)            
         else:
             self.drawImage(sprite.image, sprite.x, sprite.y)
             
@@ -464,7 +485,7 @@ class PyAngelo():
         self.ctx.font = str(fontSize) + "pt " + fontName
         textMetrics = self.ctx.measureText(text)
 
-        return abs(textMetrics.actualBoundingBoxLeft) + abs(textMetrics.actualBoundingBoxRight)
+        return (abs(textMetrics.actualBoundingBoxLeft) + abs(textMetrics.actualBoundingBoxRight), abs(textMetrics.actualBoundingBoxAscent) + abs(textMetrics.actualBoundingBoxDescent))
 
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
         self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
@@ -559,7 +580,7 @@ class PyAngelo():
 
         if self.state == self.STATE_STOP:       
             self.clear(0.392,0.584,0.929)
-            width = self.measureText("Ready", fontSize = 30)
+            width = self.measureText("Ready", fontSize = 30)[0]
             self.drawText("Ready", 250 - width/2, 170, fontSize = 30)
         elif self.state == self.STATE_RUN:   
             if self.main_loop is not None:
@@ -579,17 +600,17 @@ class PyAngelo():
         elif self.state == self.STATE_LOAD:
             self.clear(0.192,0.384,0.729)
             text = "Loading: " + self.loading_filename
-            width = self.measureText(text, fontSize = 20)
+            width = self.measureText(text, fontSize = 20)[0]
             self.drawText(text, 250 - width/2, 170, fontSize = 20)            
         elif self.state == self.STATE_LOADED:
             self.clear(0.192,0.384,0.729)
             
             text = "Successfully Loaded:"
-            width = self.measureText(text, fontSize = 20)
+            width = self.measureText(text, fontSize = 20)[0]
             self.drawText(text, 250 - width/2, 200, fontSize = 20)            
             
             text = self.loading_filename
-            width = self.measureText(text, fontSize = 20)
+            width = self.measureText(text, fontSize = 20)[0]
             self.drawText(text, 250 - width/2, 170, fontSize = 20)            
         
         timer.request_animation_frame(self.update)
