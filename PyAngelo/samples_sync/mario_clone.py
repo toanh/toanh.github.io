@@ -57,11 +57,17 @@ en03.y_dir = -1
 en03.x_dir = 1
 enemies.append(en03)
 
+# only show loading resources screen during the initial batch of loads
+isFirstTime = True
+
 @loop_animation
+
 graphics.clear(0, 0.5, 1.0)
-while graphics.loadingResources > 0:
+
+while graphics.loadingResources > 0 and isFirstTime:
     graphics.drawText("Loading resources..", 0, 0)
     return
+isFirstTime = False
 
 # checking game state
 if player.lives > 0:
