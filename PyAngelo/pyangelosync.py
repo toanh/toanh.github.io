@@ -25,10 +25,11 @@ from browser import bind, self, window
 from pyangelo_consts import *
 
 class PyAngeloImage():
-    def __init__(self, image):
+    def __init__(self, image, sprite):
         self.img = image
         self.height = image.naturalHeight
         self.width = image.naturalWidth
+        self.sprite = sprite
         
 class Point():
     def __init__(self, x = 0, y = 0):
@@ -68,11 +69,13 @@ class Text():
 class Sprite:
     def __init__(self, image, x = 0, y = 0, r = 1, g = 1, b = 1):
         if (isinstance(image, str)):
-            image = graphics.loadImage(image)            
+            image = graphics.loadImage(image, self)   
         self.image = image
         self.r = r
         self.g = g
         self.b = b
+        self.width = 0
+        self.height = 0
         
         if isinstance(image, Circle):
             self.x = self.image.x
@@ -93,6 +96,7 @@ class Sprite:
             self.y = y
         
     def overlaps(self, other):
+        # TODO: BUG! If the 'other' is an image that has a shared URL with a previously loaded image, collision doesn't work!!
         if isinstance(self.image, PyAngeloImage):
             x1 = self.x
             y1 = self.y
@@ -108,6 +112,11 @@ class Sprite:
             y1 = self.y - self.radius
             width1 = self.radius * 2
             height1 = self.radius * 2
+        else:
+            x1 = self.x
+            y1 = self.y
+            width1 = self.width
+            height1 = self.height        
             
         if (isinstance(other.image, PyAngeloImage)):
             x2 = other.x
@@ -124,6 +133,11 @@ class Sprite:
             y2 = other.y - other.radius
             width2 = other.radius * 2
             height2 = other.radius * 2
+        else:
+            x2 = other.x
+            y2 = other.y
+            width2 = other.width
+            height2 = other.height            
             
         return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))   
 
@@ -407,14 +421,23 @@ class PyAngelo():
         do_print("Aborted loading of resource: " + e.target.src + "\n", "red")  
     
     def resourceLoaded(self, e):
-        self.loadingResources -= 1
+        
         
         window.console.log("Successfully loaded file:" + e.target.src);
             
         e.target.jmssImg.height = e.target.naturalHeight
-        e.target.jmssImg.width = e.target.naturalWidth        
+        e.target.jmssImg.width = e.target.naturalWidth     
+
+        if e.target.jmssImg.sprite is not None:
+            
+            e.target.jmssImg.sprite.height = e.target.naturalHeight
+            e.target.jmssImg.sprite.width = e.target.naturalWidth
+            window.console.log("Setting sprite width and height:", e.target.jmssImg.sprite.height, e.target.jmssImg.sprite.width);
+            
+        self.loadingResources -= 1
+            
        
-    def loadImage(self, file):
+    def loadImage(self, file, sprite = None):
     
         if file in self.resources:
             return self.resources[file]       
@@ -430,11 +453,11 @@ class PyAngelo():
         img.bind('error', self.resourceError)
         img.bind('abort', self.resourceAbort)
         
-        jmssImg = PyAngeloImage(img)
+        jmssImg = PyAngeloImage(img, sprite)
         img.jmssImg = jmssImg
         
         self.resources[file] = jmssImg
-        
+
         return jmssImg
 
     def drawImage(self, image, x, y, width = None, height = None, rotation=0, anchorX = None, anchorY = None, opacity=None, r=1.0, g=1.0, b=1.0, rect=None):        
@@ -471,15 +494,15 @@ class PyAngelo():
 
         self.ctx.restore()    
         
-    def drawSprite(self, sprite):
+    def drawSprite(self, sprite, offsetX = 0, offsetY = 0):
         if isinstance(sprite.image, Rectangle):
-            self.drawRect(sprite.x, sprite.y, sprite.width, sprite.height, sprite.r, sprite.g, sprite.b)
+            self.drawRect(sprite.x - offsetX, sprite.y - offsetY, sprite.width, sprite.height, sprite.r, sprite.g, sprite.b)
         elif isinstance(sprite.image, Circle):
-            self.drawCircle(sprite.x, sprite.y, sprite.radius, sprite.r, sprite.g, sprite.b)
+            self.drawCircle(sprite.x - offsetX, sprite.y - offsetY, sprite.radius, sprite.r, sprite.g, sprite.b)
         elif isinstance(sprite.image, Text):
-            self.drawText(sprite.image.text, sprite.x, sprite.y, sprite.image.fontName, sprite.image.fontSize, sprite.r, sprite.g, sprite.b)            
+            self.drawText(sprite.image.text, sprite.x - offsetX, sprite.y - offsetY, sprite.image.fontName, sprite.image.fontSize, sprite.r, sprite.g, sprite.b)            
         else:
-            self.drawImage(sprite.image, sprite.x, sprite.y)
+            self.drawImage(sprite.image, sprite.x - offsetX, sprite.y - offsetY)
             
     def measureText(self, text, fontName = "Arial", fontSize = 10):
         self.ctx.font = str(fontSize) + "pt " + fontName
