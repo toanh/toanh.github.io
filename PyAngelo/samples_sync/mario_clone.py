@@ -1,3 +1,6 @@
+# start with the music!
+graphics.playSound("sounds/outrun.mp3")
+
 # setting up the player
 
 player = Sprite("https://i.imgur.com/mH85TXk.png", x = 0, y = 20)
@@ -21,19 +24,22 @@ floors.append(plat02)
 # list of walls (vertical)
 walls = []
 walls.append(Sprite("https://i.imgur.com/VqmtsEo.png", x = 450, y = 20, r = 0, g = 0, b = 1))
-walls.append(Sprite(Rectangle(600, 20, 150, 20), x = 450, y = 20, r = 0.2, g = 0.2, b = 1))
-walls.append(Sprite(Rectangle(620, 40, 130, 20), x = 450, y = 20, r = 0.3, g = 0.3, b = 1))
-walls.append(Sprite(Rectangle(640, 60, 110, 20), x = 450, y = 20, r = 0.4, g = 0.4, b = 1))
-walls.append(Sprite(Rectangle(660, 80, 90, 20), x = 450, y = 20, r = 0.5, g = 0.5, b = 1))
-walls.append(Sprite(Rectangle(680, 100, 70, 20), x = 450, y = 20, r = 0.6, g = 0.6, b = 1))
-walls.append(Sprite(Rectangle(700, 120, 50, 20), x = 450, y = 20, r = 0.7, g = 0.7, b = 1))
+walls.append(Sprite(Rectangle(600, 20, 150, 20), r = 0.2, g = 0.2, b = 1))
+walls.append(Sprite(Rectangle(620, 40, 130, 20), r = 0.3, g = 0.3, b = 1))
+walls.append(Sprite(Rectangle(640, 60, 110, 20), r = 0.4, g = 0.4, b = 1))
+walls.append(Sprite(Rectangle(660, 80, 90, 20), r = 0.5, g = 0.5, b = 1))
+walls.append(Sprite(Rectangle(680, 100, 70, 20), r = 0.6, g = 0.6, b = 1))
+walls.append(Sprite(Rectangle(700, 120, 50, 20), r = 0.7, g = 0.7, b = 1))
+# walls at the end to prevent falling off level
+walls.append(Sprite(Rectangle(-1, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
+walls.append(Sprite(Rectangle(751, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
 
 # list of collectibles
 collects = []
-collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 100, 100))
-collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 200, 240))
-collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 350, 140))
-collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 720, 160))
+collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 100, 120))
+collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 200, 260))
+collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 350, 160))
+collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 720, 180))
 
 
 # list of enemies
@@ -60,7 +66,7 @@ while graphics.loadingResources > 0:
 # checking game state
 if player.lives > 0:
     # player is still alive.. keep playing
-    
+
     # checking controls
     if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
         player.x += 2
@@ -133,6 +139,8 @@ if player.lives > 0:
                 # kill it!
                 del enemies[n]
                 player.score += 10
+                # bounce the player up a little
+                player.y_dir = 10
             else:
                 # player loses life if s/he contacts the enemy but didn't land on it
                 player.lives -= 1
@@ -148,9 +156,15 @@ if player.lives > 0:
             player.score += 10
         n += 1
         
+    # fell off the level
+    if player.y < 0:
+        player.lives -= 1
+        
     offsetX = 0
     if player.x > graphics.width / 2:
         offsetX = player.x -graphics.width / 2
+    if player.x > 750 - graphics.width/2:
+        offsetX = 750 - graphics.width
     # draw all the level elements in turn
     for floor in floors:
         graphics.drawSprite(floor, offsetX)
@@ -166,6 +180,9 @@ if player.lives > 0:
         
     # player is drawn last so that s/he appears on top of everything
     graphics.drawSprite(player, offsetX)
+    
+    graphics.drawText(f"Score: {player.score}",0,380)
+    graphics.drawText(f"Lives: {player.lives}",440,380)
 else:
     # player is dead, draw end text
     graphics.drawText("GAME OVER!", 200, 200, r  = 1)
