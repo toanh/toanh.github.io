@@ -12,7 +12,7 @@ player.score = 0
 player.lives = 1
 player.can_jump = False
 
-# list of floors (horizontal)
+# list of floors (solid from the top only - can jump on them from underneath)
 floors = []
 ground = Sprite(Rectangle(0, 0, 750, 20), r=0.5, g=1, b=0.5)
 plat01 = Sprite(Rectangle(300, 100, 100, 20), r=0.5, g=1, b=0.5)
@@ -21,16 +21,21 @@ floors.append(ground)
 floors.append(plat01)
 floors.append(plat02)
 
-# list of walls (vertical)
+# list of blocks (fully solid)
 walls = []
 walls.append(Sprite("https://i.imgur.com/VqmtsEo.png", x = 450, y = 20, r = 0, g = 0, b = 1))
+walls.append(Sprite(Rectangle(100, 20, 20, 20), r = 0.2, g = 0.2, b = 1))
+walls.append(Sprite(Rectangle(100, 100, 20, 20), r = 0.2, g = 0.2, b = 1))
+#walls.append(Sprite(Rectangle(100, 100, 20, 20), r = 0.2, g = 0.2, b = 1))
+
 walls.append(Sprite(Rectangle(600, 20, 150, 20), r = 0.2, g = 0.2, b = 1))
 walls.append(Sprite(Rectangle(620, 40, 130, 20), r = 0.3, g = 0.3, b = 1))
 walls.append(Sprite(Rectangle(640, 60, 110, 20), r = 0.4, g = 0.4, b = 1))
 walls.append(Sprite(Rectangle(660, 80, 90, 20), r = 0.5, g = 0.5, b = 1))
 walls.append(Sprite(Rectangle(680, 100, 70, 20), r = 0.6, g = 0.6, b = 1))
 walls.append(Sprite(Rectangle(700, 120, 50, 20), r = 0.7, g = 0.7, b = 1))
-# walls at the end to prevent falling off level
+
+# walls at the left/right edges to prevent falling off level
 walls.append(Sprite(Rectangle(-1, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
 walls.append(Sprite(Rectangle(751, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
 
@@ -68,10 +73,14 @@ while graphics.loadingResources > 0 and isFirstTime:
     graphics.drawText("Loading resources..", 0, 0)
     return
 isFirstTime = False
+intersected = False
 
 # checking game state
 if player.lives > 0:
     # player is still alive.. keep playing
+    
+    old_x = player.x
+    old_y = player.y
 
     # checking controls
     if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
@@ -85,23 +94,45 @@ if player.lives > 0:
     if (graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP)) and player.can_jump:
         player.y_dir += 15
     
+    #if apply_gravity:
+        # apply gravity (accerelating downward speed) to the player
+    player.y_dir -= 1
+    player.y += player.y_dir
+    
     player.can_jump = False
+    
     # checking interaction with walls
     for wall in walls:
+
         if player.overlaps(wall):
             # player lands on top of the wall?
             if player.y_dir < 0:
-                if player.y > wall.y + wall.height - player.y/2:
+                if old_y > wall.y + wall.height - 1:
+                    # don't apply gravity if we've already corrected the vertical
+                    # position
+                    #apply_gravity = False
                     player.y = wall.y + wall.height
                     player.y_dir = 0
                     player.can_jump = True
+                    
+            # player bumps the bottom of the wall with head
+            elif player.y_dir > 0:
+                if old_y + player.height < wall.y + 1:
+                    # don't apply gravity if we've already corrected the vertical
+                    # position
+                    #apply_gravity = False
+                    player.y = wall.y - player.height
+                    player.y_dir = 0
+                    
             # player is overlapping the left of the wall and moving right
-            elif player.x_dir < 0 and player.y < wall.y + wall.height - player.y/2:
+            if player.x_dir < 0 and old_x > wall.x + wall.width - 1:
                 player.x = wall.x + wall.width
+                player.x_dir = 0
             # player is overlapping the right of the wall and moving left
-            elif player.x_dir > 0 and player.y < wall.y + wall.height - player.y/2:
+            elif player.x_dir > 0 and old_x + player.width < wall.x + 1:
                 player.x = wall.x - player.width
-            player.x_dir = 0
+                player.x_dir = 0
+            
         # checking enemies and walls
         for enemy in enemies:
             if enemy.overlaps(wall):
@@ -111,10 +142,6 @@ if player.lives > 0:
                 else:
                     enemy.x = wall.x - enemy.width
                 enemy.x_dir = -enemy.x_dir
-                
-    # apply gravity (accerelating downward speed) to the player
-    player.y_dir -= 1
-    player.y += player.y_dir
     
     # apply gravity and moving enemies    
     for enemy in enemies:
