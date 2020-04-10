@@ -77,6 +77,9 @@ class Sprite:
         self.width = 0
         self.height = 0
         
+        # user defined!
+        self.type = 0
+        
         if isinstance(image, Circle):
             self.x = self.image.x
             self.y = self.image.y
@@ -94,6 +97,18 @@ class Sprite:
         else:
             self.x = x
             self.y = y
+            
+    def getHeight(self):
+        if isinstance(self.image, PyAngeloImage):
+            return self.image.height
+        else:
+            return self.height
+
+    def getWidth(self):
+        if isinstance(self.image, PyAngeloImage):
+            return self.image.width
+        else:
+            return self.width
         
     def overlaps(self, other):
         # TODO: BUG! If the 'other' is an image that has a shared URL with a previously loaded image, collision doesn't work!!
@@ -247,7 +262,7 @@ class PyAngelo():
             
     def stopAllSounds(self):
         for sound in self.soundPlayers:
-            self.pauseSound(sound)
+            self.stopSound(sound)
 
     def pauseSound(self, sound):
         if sound in self.soundPlayers:
@@ -255,7 +270,8 @@ class PyAngelo():
 
     # alias for pauseSound
     def stopSound(self, sound):
-        self.pauseSound(sound)
+        if sound in self.soundPlayers:
+            self.soundPlayers[sound].stop()   
         
     def _keydown(self, ev):
        

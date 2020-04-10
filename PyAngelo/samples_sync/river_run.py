@@ -1,19 +1,45 @@
 graphics.playSound("sounds/mario.mp3")
+coinSound = graphics.loadSound("sounds/coin.mp3")
+speedSound = graphics.loadSound("sounds/speed.mp3")
 
 # facing right image for player
 player = Sprite("https://i.imgur.com/mH85TXk.png", 220, 376)
-
 player.speed = 1
 player.lives = 1
 player.score = 0
 
-# initial location of image to be draw (at the very top of the image - ready to scroll down)
-scroll_y = 500 * 16 - 400
+# level height
+level_height = 500 * 16
+# level image height
+level_image_height = 1024
+level_image_width = 64
 
+# initial location of level image to be drawn
+# (at the very top of the image - ready to scroll down)
+scroll_y = level_height - graphics.height
+# how fast the level scrolls
 scroll_speed = 2
 
+pickups = []
+pickups.append(TextSprite("💰", x=24, y = 75))
+pickups.append(TextSprite("💰", x=24, y = 75))
+pickups.append(TextSprite("💰", x=8, y = 305))
+pickups.append(TextSprite("💰", x=38, y = 317))
+pickups.append(TextSprite("💰", x=40, y = 545))
+pickups.append(TextSprite("💰", x=30, y = 774))
+pickups.append(TextSprite("💰", x=10, y = 922))
+pickups.append(TextSprite("💨", x = 24, y = 183))
+
+# adjust all the pickup positions
+for pickup in pickups:
+    pickup.x = (pickup.x/ level_image_width) * graphics.width
+    pickup.y =  graphics.height -(pickup.y / level_image_height) * level_height
+    
 @loop_animation
 scroll_y -= scroll_speed
+
+for pickup in pickups:
+    pickup.y += scroll_speed
 
 if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
     player.x = player.x - player.speed
@@ -54,23 +80,28 @@ else:
     player.score += 0.1
     # draws the level image stretched out (image is only 64 x 1024) but wil be stretched
     # to 500 x 40,000 - conserves memery at the expense of pixel blurriness/aliasing
-    graphics.drawImage("samples_sync/level01.png", 0, y = -scroll_y, width = 500, height = 500 * 16)
+    graphics.drawImage("samples_sync/river_level.png", 0, y = -scroll_y, width = 500, height = 500 * 16)
     
     # get pixel colour at the centre of the player sprite
     colour = graphics.getPixelColour(player.x + player.width/2, player.y + player.height/2)
     if colour.r == 136/255.0 and colour.b == 21/255.0 and colour.g == 0:
         player.lives -= 1
-    ###### bonuses! - doesn't disappear, just a check of background colour
-    # can add sound effect to improve feedback, however, must be triggered upon collection
-    # entry otherwise sound effects will keep echo'ing
-    elif colour.r == 181/255.0 and colour.b == 29/255.0 and colour.g == 230/255.0:
-        # speed boost
-        player.speed = 1.5        
-        graphics.drawText(f"Speed boost!", 167, 167, fontSize = 20, r = 1, g = 1, b = 1)
-    elif colour.r == 255/255.0 and colour.b == 0/255.0 and colour.g == 242/255.0:
-        # points bonus
-        player.score += 10
-        graphics.drawText(f"Points bonus!", 167, 167, fontSize = 20, r = 1, g = 1, b = 1)
+        
+    i = 0
+    while i < len(pickups):
+        pickup = pickups[i]    
+        if player.overlaps(pickup):
+            if pickup.image.text == "💰":
+                player.score += 10
+                graphics.playSound(coinSound)
+            if pickup.image.text == "💨":
+                player.speed = 1.5 
+                graphics.playSound(speedSound)
+            del pickups[i]
+        i += 1
 
+    for pickup in pickups:
+        graphics.drawSprite(pickup)
+        
     graphics.drawSprite(player)
     graphics.drawText(f"Score: {int(player.score)}", 0, 380)

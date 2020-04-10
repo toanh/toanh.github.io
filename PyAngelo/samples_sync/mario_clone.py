@@ -1,5 +1,8 @@
 # start with the music!
-graphics.playSound("sounds/outrun.mp3")
+music = graphics.loadSound("sounds/outrun.mp3")
+graphics.playSound(music)
+
+level_width = 950
 
 # setting up the player
 
@@ -14,37 +17,40 @@ player.can_jump = False
 
 # list of floors (solid from the top only - can jump on them from underneath)
 floors = []
-ground = Sprite(Rectangle(0, 0, 750, 20), r=0.5, g=1, b=0.5)
-plat01 = Sprite(Rectangle(300, 100, 100, 20), r=0.5, g=1, b=0.5)
-plat02 = Sprite(Rectangle(200, 200, 100, 20), r=0.5, g=1, b=0.5)
-floors.append(ground)
-floors.append(plat01)
-floors.append(plat02)
+floors.append(Sprite(Rectangle(0, 0, 730, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(800, 0, 300, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(300, 100, 100, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(200, 200, 100, 20), r=0.5, g=1, b=0.5))
 
 # list of blocks (fully solid)
 walls = []
 walls.append(Sprite("https://i.imgur.com/VqmtsEo.png", x = 450, y = 20, r = 0, g = 0, b = 1))
-walls.append(Sprite(Rectangle(100, 20, 20, 20), r = 0.2, g = 0.2, b = 1))
-walls.append(Sprite(Rectangle(100, 100, 20, 20), r = 0.2, g = 0.2, b = 1))
-#walls.append(Sprite(Rectangle(100, 100, 20, 20), r = 0.2, g = 0.2, b = 1))
+walls.append(Sprite("https://i.imgur.com/VqmtsEo.png", x = 100, y = 20, r = 0, g = 0, b = 1))
 
-walls.append(Sprite(Rectangle(600, 20, 150, 20), r = 0.2, g = 0.2, b = 1))
-walls.append(Sprite(Rectangle(620, 40, 130, 20), r = 0.3, g = 0.3, b = 1))
-walls.append(Sprite(Rectangle(640, 60, 110, 20), r = 0.4, g = 0.4, b = 1))
-walls.append(Sprite(Rectangle(660, 80, 90, 20), r = 0.5, g = 0.5, b = 1))
-walls.append(Sprite(Rectangle(680, 100, 70, 20), r = 0.6, g = 0.6, b = 1))
-walls.append(Sprite(Rectangle(700, 120, 50, 20), r = 0.7, g = 0.7, b = 1))
+walls.append(Sprite(Rectangle(100, 120, 20, 20), r = 0.2, g = 0.2, b = 1))
+walls.append(Sprite(Rectangle(800, 20, 150, 20), r = 0.2, g = 0.2, b = 1))
+walls.append(Sprite(Rectangle(820, 40, 130, 20), r = 0.3, g = 0.3, b = 1))
+walls.append(Sprite(Rectangle(840, 60, 110, 20), r = 0.4, g = 0.4, b = 1))
+walls.append(Sprite(Rectangle(860, 80, 90, 20), r = 0.5, g = 0.5, b = 1))
+walls.append(Sprite(Rectangle(880, 100, 70, 20), r = 0.6, g = 0.6, b = 1))
+walls.append(Sprite(Rectangle(900, 120, 50, 20), r = 0.7, g = 0.7, b = 1))
+hidden_wall = Sprite(Rectangle(690, 80, 20, 20), r = 1, g = 1, b = 0)
+hidden_wall.type = 1
+walls.append(hidden_wall)
 
 # walls at the left/right edges to prevent falling off level
 walls.append(Sprite(Rectangle(-1, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
-walls.append(Sprite(Rectangle(751, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
+walls.append(Sprite(Rectangle(951, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
 
 # list of collectibles
 collects = []
-collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 100, 120))
+collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 100, 200))
 collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 200, 260))
 collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 350, 160))
 collects.append(Sprite("https://i.imgur.com/jgIxuG7.png", 720, 180))
+final = TextSprite("🍉",x = 920, y = 240)
+final.type = 3
+collects.append(final)
 
 
 # list of enemies
@@ -59,11 +65,12 @@ en02.x_dir = 1
 enemies.append(en02)
 en03 = TextSprite("😾", x=580, y=20)
 en03.y_dir = -1
-en03.x_dir = 1
+en03.x_dir = -0.25
 enemies.append(en03)
 
 # only show loading resources screen during the initial batch of loads
 isFirstTime = True
+won = False
 
 @loop_animation
 
@@ -73,10 +80,14 @@ while graphics.loadingResources > 0 and isFirstTime:
     graphics.drawText("Loading resources..", 0, 0)
     return
 isFirstTime = False
-intersected = False
 
+if won:
+    # player has won!
+    graphics.clear()
+    graphics.drawText("YOU WON!", 220, 200)
+    graphics.drawText(f"Score: {player.score}",225,160)
 # checking game state
-if player.lives > 0:
+elif player.lives > 0:
     # player is still alive.. keep playing
     
     old_x = player.x
@@ -91,7 +102,7 @@ if player.lives > 0:
         player.x -= 2
         player.x_dir = -1
         player.image = "https://i.imgur.com/mtUAWTK.png"
-    if (graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP)) and player.can_jump:
+    if (graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP) or graphics.isKeyPressed(KEY_V_FIRE)) and player.can_jump:
         player.y_dir += 15
     
     #if apply_gravity:
@@ -105,42 +116,57 @@ if player.lives > 0:
     for wall in walls:
 
         if player.overlaps(wall):
-            # player lands on top of the wall?
-            if player.y_dir < 0:
-                if old_y > wall.y + wall.height - 1:
-                    # don't apply gravity if we've already corrected the vertical
-                    # position
-                    #apply_gravity = False
-                    player.y = wall.y + wall.height
-                    player.y_dir = 0
-                    player.can_jump = True
-                    
             # player bumps the bottom of the wall with head
-            elif player.y_dir > 0:
-                if old_y + player.height < wall.y + 1:
+            if player.y_dir > 0:
+                if old_y + player.getHeight() < wall.y + 1:
                     # don't apply gravity if we've already corrected the vertical
                     # position
                     #apply_gravity = False
-                    player.y = wall.y - player.height
+                    player.y = wall.y - player.getHeight()
                     player.y_dir = 0
                     
-            # player is overlapping the left of the wall and moving right
-            if player.x_dir < 0 and old_x > wall.x + wall.width - 1:
-                player.x = wall.x + wall.width
-                player.x_dir = 0
-            # player is overlapping the right of the wall and moving left
-            elif player.x_dir > 0 and old_x + player.width < wall.x + 1:
-                player.x = wall.x - player.width
-                player.x_dir = 0
+                    # hidden block
+                    if wall.type == 2:
+                        wall.b += 0.2
+                        wall.r -= 0.2
+                        if wall.b >= 1:
+                            wall.b = 1
+                            wall.r = 0
+                            
+                            wall.type = 0
+                            collects.append(TextSprite("🍓", x = wall.x - 6,  y= wall.y + wall.getHeight() * 2))
+                            
+                    if wall.type == 1:
+                        wall.type = 2
+            
+            if wall.type != 1:                        
+                # player lands on top of the wall?
+                if player.y_dir < 0:
+                    if old_y > wall.y + wall.getHeight() - 1:
+                        # don't apply gravity if we've already corrected the vertical
+                        # position
+                        #apply_gravity = False
+                        player.y = wall.y + wall.getHeight()
+                        player.y_dir = 0
+                        player.can_jump = True
+                        
+                # player is overlapping the left of the wall and moving right
+                if player.x_dir < 0 and old_x > wall.x + wall.getWidth() - 1:
+                    player.x = wall.x + wall.getWidth() 
+                    player.x_dir = 0
+                # player is overlapping the right of the wall and moving left
+                elif player.x_dir > 0 and old_x + player.getWidth()  < wall.x + 1:
+                    player.x = wall.x - player.getWidth() 
+                    player.x_dir = 0
             
         # checking enemies and walls
         for enemy in enemies:
             if enemy.overlaps(wall):
                 # enemy reverses horizontal direction if the bump into a wall
                 if enemy.x_dir < 0:
-                    enemy.x = wall.x + wall.width
+                    enemy.x = wall.x + wall.getWidth() 
                 else:
-                    enemy.x = wall.x - enemy.width
+                    enemy.x = wall.x - enemy.getWidth() 
                 enemy.x_dir = -enemy.x_dir
     
     # apply gravity and moving enemies    
@@ -153,13 +179,13 @@ if player.lives > 0:
     for floor in floors:
         # does player land on a floor?
         if player.overlaps(floor) and player.y_dir < 0:
-            player.y = floor.y + floor.height
+            player.y = floor.y + floor.getHeight()
             player.y_dir = 0
             player.can_jump = True
         # does the enemy land on a floor?
         for enemy in enemies:
             if enemy.overlaps(floor) and enemy.y_dir < 0:
-                enemy.y = floor.y + floor.height
+                enemy.y = floor.y + floor.getHeight()
                 enemy.y_dir = 0
 
     # not using a for loop because we may be deleting elements from the list
@@ -185,6 +211,8 @@ if player.lives > 0:
     while n < len(collects):
         # player overlaps a collectible!
         if player.overlaps(collects[n]):
+            if collects[n].type == 3:
+                won = True
             del collects[n]
             player.score += 10
         n += 1
@@ -196,14 +224,17 @@ if player.lives > 0:
     offsetX = 0
     if player.x > graphics.width / 2:
         offsetX = player.x -graphics.width / 2
-    if player.x > 750 - graphics.width/2:
-        offsetX = 750 - graphics.width
+    if player.x > level_width - graphics.width/2:
+        offsetX = level_width - graphics.width
     # draw all the level elements in turn
     for floor in floors:
         graphics.drawSprite(floor, offsetX)
         
     for wall in walls:
-        graphics.drawSprite(wall, offsetX)        
+        
+        if wall.type != 1:
+            # don't draw hidden blocks!
+            graphics.drawSprite(wall, offsetX)        
         
     for collect in collects:
         graphics.drawSprite(collect, offsetX)    
@@ -219,3 +250,4 @@ if player.lives > 0:
 else:
     # player is dead, draw end text
     graphics.drawText("GAME OVER!", 200, 200, r  = 1)
+    graphics.stopSound(music)
