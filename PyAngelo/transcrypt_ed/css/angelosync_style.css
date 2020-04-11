@@ -1,0 +1,609 @@
+html {
+    font-size: 14px;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #B0B0B0;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/* PAGE COLORS
+   ================================================== */
+
+html, body {
+    color: black;
+    transition: background-color 0.2s ease;
+    font-family: "Arial";
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    font-style: normal;
+    text-align: left;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #525252;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
+}
+
+/* GENERAL
+   ================================================== */
+
+body .pynodeContainer {
+    background-color: #ECECEC;
+}
+
+body .footerText {
+    color: #CBCBCB;
+}
+
+body .pageInfoWrapper {
+    background-color: #525252;
+}
+
+/* MAIN TYPE STYLES AND LINKS
+   ================================================== */
+
+@font-face {
+    font-family: Oswald;
+    src: url('Oswald-Regular.ttf');
+}
+
+h1 {
+    color: black;
+    font: 3.2rem/1.1 'Oswald', 'Arial', sans-serif;
+    margin: 0;
+}
+
+h2 {
+    color: black;
+    font: 1.8rem/1.1 'Oswald', 'Arial', sans-serif;
+    margin: 0;
+}
+
+h3 {
+    font: 1.4rem/1.1 'Oswald', 'Arial', sans-serif;
+    margin: 0;
+}
+
+h4 {
+    font: 1.2rem/1.1 'Oswald', 'Arial', sans-serif;
+    margin: 0;
+}
+
+h5 {
+    font: 1.0rem/1.1 'Oswald', 'Arial', sans-serif;
+    margin: 0;
+}
+
+p {
+    font: 1.2rem/1.1 Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+    font-size: 14px;
+    color: black;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: teal;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -150px;
+    visibility: hidden;
+}
+
+/* FONT STYLES
+   ================================================== */
+
+.pageTextSmall {
+    margin: 0;
+    font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+    font-size: 11px;
+    color: black;
+}
+
+.pageTextGap {
+    margin: 0;
+    font-size: 5px;
+}
+
+.footerText {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* CONTAINERS
+   ================================================== */
+
+.pynodeContainer {
+    min-width: 900px;
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.pynodeOutputContainer {
+    min-width: 430px;
+    min-height: 360px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.pynodeEditorContainer {
+    min-width: 100px;
+    min-height: 100px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.pynodeConsoleContainer {
+    min-width: 100px;
+    min-height: 100px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* PYNODE
+   ================================================== */
+
+body.pynode .pageWholeWrapper {
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+body.pynode .pageBanner {
+    width: 100%;
+    height: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    _background-color: #525252;
+    background-color: blue;
+    color: white;
+}
+
+body.pynode .pageTopWrapper {
+    height: 450px;
+    position: relative;
+	//column-count: 2;
+}
+
+body.pynode .pageTopWrapperNoBrowser {
+    height: 300px;
+    position: relative;
+}
+
+body.pynode .pageTopSamples {
+	column-count: 3;
+}
+
+body.pynode .appWrapper {
+    height: 1560px;
+    background-color: #BBBBBB;
+    position: relative;
+    //padding-bottom: 20px;
+    padding-top: 20px;
+    box-shadow: inset 0 16px 20px -20px rgba(0, 0, 0, 0.75), inset 0 -16px 20px -20px rgba(0, 0, 0, 0.5);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
+}
+
+body.pynode .appContainer {
+    height: 100%;
+    width: 850px;
+    visibility: visible;
+    margin-left: calc(50% - 425px);   
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  	
+    //max-width: 1500px;
+}
+
+body.pynode .appEditor {
+    width: 100%;
+    padding-bottom: 20px;
+    float: bottom;
+    height: calc(100% - 780px);
+}
+
+body.pynode .appOutputs {
+    //width: 100%;
+    //float: bottom;
+    //padding-right: 20px;
+    height: 760px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;    
+    //margin-left: calc(50% - 250px)    
+    
+}
+
+body.pynode .appOutputControlsWrapper {
+    display: table;
+    //width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    //border-spacing: 10px; /*Optional*/
+}
+
+body.pynode .editorWrapper {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 10px solid #525252;
+    box-sizing: border-box;
+}
+
+body.pynode #editorBox {
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+}
+
+body.pynode .editorButtonBar {
+    width: 100%;
+    height: 30px;
+    background-color: #F0F0F0;
+    padding-top: 10px;
+    padding-left: 0px;
+}
+
+body.pynode .editorButton {
+    width: 100px;
+    height: 20px;
+    background-color: #ACACAC;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: white;
+    //margin-left: 5px;
+    margin-left: calc(40% - 50px);
+    float: left;
+}
+
+body.pynode .outputButton {
+    width: 100px;
+    height: 20px;
+    background-color: #ACACAC;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: white;
+    margin-left: 5px;
+    float: left;
+}
+
+body.pynode .editorButtonIcon {
+    float: left;
+    padding-right: 5px;
+    margin-top: -1px;
+}
+
+body.pynode .buttonBarLayoutPanel {
+    float: right;
+    padding-top: 2px;
+    padding-left: 20px;
+    width: 80px;
+}
+
+body.pynode .layoutButtonOn {
+    width: 22px;
+    height: 22px;
+    padding-top: 2px;
+    padding-left: 2px;
+    float: left;
+    margin-right: 8px;
+    background-color: #E0E0E0;
+    box-shadow: inset 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+}
+
+body.pynode .layoutButtonOff {
+    width: 22px;
+    height: 22px;
+    padding-top: 2px;
+    padding-left: 2px;
+    float: left;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+body.pynode #runPlay {
+    display: inherit;
+}
+
+body.pynode #runPause {
+    display: none;
+}
+
+body.pynode #output_runPlay {
+    display: inherit;
+}
+
+body.pynode #output_runPause {
+    display: none;
+}
+
+body.pynode .editorHeader {
+    height: 20px;
+    width: 100%;
+    background-color: #F0F0F0;
+}
+
+body.pynode #editor {
+    //position: absolute;
+    position: relative;
+    width: 100%;
+    height: 90%;
+}
+
+
+
+body.pynode .outputWrapper {
+    width: 500px;
+    height: 490px;
+    background-color: white;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 10px solid #525252;
+    box-sizing: border-box;
+    position: relative;
+    margin-left: 5px;
+    margin-right: 5px;
+    //margin-left: calc(50% - 250px);
+    display: table-cell;
+    //float: none;
+}
+
+body.pynode .dpadWrapper {
+    width: 160px;
+    height: 470px;
+    //background-color: white;
+    //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 10px solid #525252;
+    border-top: 10px solid #525252;
+    border-left: 10px solid #525252;
+    border-right: 5px solid #676767;
+    //box-sizing: border-box;
+    position: relative;
+    //float: left;
+    //margin-left: calc(50% - 250px - 180px);
+    display: table-cell;
+    //background-color: red; 
+    //visibility: hidden;
+    background-image: url("../images/controls/dpad.png");
+    background-repeat: no-repeat;
+    background-position: center; 
+    background-color: #828282;    
+}
+
+body.pynode .buttonsWrapper {
+    width: 160px;
+    height: 470px;
+    background-color: #828282;    
+    //box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 10px solid #525252;
+    border-top: 10px solid #525252;
+    border-right: 10px solid #525252;
+    border-left: 5px solid #676767;
+    //box-sizing: border-box;
+    position: relative;
+    //float: right;
+    //margin-left: calc(50% + 250px + 5px);
+    display: table-cell;
+    //background-color: blue; 
+    //visibility: hidden;
+    background-image: url("../images/controls/fire_button.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+body.pynode #outputBox {
+    width: 500px;
+    height: 400px;
+    background-color: white;        
+}
+
+body.pynode #output {
+    width: 500px;
+    height: 400px;
+    display: block;
+}
+
+body.pynode .consoleWrapper {
+    width: 100%;
+    //width: 850px;
+    height: 230px;
+    margin-top: 20px;
+    background-color: white;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 10px solid #525252;
+    box-sizing: border-box;
+    position: relative;
+    //margin-left: calc(50% - 160px)
+    //float: right;
+}
+
+
+body.pynode .consoleBox {
+    background-color: #F0F0F0;         
+    width: calc(100% - 25px);
+    height: calc(100% - 62px);
+    padding-top: 10px;
+    padding-bottom: 12px;
+    padding-left: 10px;
+    padding-right: 15px;
+}
+
+body.pynode #console {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: 1px solid #B1B1B1;
+    padding-left: 2px;
+    font-family: monospace;
+    overflow-y: auto;
+    background-color: #202020;
+}
+
+body.pynode .appSectionTitle {
+    color: white;
+    background-color: #525252;
+    padding-left: 10px;
+    width: calc(100% - 10px);
+    height: 30px;
+    padding-top: 10px;
+}
+
+body.pynode .appSectionEnlarge {
+    float: right;
+    padding-right: 10px;
+}
+
+body.pynode .appSectionBarIcon {
+    width: 30px;
+    height: 20px;
+    margin-bottom: 2px;
+    float: right;
+}
+
+body.pynode .appSectionBarIconFirst {
+    width: 20px;
+    height: 20px;
+    float: right;
+    padding-left: 12px;
+}
+
+body.pynode .appSectionBarIconDivider {
+    width: 0px;
+    height: 28px;
+    margin-top: -4px;
+    float: right;
+    border-right: 1px solid #2E2E2E;
+    border-left: 1px solid #6A6A6A;
+
+}
+
+body.pynode .pageBottomWrapper {
+    height: 400px;
+    height: auto;
+    position: relative;
+}
+
+body.pynode .pynodeGithubStar {
+    float: right;
+    height: 50px;
+}
+
+body.pynode .pynodeLogo {
+    width: 135px;
+    height: 130px;
+    padding-top: 15px;
+    float: left;
+}
+
+body.pynode .pynodeTitle {
+    height: 105px;
+    font: 6.0rem/1.1 'Oswald', sans-serif;
+}
+
+body.pynode .pynodeSubtitle {
+    height: 20px;
+    padding-bottom: 8px;
+}
+
+body.pynode .pynodeAuthorSubtitle {
+    height: 20px;
+    padding-bottom: 10px;
+}
+
+body.pynode .pynodeDescription {
+    height: 50px;
+}
+
+body.pynode code {
+    font-family: monospace;
+    font: 1.0rem/1.5 monospace;
+    border: 1px solid #B1B1B1;
+    background-color: #F0F0F0;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 1px;
+}
+
+body.pynode .codeInline {
+    border: none;
+}
+
+body.pynode li {
+    margin: 5px 0px;
+}
+
+/* GENERAL
+   ================================================== */
+.pageTop {
+    width: 750px;
+    height: calc(100% - 70px);
+    margin-top: 50px;
+    margin-left: calc(50% - 425px);
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    background-color: white;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 40px;
+}
+
+.pageWhole {
+    width: 750px;
+    margin-left: calc(50% - 425px);
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin-top: 30px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;  
+}
+
+body .floatLeft {
+    float: left;
+}
+
+body .floatRight {
+    float: right;
+}
+
+/* FOOTER
+   ================================================== */
+
+.pageInfoWrapper {
+    width: 100%;
+    height: 12px;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: absolute;
+    bottom: 0;
+}
+
+.pageInfoWrapperHome {
+    width: 100%;
+    height: 10px;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

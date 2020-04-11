@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PyAngelo</title>
+    <meta name="description" content="Simple Online Python Graphics Programming">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="css/angelosync_style.css?version=0.9.7" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">    
+    <script src="howler.js"></script>
+   
+    <script type="module">import * as PyAngelo from './__target__/PyAngelo.js'; window.PyAngelo = PyAngelo;</script>
+    <script type="module">import * as mario_clone from './__target__/mario_clone.js'; window.mario_clone = mario_clone;</script>
+</head>
+
+<body class="pynode"">
+<div class="pynodeContainer">
+    <div class="pageWholeWrapper">
+        <div class="appWrapper" id="appWrapper">
+            <div class="appContainer" id="appContainer">     			
+                <div class="appOutputs">
+                    <div class="appOutputControlsWrapper">
+                        <div class="dpadWrapper">
+                        </div>
+                        <div class="outputWrapper">
+                            <div class="appSectionTitle">
+                                <div class="floatLeft">
+                                    <h3>Output</h3>
+                                </div>
+                            </div>
+                            <div id="outputBox">
+                                <canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
+                                </canvas>
+                            </div>
+                        </div>
+                        <div class="buttonsWrapper">
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>       
+    </div>
+</div>
+
+<script>   
+    // disabling touch behaviours on the controller divs
+    document.querySelector(".dpadWrapper").addEventListener("touchstart", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".dpadWrapper").addEventListener("touchmove", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".buttonsWrapper").addEventListener("touchstart", function(event) {
+             event.preventDefault();
+    }, false);  
+    document.querySelector(".buttonsWrapper").addEventListener("touchmove", function(event) {
+             event.preventDefault();
+    }, false);      
+</script>
+</body>
+</html>
