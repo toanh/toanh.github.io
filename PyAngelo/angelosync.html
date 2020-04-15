@@ -429,6 +429,7 @@
         })(file);
         window.startLoading(file.name);
         reader.readAsText(file);
+        event.target.value = '';
     }
 
     function userSaveCode() {
