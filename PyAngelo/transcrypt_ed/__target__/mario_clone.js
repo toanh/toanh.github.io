@@ -1,11 +1,11 @@
-// Transcrypt'ed from Python, 2020-04-11 22:07:36
+// Transcrypt'ed from Python, 2020-04-12 10:51:18
 import {AssertionError, AttributeError, BaseException, DeprecationWarning, Exception, IndexError, IterableError, KeyError, NotImplementedError, RuntimeWarning, StopIteration, UserWarning, ValueError, Warning, __JsIterator__, __PyIterator__, __Terminal__, __add__, __and__, __call__, __class__, __envir__, __eq__, __floordiv__, __ge__, __get__, __getcm__, __getitem__, __getslice__, __getsm__, __gt__, __i__, __iadd__, __iand__, __idiv__, __ijsmod__, __ilshift__, __imatmul__, __imod__, __imul__, __in__, __init__, __ior__, __ipow__, __irshift__, __isub__, __ixor__, __jsUsePyNext__, __jsmod__, __k__, __kwargtrans__, __le__, __lshift__, __lt__, __matmul__, __mergefields__, __mergekwargtrans__, __mod__, __mul__, __ne__, __neg__, __nest__, __or__, __pow__, __pragma__, __proxy__, __pyUseJsNext__, __rshift__, __setitem__, __setproperty__, __setslice__, __sort__, __specialattrib__, __sub__, __super__, __t__, __terminal__, __truediv__, __withblock__, __xor__, abs, all, any, assert, bool, bytearray, bytes, callable, chr, copy, deepcopy, delattr, dict, dir, divmod, enumerate, filter, float, getattr, hasattr, input, int, isinstance, issubclass, len, list, map, max, min, object, ord, pow, print, property, py_TypeError, py_iter, py_metatype, py_next, py_reversed, py_typeof, range, repr, round, set, setattr, sorted, str, sum, tuple, zip} from './org.transcrypt.__runtime__.js';
 import {CMD_CLEAR, CMD_DRAWCIRCLE, CMD_DRAWIMAGE, CMD_DRAWLINE, CMD_DRAWPIXEL, CMD_DRAWRECT, CMD_DRAWTEXT, CMD_HALT, CMD_INPUT, CMD_LOADSOUND, CMD_PAUSESOUND, CMD_PLAYSOUND, CMD_PRINT, CMD_REVEAL, Circle, Colour, KEY_A, KEY_BEGIN, KEY_CTRL, KEY_D, KEY_DOWN, KEY_END, KEY_ENTER, KEY_ESC, KEY_HOME, KEY_J, KEY_LEFT, KEY_PAGEDOWN, KEY_PAGEUP, KEY_Q, KEY_RIGHT, KEY_S, KEY_UP, KEY_V_DOWN, KEY_V_FIRE, KEY_V_LEFT, KEY_V_RIGHT, KEY_V_UP, KEY_W, Point, PyAngelo, PyAngeloImage, Rectangle, Sprite, Text, TextSprite, graphics} from './PyAngelo.js';
 var __name__ = '__main__';
 export var music = graphics.loadSound ('sounds/JeroenTel001.mp3');
 graphics.playSound (music);
 export var level_width = 950;
-export var player = Sprite ('https://i.imgur.com/mH85TXk.png', __kwargtrans__ ({x: 0, y: 20}));
+export var player = Sprite ('https://i.imgur.com/wDa6mLI.png', __kwargtrans__ ({x: 0, y: 20}));
 player.y_dir = 0;
 player.x_dir = 0;
 player.score = 0;
@@ -72,12 +72,12 @@ export var Game = graphics.loop (function () {
 		if (graphics.isKeyPressed (KEY_D) || graphics.isKeyPressed (KEY_V_RIGHT)) {
 			player.x += 2;
 			player.x_dir = 1;
-			player.image = 'https://i.imgur.com/mH85TXk.png';
+			player.image = 'https://i.imgur.com/wDa6mLI.png';
 		}
 		if (graphics.isKeyPressed (KEY_A) || graphics.isKeyPressed (KEY_V_LEFT)) {
 			player.x -= 2;
 			player.x_dir = -(1);
-			player.image = 'https://i.imgur.com/mtUAWTK.png';
+			player.image = 'https://i.imgur.com/o1GtfiB.png';
 		}
 		if ((graphics.isKeyPressed (KEY_W) || graphics.isKeyPressed (KEY_V_UP) || graphics.isKeyPressed (KEY_V_FIRE)) && player.can_jump) {
 			player.y_dir += 15;

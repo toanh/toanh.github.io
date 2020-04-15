@@ -10,7 +10,7 @@ level_width = 950
 
 # setting up the player
 
-player = Sprite("https://i.imgur.com/mH85TXk.png", x = 0, y = 20)
+player = Sprite("https://i.imgur.com/wDa6mLI.png", x = 0, y = 20)
 #left facing image: https://i.imgur.com/mtUAWTK.png
 #right facing image: https://i.imgur.com/mH85TXk.png
 player.y_dir = 0
@@ -102,11 +102,11 @@ def Game():
         if graphics.isKeyPressed(KEY_D) or graphics.isKeyPressed(KEY_V_RIGHT):
             player.x += 2
             player.x_dir = 1
-            player.image = "https://i.imgur.com/mH85TXk.png"
+            player.image = "https://i.imgur.com/wDa6mLI.png"
         if graphics.isKeyPressed(KEY_A) or graphics.isKeyPressed(KEY_V_LEFT):
             player.x -= 2
             player.x_dir = -1
-            player.image = "https://i.imgur.com/mtUAWTK.png"
+            player.image = "https://i.imgur.com/o1GtfiB.png"
         if (graphics.isKeyPressed(KEY_W) or graphics.isKeyPressed(KEY_V_UP) or graphics.isKeyPressed(KEY_V_FIRE)) and player.can_jump:
             player.y_dir += 15
         

@@ -702,9 +702,9 @@ def doneLoading():
     graphics.state = graphics.STATE_LOADED
     
     disable_stop_enable_play() 
-    self.resources =  {}
-    self.loadingResources = 0
-    self.stopAllSounds()       
+    graphics.resources =  {}
+    graphics.loadingResources = 0
+    graphics.stopAllSounds()       
 
 window.startLoading = startLoading
 window.doneLoading = doneLoading

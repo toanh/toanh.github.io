@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-04-11 22:07:36
+// Transcrypt'ed from Python, 2020-04-12 10:51:18
 var random = {};
 var sys = {};
 var time = {};
