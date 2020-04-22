@@ -1,4 +1,4 @@
-graphics.playSound("sounds/mario.mp3")
+graphics.playSound("sounds/Eliminator_end.mp3")
 coinSound = graphics.loadSound("sounds/coin.mp3")
 speedSound = graphics.loadSound("sounds/speed.mp3")
 

@@ -1,5 +1,5 @@
 # start with the music!
-music = graphics.loadSound("sounds/outrun.mp3")
+music = graphics.loadSound("sounds/SuperMonaco.mp3")
 graphics.playSound(music)
 
 level_width = 950

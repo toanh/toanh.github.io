@@ -159,7 +159,7 @@ enemies = []
 spawnTime = 50
 spawnTimer = spawnTime
 
-graphics.playSound("sounds/outrun.mp3")
+graphics.playSound("sounds/Eliminator_intro.mp3")
 
 @loop_animation
 graphics.clear(0, 0, 0)
