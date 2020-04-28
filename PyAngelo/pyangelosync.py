@@ -67,15 +67,15 @@ class Text():
        
         
 class Sprite:
-    def __init__(self, image, x = 0, y = 0, r = 1, g = 1, b = 1):
+    def __init__(self, image, x = 0, y = 0, width = 0, height = 0, r = 1, g = 1, b = 1):
         if (isinstance(image, str)):
             image = graphics.loadImage(image, self)   
         self.image = image
         self.r = r
         self.g = g
         self.b = b
-        self.width = 0
-        self.height = 0
+        self.width = width
+        self.height = height
         
         # user defined!
         self.type = 0
@@ -100,13 +100,19 @@ class Sprite:
             
     def getHeight(self):
         if isinstance(self.image, PyAngeloImage):
-            return self.image.height
+            if self.height == 0:
+                return self.image.height
+            else:
+                return self.height
         else:
             return self.height
 
     def getWidth(self):
         if isinstance(self.image, PyAngeloImage):
-            return self.image.width
+            if self.width == 0:
+                return self.image.width
+            else:
+                return self.width
         else:
             return self.width
         
@@ -115,8 +121,8 @@ class Sprite:
         if isinstance(self.image, PyAngeloImage):
             x1 = self.x
             y1 = self.y
-            width1 = self.image.width
-            height1 = self.image.height
+            width1 = self.getWidth()
+            height1 = self.getHeight()
         elif isinstance(self.image, Rectangle) or isinstance(self.image, Text):
             x1 = self.x
             y1 = self.y
@@ -136,8 +142,8 @@ class Sprite:
         if (isinstance(other.image, PyAngeloImage)):
             x2 = other.x
             y2 = other.y
-            width2 = other.image.width
-            height2 = other.image.height
+            width2 = other.getWidth()
+            height2 = other.getHeight()
         elif isinstance(other.image, Rectangle) or isinstance(self.image, Text):
             x2 = other.x
             y2 = other.y
@@ -157,7 +163,7 @@ class Sprite:
         return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))   
 
     def contains(self, point):       
-        return point.x >= self.x and point.x <= self.x + self.image.width and point.y >= self.y and point.y <= self.y + self.image.height
+        return point.x >= self.x and point.x <= self.x + self.getWidth() and point.y >= self.y and point.y <= self.y + self.getHeight()
         
 class TextSprite(Sprite):
     def __init__(self, text, fontSize = 20, fontName = "Arial", x = 0, y = 0, r = 1, g = 1, b = 1):
@@ -445,10 +451,11 @@ class PyAngelo():
         e.target.jmssImg.width = e.target.naturalWidth     
 
         if e.target.jmssImg.sprite is not None:
-            
-            e.target.jmssImg.sprite.height = e.target.naturalHeight
-            e.target.jmssImg.sprite.width = e.target.naturalWidth
-            window.console.log("Setting sprite width and height:", e.target.jmssImg.sprite.height, e.target.jmssImg.sprite.width);
+            if e.target.jmssImg.sprite.height == 0:
+                e.target.jmssImg.sprite.height = e.target.naturalHeight
+            if e.target.jmssImg.sprite.width == 0:
+                e.target.jmssImg.sprite.width = e.target.naturalWidth
+            #window.console.log("Setting sprite width and height:", e.target.jmssImg.sprite.height, e.target.jmssImg.sprite.width);
             
         self.loadingResources -= 1
             
@@ -518,7 +525,7 @@ class PyAngelo():
         elif isinstance(sprite.image, Text):
             self.drawText(sprite.image.text, sprite.x - offsetX, sprite.y - offsetY, sprite.image.fontName, sprite.image.fontSize, sprite.r, sprite.g, sprite.b)            
         else:
-            self.drawImage(sprite.image, sprite.x - offsetX, sprite.y - offsetY)
+            self.drawImage(sprite.image, sprite.x - offsetX, sprite.y - offsetY, width = sprite.getWidth(), height = sprite.getHeight())
             
     def measureText(self, text, fontName = "Arial", fontSize = 10):
         self.ctx.font = str(fontSize) + "pt " + fontName
