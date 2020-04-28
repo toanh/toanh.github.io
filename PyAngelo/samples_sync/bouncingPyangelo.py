@@ -1,5 +1,5 @@
-# set up box position and size
-box_sprite = Sprite(Rectangle(0, 0, 32, 32), r = 1, g = 0, b = 0)
+# set up sprite position and size
+box_sprite = Sprite("https://pyangelo.github.io/PyAngelo.png", width = 64, height = 32, r = 1, g = 0, b = 0)
 
 # set up box direction (and speed)
 dir_x = 4
