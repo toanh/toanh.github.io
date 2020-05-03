@@ -166,7 +166,7 @@ class Sprite:
         return point.x >= self.x and point.x <= self.x + self.getWidth() and point.y >= self.y and point.y <= self.y + self.getHeight()
         
 class TextSprite(Sprite):
-    def __init__(self, text, fontSize = 20, fontName = "Arial", x = 0, y = 0, r = 1, g = 1, b = 1):
+    def __init__(self, text, x = 0, y = 0, fontSize = 20, fontName = "Arial", r = 1, g = 1, b = 1):
         textObject = Text(text, fontSize, fontName)
         Sprite.__init__(self, textObject, x, y, r, g, b)
         
