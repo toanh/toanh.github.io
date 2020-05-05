@@ -57,9 +57,33 @@
                 };
                 client.send();
             }
-            var url = window.location.href;
-            var newUrl = url.substring(url.lastIndexOf('/') + 1).split("?")[0];
-            window.history.pushState("object or string", "Title", "" + newUrl);
+            else if (pair.length == 2 && pair[0] == "url") {
+                project_url = pair[1];
+                read_storage = false;
+                var client = new XMLHttpRequest();
+                // TODO: using the herokuapp CORS proxy as a test. Write own proxy!
+                client.open("GET", "https://cors-anywhere.herokuapp.com/" + project_url);
+                client.onreadystatechange = function () {
+                    if (client.readyState == 4) {
+                        project_src = client.responseText;
+                        if (editor_exists) {
+                            editor.setValue(project_src, -1);
+                        }
+                    }
+                    else {
+                        read_storage = true;
+                        if (editor_exists) {
+                            loadCode()
+                        }
+                    }
+                };
+                client.send();
+            }
+            //var url = window.location.href;
+            //var newUrl = url.substring(url.lastIndexOf('/') + 1).split("?")[0];
+            //var newUrl = url.split("?")[0];
+            //newURL = newURL.substring(newURL.lastIndexOf('/' + 1);
+            //window.history.pushState("object or string", "Title", "" + newUrl);
         }
     </script>
 </head>
