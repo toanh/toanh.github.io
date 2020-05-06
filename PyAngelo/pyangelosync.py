@@ -98,6 +98,12 @@ class Sprite:
             self.x = x
             self.y = y
             
+    def setData(self, image):
+        if isinstance(self.image, PyAngeloImage):
+            self.image = graphics.loadImage(image, self) 
+        elif isinstance(self.image, Text):
+            self.image.text = image
+            
     def getHeight(self):
         if isinstance(self.image, PyAngeloImage):
             if self.height == 0:
