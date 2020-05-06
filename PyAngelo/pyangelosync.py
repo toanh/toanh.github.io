@@ -259,9 +259,14 @@ class PyAngelo():
         
     def loadSound(self, filename, loop = False, streaming = False):
         howl = window.Howl
-        sound = howl.new({"src": [filename], "loop": loop})
+        sound = howl.new({"src": [filename], "loop": loop, "onload": self._soundLoaded})
+        self.loadingResources += 1
+
         self.soundPlayers[filename] = sound
         return filename
+        
+    def _soundLoaded(self, e, f):
+        self.loadingResources -= 1
 
     def playSound(self, sound, loop = False, volume = 1.0):
         if sound not in self.soundPlayers:

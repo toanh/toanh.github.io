@@ -1,12 +1,13 @@
 # start with the music!
-music = graphics.loadSound("sounds/SuperMonaco.mp3")
-#graphics.playSound(music)
+music = graphics.loadSound("sounds/Cybernoid_II.mp3")
+graphics.playSound(music, loop = True, volume = 0.3)
 
 # loading the images
 playerRight = "https://i.imgur.com/mH85TXk.png"
 playerLeft = "https://i.imgur.com/mtUAWTK.png"
 pipeImage = "https://i.imgur.com/VqmtsEo.png"
 cherryImage = "https://i.imgur.com/jgIxuG7.png"
+
 graphics.loadImage(playerLeft)
 graphics.loadImage(playerRight)
 graphics.loadImage(pipeImage)
@@ -27,14 +28,15 @@ floors = []
 # the main floor
 floors.append(Sprite(Rectangle(0, 0, level_width, 20), r=0.5, g=1, b=0.5))
 # a sample floor
-floors.append(Sprite(Rectangle(200, 200, 100, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(180, 180, 100, 20), r=0.5, g=1, b=0.5))
 
 # list of blocks (fully solid)
 walls = []
 # walls at the left/right edges to prevent falling off level
 walls.append(Sprite(Rectangle(-1, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
 walls.append(Sprite(Rectangle(level_width, 0, 1, 1000), r = 0.7, g = 0.7, b = 1))
-# a pipe
+
+# a pipe block
 walls.append(Sprite(pipeImage, x = 100, y = 20, r = 0, g = 0, b = 1))
 # sample block
 walls.append(Sprite(Rectangle(100, 120, 20, 20), r = 0.2, g = 0.2, b = 1))
@@ -53,6 +55,18 @@ en01.y_dir = -1
 en01.x_dir = 1
 enemies.append(en01)
 
+
+
+
+
+
+
+################################################################################
+# Students: you don't need to worry too much about the code under here, it's   #
+# for the physics and collision detection.                                     #
+#                                                                              #
+# Those who need to customise and tweak things are welcome to have go at       #
+# changing the code and settings though.                                       #
 ################################################################################
 
 # only show loading resources screen during the initial batch of loads
@@ -112,7 +126,6 @@ elif player.lives > 0:
                     player.y = wall.y - player.getHeight()
                     player.y_dir = 0
                     
-            
             if wall.type != 1:                        
                 # player lands on top of the wall?
                 if player.y_dir < 0:
@@ -152,7 +165,7 @@ elif player.lives > 0:
     # checking interaction with floors
     for floor in floors:
         # does player land on a floor?
-        if player.overlaps(floor) and player.y_dir < 0:
+        if player.overlaps(floor) and player.y_dir < 0 and old_y > floor.y + floor.getHeight() - 1:
             player.y = floor.y + floor.getHeight()
             player.y_dir = 0
             player.can_jump = True
