@@ -20,15 +20,15 @@ player = Sprite(playerRight, x = 0, y = 20)
 player.y_dir = 0
 player.x_dir = 0
 player.score = 0
-player.lives = 1
+player.health = 1
 player.can_jump = False
 
 # list of floors (solid from the top only - can jump on them from underneath)
 floors = []
 # the main floor
-floors.append(Sprite(Rectangle(0, 0, level_width, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(0, 0, level_width, 20), r = 0.5, g = 1, b = 0.5))
 # a sample floor
-floors.append(Sprite(Rectangle(180, 180, 100, 20), r=0.5, g=1, b=0.5))
+floors.append(Sprite(Rectangle(180, 180, 100, 20), r = 0.5, g = 1, b = 0.5))
 
 # list of blocks (fully solid)
 walls = []
@@ -44,13 +44,13 @@ walls.append(Sprite(Rectangle(100, 120, 20, 20), r = 0.2, g = 0.2, b = 1))
 # list of collectibles
 collects = []
 collects.append(Sprite(cherryImage, 100, 200))
-final = TextSprite("🍉",x = level_width - 50, y = 120)
-final.type = 3
+final = TextSprite("🍉", x = level_width - 50, y = 120)
+final.type = 3  # type of 3 means the level completion collectible
 collects.append(final)
 
 # list of enemies
 enemies = []
-en01 = TextSprite("😈", x=200,y=220)
+en01 = TextSprite("😈", x = 200, y = 220)
 en01.y_dir = -1
 en01.x_dir = 1
 enemies.append(en01)
@@ -78,7 +78,7 @@ won = False
 graphics.clear(0, 0.5, 1.0)
 
 while graphics.loadingResources > 0 and isFirstTime:
-    graphics.drawText("Loading resources..", 0, 0)
+    graphics.drawText("Loading resources... " + str(graphics.loadingResources) + " remaining.", 0, 0)
     return
 isFirstTime = False
 
@@ -88,7 +88,7 @@ if won:
     graphics.drawText("YOU WON!", 220, 200)
     graphics.drawText(f"Score: {player.score}",225,160)
 # checking game state
-elif player.lives > 0:
+elif player.health > 0:
     # player is still alive.. keep playing
     
     old_x = player.x
@@ -189,7 +189,7 @@ elif player.lives > 0:
                 player.y_dir = 10
             else:
                 # player loses life if s/he contacts the enemy but didn't land on it
-                player.lives -= 1
+                player.health -= 1
         n += 1
 
     # not using a for loop because we may be deleting elements from the list
@@ -206,7 +206,7 @@ elif player.lives > 0:
         
     # fell off the level
     if player.y < 0:
-        player.lives -= 1
+        player.health = 0
         
     offsetX = 0
     if player.x > graphics.width / 2:
@@ -233,7 +233,7 @@ elif player.lives > 0:
     graphics.drawSprite(player, offsetX)
     
     graphics.drawText(f"Score: {player.score}",0,380)
-    graphics.drawText(f"Lives: {player.lives}",440,380)
+    graphics.drawText(f"Health: {player.health}",440,380)
 else:
     # player is dead, draw end text
     graphics.drawText("GAME OVER!", 200, 200, r  = 1)
