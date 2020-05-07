@@ -113,6 +113,25 @@ elif player.health > 0:
     
     player.can_jump = False
     
+    # apply gravity and moving enemies    
+    for enemy in enemies:
+        enemy.y_dir -= 1
+        enemy.x += enemy.x_dir
+        enemy.y += enemy.y_dir
+        
+    # checking interaction with floors
+    for floor in floors:
+        # does player land on a floor?
+        if player.overlaps(floor) and player.y_dir < 0 and old_y > floor.y + floor.getHeight() - 1:
+            player.y = floor.y + floor.getHeight()
+            player.y_dir = 0
+            player.can_jump = True
+        # does the enemy land on a floor?
+        for enemy in enemies:
+            if enemy.overlaps(floor) and enemy.y_dir < 0:
+                enemy.y = floor.y + floor.getHeight()
+                enemy.y_dir = 0
+    
     # checking interaction with walls
     for wall in walls:
 
@@ -149,32 +168,19 @@ elif player.health > 0:
         # checking enemies and walls
         for enemy in enemies:
             if enemy.overlaps(wall):
-                # enemy reverses horizontal direction if the bump into a wall
-                if enemy.x_dir < 0:
-                    enemy.x = wall.x + wall.getWidth() 
+                if enemy.y_dir < 0:
+                    enemy.y = wall.y + wall.getHeight()
+                    enemy.y_dir = 0
                 else:
-                    enemy.x = wall.x - enemy.getWidth() 
-                enemy.x_dir = -enemy.x_dir
+                    # enemy reverses horizontal direction if the bump into a wall
+                    if enemy.x_dir < 0:
+                        enemy.x = wall.x + wall.getWidth() 
+                    else:
+                        enemy.x = wall.x - enemy.getWidth() 
+                    enemy.x_dir = -enemy.x_dir
     
-    # apply gravity and moving enemies    
-    for enemy in enemies:
-        enemy.y_dir -= 1
-        enemy.x += enemy.x_dir
-        enemy.y += enemy.y_dir
-    
-    # checking interaction with floors
-    for floor in floors:
-        # does player land on a floor?
-        if player.overlaps(floor) and player.y_dir < 0 and old_y > floor.y + floor.getHeight() - 1:
-            player.y = floor.y + floor.getHeight()
-            player.y_dir = 0
-            player.can_jump = True
-        # does the enemy land on a floor?
-        for enemy in enemies:
-            if enemy.overlaps(floor) and enemy.y_dir < 0:
-                enemy.y = floor.y + floor.getHeight()
-                enemy.y_dir = 0
 
+                
     # not using a for loop because we may be deleting elements from the list
     # using indexed elements instead
     n = 0
