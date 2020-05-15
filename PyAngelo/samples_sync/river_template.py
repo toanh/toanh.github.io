@@ -2,8 +2,11 @@ graphics.playSound("sounds/Turbo_Outrun_03.mp3")
 coinSound = graphics.loadSound("sounds/coin.mp3")
 speedSound = graphics.loadSound("sounds/speed.mp3")
 
+# level image
+level_image = "samples_sync/river_level_trees.png"
+
 # facing right image for player
-player = TextSprite("🤖", 220, 376)
+player = TextSprite("🦢", 220, 376)
 player.speed = 1
 player.lives = 1
 player.score = 0
@@ -75,13 +78,13 @@ elif scroll_y <= 0:
     graphics.drawText(f"Score: {int(player.score)}", 0, 380)
 else:    
     player.score += 0.1
-    graphics.drawImage("samples_sync/river_level.png", 0, y = -scroll_y, width = 500, height = level_height)
+    graphics.drawImage(level_image, 0, y = -scroll_y, width = 500, height = level_height)
     
     # get pixel colour at the centre of the player sprite
     colour = graphics.getPixelColour(player.x + player.width/2, player.y + player.height/2)
     
     # check the color to see if the player has hit it! Need to divide by 255.
-    if colour.r == 136/255.0 and colour.b == 21/255.0 and colour.g == 0:
+    if colour.r == 28/255.0and colour.g == 147/255.0 and colour.b == 64/255.0:
         player.lives -= 1
         
     i = 0
