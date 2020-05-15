@@ -1,4 +1,4 @@
-graphics.playSound("sounds/Turbo_Outrun_03.mp3")
+graphics.playSound("sounds/Turbo_Outrun_03.mp3", volume = 0.2)
 coinSound = graphics.loadSound("sounds/coin.mp3")
 speedSound = graphics.loadSound("sounds/speed.mp3")
 
@@ -12,8 +12,8 @@ player.lives = 1
 player.score = 0
 
 # level image height - put your image dimensions below
-level_image_height = 1024
-level_image_width = 64
+level_image_height = 2048
+level_image_width = 128
 
 # level height
 level_height = graphics.width / level_image_width * level_image_height
@@ -25,14 +25,13 @@ scroll_y = level_height - graphics.height
 scroll_speed = 2
 
 pickups = []
-pickups.append(TextSprite("💰", x=24, y = 75))
-pickups.append(TextSprite("💰", x=24, y = 75))
-pickups.append(TextSprite("💰", x=8, y = 305))
-pickups.append(TextSprite("💰", x=38, y = 317))
-pickups.append(TextSprite("💰", x=40, y = 545))
-pickups.append(TextSprite("💰", x=30, y = 774))
-pickups.append(TextSprite("💰", x=10, y = 922))
-pickups.append(TextSprite("💨", x = 24, y = 183))
+pickups.append(TextSprite("💰", x=48, y = 150))
+pickups.append(TextSprite("💰", x=16, y = 610))
+pickups.append(TextSprite("💰", x=76, y = 634))
+pickups.append(TextSprite("💰", x=80, y = 1090))
+pickups.append(TextSprite("💰", x=60, y = 1548))
+pickups.append(TextSprite("💰", x=20, y = 1844))
+pickups.append(TextSprite("💨", x = 48, y = 366))
 
 # adjust all the pickup positions
 for pickup in pickups:
