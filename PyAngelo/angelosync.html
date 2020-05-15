@@ -36,6 +36,11 @@
         var query = window.location.search.substring(1);
         if (query.length > 0) {
             var pair = query.split("=");
+			
+			var url = window.location.href;
+            var newUrl = url.split("?")[0];
+            var newUrl = newUrl.substring(newUrl.lastIndexOf('/' + 1));
+			
             if (pair.length == 2 && pair[0] == "project") {
                 project_name = pair[1];
                 read_storage = false;
@@ -57,7 +62,7 @@
                 };
                 client.send();
             }
-            else if (pair.length == 2 && pair[0] == "url") {
+            else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel")) {
                 project_url = pair[1];
                 read_storage = false;
                 var client = new XMLHttpRequest();
@@ -78,13 +83,15 @@
                     }
                 };
                 client.send();
+				
+				if (pair[0] == "rel")
+				{
+					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
+					
+					newUrl = window.location.href;
+				}
             }
-            var url = window.location.href;
-            //var newUrl = url.substring(url.lastIndexOf('/') + 1).split("?")[0];
-            var newUrl = url.split("?")[0];
-            //window.console.log(newUrl)
-            var newUrl = newUrl.substring(newUrl.lastIndexOf('/' + 1));
-            //window.console.log(newUrl)
+
             window.history.pushState("object or string", "Title", "" + newUrl);
         }
     </script>
