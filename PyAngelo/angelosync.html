@@ -65,6 +65,14 @@
             }
             else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel")) {
                 project_url = pair[1];
+				
+				if (pair[0] == "rel")
+				{
+					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
+                    
+					auto_run = true;
+					newUrl = window.location.href;
+				}                
                 read_storage = false;
                 var client = new XMLHttpRequest();
                 // TODO: using the herokuapp CORS proxy as a test. Write own proxy!
@@ -80,20 +88,16 @@
                         read_storage = true;
                         if (editor_exists) {
                             loadCode();   
-                            if (auto_run)
-                                document.getElementById("output_run").setAttribute("auto", true);                              
                         }
                     }
+                    if (auto_run)
+                    {
+                        console.log("setting auto run attribute on button");
+                        document.getElementById("output_run").setAttribute("auto", true);                              
+                    }                    
                 };
                 client.send();
-				
-				if (pair[0] == "rel")
-				{
-					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
-                    
-					auto_run = true;
-					newUrl = window.location.href;
-				}
+
             }
 
             window.history.pushState("object or string", "Title", "" + newUrl);
