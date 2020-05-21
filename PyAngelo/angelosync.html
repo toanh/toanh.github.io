@@ -29,9 +29,10 @@
                 saveCode();
             }
         }
-    </script>
-    <script>
+
         var read_storage = true;
+        var auto_run = false;
+
         var project_src;
         var query = window.location.search.substring(1);
         if (query.length > 0) {
@@ -78,7 +79,9 @@
                     else {
                         read_storage = true;
                         if (editor_exists) {
-                            loadCode()
+                            loadCode();   
+                            if (auto_run)
+                                document.getElementById("output_run").setAttribute("auto", true);                              
                         }
                     }
                 };
@@ -87,7 +90,8 @@
 				if (pair[0] == "rel")
 				{
 					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
-					
+                    
+					auto_run = true;
 					newUrl = window.location.href;
 				}
             }
@@ -364,8 +368,8 @@
     document["output_run"].bind("click", pyangelosync.save_code)
     document["output_run"].bind("click", pyangelosync.button_play)
     document["output_run"].style.backgroundColor = "#00FF00";  
-
-
+    
+ 
 </script>
 <!----------------- end documentation --------------->
 
@@ -516,6 +520,5 @@
 
 <!-- Relevant links that are not directly referenced. Allows website to be properly read with automatic web crawling. -->
 <a hidden style="display:none" href="pyangelosync.py">&nbsp</a>
-
 </body>
 </html>

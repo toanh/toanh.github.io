@@ -635,7 +635,10 @@ class PyAngelo():
         document["output_runPlay"].style.cursor = "pointer"
         document["output_runPause"].style.cursor = "pointer"          
 
-        if self.state == self.STATE_STOP:       
+        if self.state == self.STATE_STOP:      
+            if "auto" in document["output_run"].attrs:
+                button_play(None)
+                del document["output_run"].attrs["auto"]
             self.clear(0.392,0.584,0.929)
             width = self.measureText("Ready", fontSize = 30)[0]
             self.drawText("Ready", 250 - width/2, 170, fontSize = 30)
