@@ -205,6 +205,11 @@ class PyAngelo():
         
         self.keys = dict([(a, False) for a in range(255)] +
                          [(a, False) for a in range(0xff00, 0xffff)]) 
+        self.keys[KEY_V_LEFT] = False
+        self.keys[KEY_V_RIGHT] = False
+        self.keys[KEY_V_UP] = False
+        self.keys[KEY_V_DOWN] = False
+        self.keys[KEY_V_FIRE] = False                               
 
         document.bind("keydown", self._keydown)
         document.bind("keyup", self._keyup)   
