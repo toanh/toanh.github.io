@@ -550,14 +550,14 @@ class PyAngelo():
         return (abs(textMetrics.actualBoundingBoxLeft) + abs(textMetrics.actualBoundingBoxRight), abs(textMetrics.actualBoundingBoxAscent) + abs(textMetrics.actualBoundingBoxDescent))
 
     def drawText(self, text, x, y, fontName = "Arial", fontSize = 10, r = 1.0, g = 1.0, b = 1.0, a = 1.0, anchorX = "left", anchorY ="bottom"):
-        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(a) + ")"
         self.ctx.font = str(fontSize) + "pt " + fontName
         self.ctx.textBaseline = "bottom"
         self.ctx.fillText(text, x, self.height - y)        
 
     def clear(self, r = 0, g = 0, b = 0, a = 1):
         global array
-        self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"
+        self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(a)+ ")"
         self.ctx.fillRect(0, 0, self.width, self.height)    
         
     def drawLine(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0, width = 1):
@@ -568,7 +568,7 @@ class PyAngelo():
 
         self.ctx.beginPath()
         self.ctx.lineWidth = width
-        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(a) + ")"
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
         self.ctx.stroke()
@@ -579,10 +579,10 @@ class PyAngelo():
         b = min(b, 1.0)
         a = min(a, 1.0)
 
-        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(a) + ")"
         self.ctx.beginPath();
         self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(
-            int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+            int(b * 255.0)) + "," + str(a) + ")"
 
         self.ctx.arc(x, self._convY(y), radius, 0, 2 * 3.1415926535, True);
 
@@ -609,7 +609,7 @@ class PyAngelo():
         a = min(a, 1.0)
 
         ctx = self.ctx
-        ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"        
+        ctx.fillStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(a) + ")"        
         ctx.beginPath();
         ctx.moveTo(x, self._convY(y))
         ctx.lineTo(x + w, self._convY(y))
