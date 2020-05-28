@@ -11,6 +11,9 @@ score = 0
 # the game or show the game over screen
 playing= True
 
+# play music at lower volume and looped
+graphics.playSound("sounds/Lemmings_01.mp3", volume = 0.1, loop = True)
+
 @loop_animation
 
 # make the balls fall down at different speeds
