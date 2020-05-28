@@ -12,6 +12,7 @@ KEY_D             = 68
 KEY_Q             = 81
 KEY_J             = 74
 KEY_CTRL          = 17
+KEY_SPACE         = 32
 KEY_PAGEUP        = 0xff55
 KEY_PAGEDOWN      = 0xff56
 KEY_END           = 0xff57
