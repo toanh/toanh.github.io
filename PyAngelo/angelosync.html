@@ -69,14 +69,18 @@
 				if (pair[0] == "rel" || pair[0] == "repl")
 				{
                     style = '<link rel=stylesheet href="css/angelosync_headless.css">';
+					auto_run = true;
+					newUrl = window.location.href;
+                    
                     if (pair[0] == "repl")
                     {
                         style = '<link rel=stylesheet href="css/angelosync_repl.css">';
+                        newUrl = document.referrer + "/main.py";
+                        console.log(newURL);
                     }
 					document.head.insertAdjacentHTML( 'beforeend', style );
                     
-					auto_run = true;
-					newUrl = window.location.href;
+
 				}                
                 read_storage = false;
                 var client = new XMLHttpRequest();
