@@ -276,9 +276,10 @@ class PyAngelo():
         self.loadingResources -= 1
 
     def playSound(self, sound, loop = False, volume = 1.0):
+  
         if sound not in self.soundPlayers:
-            self.loadSound(sound)
-            
+            sound = self.loadSound(sound)
+                        
         self.soundPlayers[sound].loop(loop)
         self.soundPlayers[sound].volume(volume)        
         self.soundPlayers[sound].play()
