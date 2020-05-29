@@ -480,7 +480,7 @@ class PyAngelo():
        
     def loadImage(self, file, sprite = None):
         if "referrer" in document["output_run"].attrs:
-            file = document["output_run"].attrs["referrer"] + filename  
+            file = document["output_run"].attrs["referrer"] + file  
             
         if file in self.resources:
             return self.resources[file]             
