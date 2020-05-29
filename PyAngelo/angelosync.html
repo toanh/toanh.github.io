@@ -63,12 +63,17 @@
                 };
                 client.send();
             }
-            else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel")) {
+            else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel"|| pair[0] == "repl")) {
                 project_url = pair[1];
 				
-				if (pair[0] == "rel")
+				if (pair[0] == "rel" || pair[0] == "repl")
 				{
-					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
+                    style = '<link rel=stylesheet href="css/angelosync_headless.css">';
+                    if (pair[0] == "repl")
+                    {
+                        style = '<link rel=stylesheet href="css/angelosync_repl.css">';
+                    }
+					document.head.insertAdjacentHTML( 'beforeend', style );
                     
 					auto_run = true;
 					newUrl = window.location.href;
