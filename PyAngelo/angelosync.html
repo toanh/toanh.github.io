@@ -76,6 +76,7 @@
                     {
                         style = '<link rel=stylesheet href="css/angelosync_repl.css">';
                         project_url = document.referrer + "main.py";
+                        document.getElementById("output_run").setAttribute("referrer", document.referrer);  
                         //console.log(newUrl);
                     }
 					document.head.insertAdjacentHTML( 'beforeend', style );
