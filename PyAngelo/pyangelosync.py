@@ -270,9 +270,11 @@ class PyAngelo():
         self.loadingResources += 1
 
         self.soundPlayers[filename] = sound
+        self.soundPlayers[filename].begin_play = False
         return filename
         
     def _soundLoaded(self, e, f):
+        window.console.log("Successfully loaded sound file:" + str(e) + "," + str(f));
         self.loadingResources -= 1
 
     def playSound(self, sound, loop = False, volume = 1.0):
@@ -283,6 +285,8 @@ class PyAngelo():
         self.soundPlayers[sound].loop(loop)
         self.soundPlayers[sound].volume(volume)        
         self.soundPlayers[sound].play()
+        
+        self.soundPlayers[sound].begin_play = False
             
             
     def stopAllSounds(self):
