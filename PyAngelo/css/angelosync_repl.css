@@ -1,0 +1,93 @@
+body.pynode .pageBanner {
+	display: none;
+}
+
+body.pynode .pageTopWrapper {
+	display: none;
+}
+
+body.pynode .pageTopWrapperNoBrowser {
+	display: none;
+}
+
+body.pynode .pageTopSamples {
+	display: none;
+}
+
+body.pynode .appWrapper {
+    height: 760px;
+}
+
+body.pynode .appEditor {
+	display: none;
+}
+
+body.pynode .editorWrapper {
+	display: none;
+}
+
+body.pynode #editorBox {
+	display: none;
+}
+
+body.pynode .editorHeader {
+	display: none;
+}
+
+body.pynode #editor {
+	display: none;
+}
+
+body.pynode .pageBottomWrapper {
+	display: none;
+}
+
+body.pynode .pynodeGithubStar {
+	display: none;
+}
+
+body.pynode .pynodeLogo {
+	display: none;
+}
+
+body.pynode .pynodeTitle {
+	display: none;
+}
+
+body.pynode .pynodeSubtitle {
+	display: none;
+}
+
+body.pynode .pynodeAuthorSubtitle {
+	display: none;
+}
+
+body.pynode .pynodeDescription {
+	display: none;
+}
+
+body.pynode code {
+	display: none;
+}
+
+body.pynode .codeInline {
+	display: none;
+}
+
+body.pynode li {
+	display: none;
+}
+
+/* GENERAL
+   ================================================== */
+.pageTop {
+	display: none;
+}
+
+.pageInfoWrapper {
+	display: none;
+}
+
+.pageInfoWrapperHome {
+	display: none;
+}

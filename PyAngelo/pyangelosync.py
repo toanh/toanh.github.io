@@ -263,23 +263,30 @@ class PyAngelo():
     ########################################################################################
         
     def loadSound(self, filename, loop = False, streaming = False):
+        if "referrer" in document["output_run"].attrs:
+            filename = document["output_run"].attrs["referrer"] + filename
         howl = window.Howl
         sound = howl.new({"src": [filename], "loop": loop, "onload": self._soundLoaded})
         self.loadingResources += 1
 
         self.soundPlayers[filename] = sound
+        self.soundPlayers[filename].begin_play = False
         return filename
         
     def _soundLoaded(self, e, f):
+        window.console.log("Successfully loaded sound file:" + str(e) + "," + str(f));
         self.loadingResources -= 1
 
     def playSound(self, sound, loop = False, volume = 1.0):
+  
         if sound not in self.soundPlayers:
-            self.loadSound(sound)
-            
+            sound = self.loadSound(sound)
+                        
         self.soundPlayers[sound].loop(loop)
         self.soundPlayers[sound].volume(volume)        
         self.soundPlayers[sound].play()
+        
+        self.soundPlayers[sound].begin_play = False
             
             
     def stopAllSounds(self):
@@ -477,9 +484,11 @@ class PyAngelo():
             
        
     def loadImage(self, file, sprite = None):
-    
+        if "referrer" in document["output_run"].attrs:
+            file = document["output_run"].attrs["referrer"] + file  
+            
         if file in self.resources:
-            return self.resources[file]       
+            return self.resources[file]             
         
         self.loadingResources += 1
         

@@ -32,6 +32,7 @@
 
         var read_storage = true;
         var auto_run = false;
+        var use_referrer = false;
 
         var project_src;
         var query = window.location.search.substring(1);
@@ -63,15 +64,26 @@
                 };
                 client.send();
             }
-            else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel")) {
+            else if (pair.length == 2 && (pair[0] == "url" || pair[0] == "rel"|| pair[0] == "repl")) {
                 project_url = pair[1];
 				
-				if (pair[0] == "rel")
+				if (pair[0] == "rel" || pair[0] == "repl")
 				{
-					document.head.insertAdjacentHTML( 'beforeend', '<link rel=stylesheet href="css/angelosync_headless.css">' );
-                    
+                    style = '<link rel=stylesheet href="css/angelosync_headless.css">';
 					auto_run = true;
 					newUrl = window.location.href;
+                    
+                    if (pair[0] == "repl")
+                    {
+                        style = '<link rel=stylesheet href="css/angelosync_repl.css">';
+                        project_url = document.referrer + "main.py";
+                        use_referrer = true;
+                        
+                        //console.log(newUrl);
+                    }
+					document.head.insertAdjacentHTML( 'beforeend', style );
+                    
+
 				}                
                 read_storage = false;
                 var client = new XMLHttpRequest();
@@ -94,7 +106,11 @@
                     {
                         console.log("setting auto run attribute on button");
                         document.getElementById("output_run").setAttribute("auto", true);                              
-                    }                    
+                    }     
+                    if (use_referrer)
+                    {
+                        document.getElementById("output_run").setAttribute("referrer", document.referrer);                      
+                    }
                 };
                 client.send();
 
@@ -105,7 +121,7 @@
     </script>
 </head>
 
-<body class="pynode" onload="brython({debug:1})">
+<body class="pynode" onload="brython({debug:1,pythonpath:['./','./js/brython/Lib/site-packages/', document.referrer]})">
 <div class="pynodeContainer">
     <div class="pageWholeWrapper">
         <div class="pageTopWrapper">
