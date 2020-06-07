@@ -78,6 +78,10 @@ body.pynode li {
 	display: none;
 }
 
+body.pynode .outputButton {
+    display: none;
+}
+
 /* GENERAL
    ================================================== */
 .pageTop {
