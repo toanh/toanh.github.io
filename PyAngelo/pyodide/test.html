@@ -2,10 +2,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <!--
     <script src="https://code.jquery.com/jquery-latest.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css" rel="stylesheet"/>
-    <link href="renderedhtml.css" rel="stylesheet"/>
+    <link href="renderedhtml.css" rel="stylesheet"/>-->
     <script>
       window.languagePluginUrl = "./";
     </script>
@@ -17,6 +18,14 @@
         pyodide.remotePath = ["/", "/pyangelo"];
         pyodide.runPythonAsync(`
             from pyangelo import *
+            from random import *
+            
+            class Sprite:
+                def __init__(self, name, x, y):
+                    self.name = name
+                    self.x = x
+                    self.y = y
+                    self.dy = 0
             
             graphics = PyAngelo()
             
@@ -25,10 +34,10 @@
             i = 0
             
             n = 0
-            max_sprites = 500
+            max_sprites = 1000
             sprites = []
             while n < max_sprites:
-                sprites.append({"name":"https://toanh.github.io/PyAngelo/images/PyAngelo.png", "x":n % 500, "y": int(n/500)})
+                sprites.append(Sprite("https://toanh.github.io/PyAngelo/images/PyAngelo.png", randint(0, 450), randint(0, 350)))
                 n += 1
             
             
@@ -38,15 +47,28 @@
                 i += 0.01
                 if i > 1.0:
                     i = 0
+                    
+                n = 0
+                while n < max_sprites:
+                    sprites[n].dy -= 1
+                    sprites[n].y += sprites[n].dy
+                    
+                    if sprites[n].y <= 0:
+                        sprites[n].y = 0
+                        sprites[n].dy = -sprites[n].dy
+                    n += 1
+                    
                 graphics.clear(i, 0, 0)
+                
                 
                 n = 0
                 while n < max_sprites:
-                    graphics.drawImage(sprites[n]["name"],sprites[n]["x"],sprites[n]["y"])
+                    graphics.drawImage(sprites[n].name, sprites[n].x,sprites[n].y)
                     n += 1
                 
 
         `);      
+        /*
         function pushCode(line) {
           handleResult(c.push(line))
         }
@@ -110,7 +132,9 @@
         term.handlePythonError = function(result) {
           term.error(result.toString())
         }
+      */
       });
+
     </script>
     <div id="outputBox">
         <canvas id = "canvas" width="500" height ="400" onclick="document.getElementById('v_key_trigger').focus();">
