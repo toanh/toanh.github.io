@@ -76,7 +76,8 @@
                     if (pair[0] == "repl")
                     {
                         style = '<link rel=stylesheet href="css/angelosync_repl.css">';
-                        project_url = document.referrer + "main.py";
+						// random query param to prevent cache-ing of old main.py
+                        project_url = document.referrer + "main.py" + "?" + Math.random();
                         use_referrer = true;
                         
                         //console.log(newUrl);
