@@ -2,7 +2,7 @@ function resizeIFrameToFitContent( iFrame, width, height ) {
     iFrame.width = 960;
     iFrame.height = 820;
     scaleX = width / iFrame.width;
-    scaleY = height / iFrame.width;
+    scaleY = height / iFrame.height;
     scale = Math.min(scaleX, scaleY);
     dx = iFrame.width / 2 * (1 - scale) - (width/2 - (iFrame.width/2) * scale);
     dy = iFrame.height / 2 * (1 - scale);     
