@@ -13,10 +13,33 @@
     <script src="./pyodide_dev.js"></script>
   </head>
   <body>
+<style>
+button {
+  height: 40px;
+  width: 40px;
+  background: rgba(0, 0, 0,0);
+  border-radius: 50%;
+  border-top: 2px solid #1D9AF2;
+  border-right: 2px solid transparent;
+  border-bottom:none;
+  border-left:none;
+  animation: spinner5 700ms linear infinite;
+}
+
+@keyframes spinner5 {
+    to {
+      transform: rotate(360deg);
+    }
+}
+</style>
+<button id="spinner"></button>
     <script>
       languagePluginLoader.then(() => {
         pyodide.remotePath = ["/", "/pyangelo"];
         pyodide.runPythonAsync(`
+from js import document
+spinner = document.getElementById("spinner");
+spinner.parentNode.removeChild(spinner);
 # Adapted from: https://github.com/oscr/PyRay/blob/master/pyray.py
 # Credits to the original author below
 
