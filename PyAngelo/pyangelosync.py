@@ -174,7 +174,7 @@ class Sprite:
 class TextSprite(Sprite):
     def __init__(self, text, x = 0, y = 0, fontSize = 20, fontName = "Arial", r = 1, g = 1, b = 1):
         textObject = Text(text, fontSize, fontName)
-        Sprite.__init__(self, textObject, x, y, r, g, b)
+        Sprite.__init__(self, textObject, x, y, 0, 0, r, g, b)
         
 class PyAngelo():
     STATE_STOP      =   1
