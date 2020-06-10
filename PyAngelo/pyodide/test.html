@@ -210,7 +210,8 @@ def Game():
 		# Wall colors 0 to 3
 		shade = lineHEIGHT/(1.5 * HEIGHT) + 0.3
 
-		color = [shade, shade, shade]
+		wallcolors = [ [], [0.75, 0, 0], [0, 0.75, 0], [0, 0, 0.75] ]
+		color = wallcolors[ worldMap[mapX][mapY] ]                    
 		
 		# If side == 1 then ton the color down. Gives a "showShadow" an the wall.
 		# Draws showShadow if showShadow is True
