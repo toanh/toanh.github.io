@@ -174,7 +174,7 @@ class Sprite:
 class TextSprite(Sprite):
     def __init__(self, text, x = 0, y = 0, fontSize = 20, fontName = "Arial", r = 1, g = 1, b = 1):
         textObject = Text(text, fontSize, fontName)
-        Sprite.__init__(self, textObject, x, y, r, g, b)
+        Sprite.__init__(self, textObject, x, y, 0, 0, r, g, b)
         
 class PyAngelo():
     STATE_STOP      =   1
@@ -263,7 +263,7 @@ class PyAngelo():
     ########################################################################################
         
     def loadSound(self, filename, loop = False, streaming = False):
-        if "referrer" in document["output_run"].attrs:
+        if "referrer" in document["output_run"].attrs and not filename.startswith("http"):
             filename = document["output_run"].attrs["referrer"] + filename
         howl = window.Howl
         sound = howl.new({"src": [filename], "loop": loop, "onload": self._soundLoaded})
@@ -484,7 +484,7 @@ class PyAngelo():
             
        
     def loadImage(self, file, sprite = None):
-        if "referrer" in document["output_run"].attrs:
+        if "referrer" in document["output_run"].attrs and not file.startswith("http"):
             file = document["output_run"].attrs["referrer"] + file  
             
         if file in self.resources:
