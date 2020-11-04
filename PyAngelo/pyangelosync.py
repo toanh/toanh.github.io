@@ -209,7 +209,12 @@ class PyAngelo():
         self.keys[KEY_V_RIGHT] = False
         self.keys[KEY_V_UP] = False
         self.keys[KEY_V_DOWN] = False
-        self.keys[KEY_V_FIRE] = False                               
+        self.keys[KEY_V_FIRE] = False         
+
+        self.keys[MOUSE_LEFT] = False
+        self.keys[MOUSE_RIGHT] = False
+        self.keys[MOUSE_WHEEL] = False
+          
 
         document.bind("keydown", self._keydown)
         document.bind("keyup", self._keyup)   
@@ -426,6 +431,13 @@ class PyAngelo():
         self.keys[KEY_V_DOWN] = False
         self.keys[KEY_V_FIRE] = False
         
+        if ev.button == 0:
+            self.keys[MOUSE_LEFT] = True
+        if ev.button == 1:
+            self.keys[MOUSE_RIGHT] = True
+        if ev.button == 2:
+            self.keys[MOUSE_WHEEL] = True
+        
         if x < -self.width * 0.33 * 0.67 and y < self.height * 0.6 and y > self.height * 0.4:
             self.keys[KEY_V_LEFT] = True
         if x < 0 and x > -self.width * 0.33 * 0.33 and y < self.height * 0.6 and y > self.height * 0.4:
@@ -442,6 +454,13 @@ class PyAngelo():
     def _mouseup(self, ev):
         self.mouse_x = -1
         self.mouse_y = -1
+        
+        if ev.button == 0:
+            self.keys[MOUSE_LEFT] = False
+        if ev.button == 1:
+            self.keys[MOUSE_RIGHT] = False
+        if ev.button == 2:
+            self.keys[MOUSE_WHEEL] = False
         
         self.keys[KEY_V_LEFT] = False
         self.keys[KEY_V_RIGHT] = False

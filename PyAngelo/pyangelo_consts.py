@@ -23,6 +23,10 @@ KEY_V_UP          = "v_up"
 KEY_V_DOWN        = "v_down"
 KEY_V_FIRE        = "v_fire"
 
+MOUSE_LEFT        = 0xe000
+MOUSE_RIGHT       = 0xe001
+MOUSE_WHEEL       = 0xe002
+
 CMD_DRAWLINE      = 1
 CMD_CLEAR         = 2
 CMD_DRAWIMAGE     = 3
