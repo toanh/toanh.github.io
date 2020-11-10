@@ -532,17 +532,33 @@ def clear_button_run():
     for event in document["run"].events("click"):
         document["run"].unbind("click", event)
     document["run"].bind("click", save_code)
+    
+    document["output_runPlay"].style.display = "none"
+    document["output_runPause"].style.display = "none"    
+    for event in document["output_run"].events("click"):
+        document["output_run"].unbind("click", event)
+    document["output_run"].bind("click", save_code)    
 
-def button_play(event):    
+def button_play(event):   
     clear_button_run()
     document["runPause"].style.display = "inherit"
     document["run"].bind("click", button_stop)
+    document["run"].style.backgroundColor = "#FF0000"; 
+
+    document["output_runPause"].style.display = "inherit"
+    document["output_run"].bind("click", button_stop)
+    document["output_run"].style.backgroundColor = "#FF0000";     
     do_play()
     
 def disable_stop_enable_play():
     clear_button_run()
     document["runPlay"].style.display = "inherit"
     document["run"].bind("click", button_play)    
+    document["run"].style.backgroundColor = "#00FF00";   
+
+    document["output_runPlay"].style.display = "inherit"
+    document["output_run"].bind("click", button_play)    
+    document["output_run"].style.backgroundColor = "#00FF00";       
     
 def button_stop(event):
     array[KEY_ESC] = 1
