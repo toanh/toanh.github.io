@@ -24,7 +24,12 @@ from browser import bind, self, window
 
 from pyangelo_consts import *
 
+from AngeloTurtle import *
+
 PyAngeloWorker = worker.Worker("executor")
+
+my_turtle = AngeloTurtle()
+my_turtle.visible = False
 
 keys_buff = None
 array = None
@@ -105,11 +110,14 @@ class PyAngelo():
         self.input_buffer_index = 0
         
         timer.request_animation_frame(self.update)
-        
+    
+       
     def clear(self, r=0, g=0, b=0, a=1):
         window.console.log("Clearing...")
         kwargs = {"r": r, "g": g, "b": b, "a": a}
         self.commands.append(["clear", kwargs])
+        
+    
         
     def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
         kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
@@ -358,9 +366,9 @@ class PyAngelo():
         self.state = self.STATE_INPUT
         self.input_concluded = False
         self.input_buffer_index = 0
-
-        
+                
     def update(self, deltaTime):
+        global my_turtle
         self.anim_timer -= 16
         if self.anim_timer <= 0:
             self.anim_timer = 0
@@ -384,10 +392,28 @@ class PyAngelo():
                     self.starting_text = self.starting_text[:-5]
             self.ctx.fillText(self.starting_text, 100, 200);
         elif self.state == self.STATE_RUN:   
-            self.execute_commands()        
+            self.execute_commands()   
+            
+            # do turtle stuff
+            my_turtle.update()
+            
+            # now draw the turtle
+            if my_turtle.trail:
+                self.__drawLine(my_turtle.prev_x, my_turtle.prev_y, my_turtle.x, my_turtle.y)
+            #if my_turtle.visible:
+            #    self.__drawText("*", my_turtle.x, my_turtle.y, fontSize = 16)
+            
+            
         elif self.state == self.STATE_STOP:       
             self.__clear(0.392,0.584,0.929)	  
         elif self.state == self.STATE_HALT:
+            if len(my_turtle.commands) > 0:
+                # do turtle stuff
+                my_turtle.update()
+                
+                # now draw the turtle
+                if my_turtle.trail:
+                    self.__drawLine(my_turtle.prev_x, my_turtle.prev_y, my_turtle.x, my_turtle.y)
             # program has finished (halted) - just leave the display as is
             # execute the command in the queue (to show the results if they didn't call reveal())
             
@@ -428,6 +454,7 @@ class PyAngelo():
         timer.request_animation_frame(self.update)
        
     def execute_commands(self, do_frame = True): 
+        global my_turtle
         if len(self.commands) > 0:
             self.last_frame_commands = copy.deepcopy(self.commands)
         
@@ -456,6 +483,18 @@ class PyAngelo():
                 command[0] = self.__drawCircle
             elif command[0] == CMD_INPUT:
                 command[0] = self.__input
+            elif command[0] == CMD_TRTL_FORWARD:
+                command[0] = my_turtle.forward
+                my_turtle.receiveCommand(command)
+                
+                del self.commands[0]
+                continue
+            elif command[0] == CMD_TRTL_LEFT:
+                command[0] = my_turtle.left
+                my_turtle.receiveCommand(command)
+                 
+                del self.commands[0]
+                continue
             else:
                 # not a valid command
                 del self.commands[0]
@@ -473,11 +512,13 @@ class PyAngelo():
             
             array[KEY_ESC] = 0
             
-    def stop(self):   
+    def stop(self): 
+        global my_turtle
         if self.state != self.STATE_STOP:
             self.state = self.STATE_STOP            
 
             # TODO: put all these into a Reset() method
+            
             self.commands = []
             self.resources =  {}
             self.loadingResources = 0
@@ -485,6 +526,8 @@ class PyAngelo():
             self.__stopAllSounds()
             
             array[KEY_ESC] = 1
+            
+            my_turtle = AngeloTurtle()
 
             disable_stop_enable_play()        
             

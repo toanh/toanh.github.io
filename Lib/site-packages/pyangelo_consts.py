@@ -41,3 +41,6 @@ CMD_REVEAL        = 11
 CMD_HALT          = 12
 CMD_PRINT         = 13
 CMD_INPUT         = 14
+CMD_TRTL_FORWARD  = 15
+CMD_TRTL_RIGHT    = 16
+CMD_TRTL_LEFT     = 17

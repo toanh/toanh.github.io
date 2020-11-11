@@ -53,22 +53,10 @@ class PyAngeloWorker():
         kwargs = {"r": r, "g": g, "b": b, "a": a}
         
         self.commands.append([CMD_CLEAR, kwargs])
-        
-    '''def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
-        return not ( ((x1 + width1) < x2) or 
-                     ((x2 + width2) < x1) or
-                     ((y1 + height1) < y2) or
-                     ((y2 + height2) < y1) )
-    '''
                      
     def overlaps(self, x1, y1, width1, height1, x2, y2, width2, height2):
         return ((x1 < (x2 + width2)) and ((x1 + width1) > x2) and (y1 < (y2 + height2)) and ((y1 + height1) > y2))
         
-        '''return not ( ((x1 + width1) < x2) or 
-                     ((x2 + width2) < x1) or
-                     ((y1 + height1) < y2) or
-                     ((y2 + height2) < y1) )                     
-        '''
         
     def drawLine(self, x1, y1, x2, y2, r=1.0, g=1.0, b=1.0, a=1.0, width=1):
         kwargs = {"x1": x1, "y1": y1, "x2": x2, "y2": y2, "r": r, "g": g, "b": b,
@@ -101,6 +89,18 @@ class PyAngeloWorker():
     def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
         kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
         self.commands.append([CMD_DRAWRECT, kwargs])    
+        
+    def forward(self, steps):
+        kwargs = {"steps": steps}
+        self.commands.append([CMD_TRTL_FORWARD, kwargs])
+        # immediate reveal
+        #self.reveal()
+        
+    def left(self, angle):
+        kwargs = {"angle": angle}
+        self.commands.append([CMD_TRTL_LEFT, kwargs])
+        # immediate reveal
+        #self.reveal()
         
     def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
         kwargs = {"x": x, "y": y, "radius": radius, "r": r, "g": g, "b": b, "a": a}
