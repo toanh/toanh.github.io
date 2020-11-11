@@ -457,6 +457,8 @@ class PyAngelo():
         if len(self.commands) > 0:
             self.last_frame_commands = copy.deepcopy(self.commands)
         #print("draining queue of len:", len(self.commands))
+        
+        execute = True
         while len(self.commands) > 0:
             command = self.commands[0]
             
@@ -485,27 +487,26 @@ class PyAngelo():
             elif command[0] == CMD_TRTL_FORWARD:
                 command[0] = my_turtle.forward
                 my_turtle.receiveCommand(command)
-                
-                del self.commands[0]
-                continue
+                execute = False
             elif command[0] == CMD_TRTL_LEFT:
                 command[0] = my_turtle.left
                 my_turtle.receiveCommand(command)
-                 
-                del self.commands[0]
-                continue
+                execute = False
             elif command[0] == CMD_TRTL_CLEAR:
                 command[0] = my_turtle.clear
                 my_turtle.receiveCommand(command)
-                 
-                del self.commands[0]
-                continue                
+                execute = False 
+            elif command[0] == CMD_TRTL_SPEED:
+                command[0] = my_turtle.speed
+                my_turtle.receiveCommand(command)
+                execute = False                  
             else:
                 # not a valid command
                 del self.commands[0]
                 continue
                 
-            command[0](**command[1])    
+            if execute:
+                command[0](**command[1])    
 
             del self.commands[0]       
         

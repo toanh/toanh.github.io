@@ -20,6 +20,13 @@ window = self
 class Turtle():
     def __init__(self):
         pass
+        
+    def speed(self, speed):
+        kwargs = {"speed": speed}
+        graphics.commands.append([CMD_TRTL_SPEED, kwargs])
+        # immediate reveal
+        graphics.reveal()
+        
     def forward(self, steps):
         global array, graphics
         
