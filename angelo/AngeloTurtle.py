@@ -24,17 +24,20 @@ class AngeloTurtle:
         self.prev_x = self.x
         self.prev_y = self.y
         
-        self.stepSize = 1
-        self.angleStepSize = 5
+        self.stepSize = 3
+        self.angleStepSize = 10
         
         self.commands = []
         
         
     def __rotate(self):
+        prev_dir = self.dir
+        
         self.dir += self.angleStepSize
-        # rotate first
-        # TODO: improve precision here
-        if abs(self.dir - self.dest_dir) < 0.1:
+
+        # check for crossover
+        if (self.dest_dir - self.dir) * (self.dest_dir - prev_dir) <= 0:
+            #if abs(self.dir - self.dest_dir) < 0.1:
             # have I reached my destination
             # pop off commands
             self.dir = self.dest_dir
@@ -49,8 +52,11 @@ class AngeloTurtle:
         
         self.x = self.prev_x + self.stepSize * cos(angle)
         self.y = self.prev_y + self.stepSize * sin(angle)
-            
-        if abs(self.x - self.dest_x) < 0.5 and abs(self.y - self.dest_y) < 0.5:
+        
+        # check for overshoot
+        # TODO: fix! Doesn't work for all step sizes, check and/or and <= >= logic
+        if (self.dest_x - self.x) * (self.dest_x - self.prev_x) < 0 or (self.dest_y - self.y) * (self.dest_y - self.prev_y) < 0:
+            #if abs(self.x - self.dest_x) < 0.5 and abs(self.y - self.dest_y) < 0.5:
             # have I reached my destination
             # pop off commands
             self.x = self.dest_x
