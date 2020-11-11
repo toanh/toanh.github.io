@@ -16,6 +16,48 @@ from pyangelo_consts import *
 
 console = self.console
 window = self
+
+class Turtle():
+    def __init__(self):
+        pass
+    def forward(self, steps):
+        global array, graphics
+        
+        # set blocking semaphore
+        array[SEMAPHORE1] = 1
+        
+        kwargs = {"steps": steps}
+        graphics.commands.append([CMD_TRTL_FORWARD, kwargs])
+        # immediate reveal
+        graphics.reveal()
+        
+        # this should block until last turtle command is done
+        while array[SEMAPHORE1] == 1:
+            continue
+        #array[SEMAPHORE1] = 0
+        
+        
+    def left(self, angle):
+        global array, graphics
+        # set blocking semaphore
+        array[SEMAPHORE1] = 1
+
+
+        kwargs = {"angle": angle}
+        graphics.commands.append([CMD_TRTL_LEFT, kwargs])
+        # immediate reveal
+        graphics.reveal()
+        # this should block until last turtle command is done
+        while array[SEMAPHORE1] == 1:
+            continue
+        #array[SEMAPHORE1] = 0
+        
+    def clear(self, r=0, g=0, b=0, a=0):
+        # TODO: check for escape in every API call?
+
+        kwargs = {"r": r, "g": g, "b": b, "a": a}       
+        graphics.commands.append([CMD_TRTL_CLEAR, kwargs])  
+        graphics.reveal()        
    
 class PyAngeloWorker():
     def __init__(self):
@@ -89,19 +131,7 @@ class PyAngeloWorker():
     def drawRect(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0):           
         kwargs = {"x1":x1, "y1": y1, "x2":x2, "y2": y2, "r": r, "g": g, "b": b, "a": a}
         self.commands.append([CMD_DRAWRECT, kwargs])    
-        
-    def forward(self, steps):
-        kwargs = {"steps": steps}
-        self.commands.append([CMD_TRTL_FORWARD, kwargs])
-        # immediate reveal
-        #self.reveal()
-        
-    def left(self, angle):
-        kwargs = {"angle": angle}
-        self.commands.append([CMD_TRTL_LEFT, kwargs])
-        # immediate reveal
-        #self.reveal()
-        
+                
     def drawCircle(self, x, y, radius, r=1.0, g=1.0, b=1.0, a=1.0):
         kwargs = {"x": x, "y": y, "radius": radius, "r": r, "g": g, "b": b, "a": a}
         self.commands.append([CMD_DRAWCIRCLE, kwargs])
@@ -184,6 +214,7 @@ class PyAngeloWorker():
         return True
         
 graphics = PyAngeloWorker()
+turtle = Turtle()
 array = None
 shared = None
 
@@ -205,7 +236,7 @@ def run_code(src, globals, locals):
         send_message(["quit"])
        
 def send_message(message):
-    self.console.log("Worker sending to main thread..")
+    self.console.log("Worker sending to main thread..", str(message))
     self.send(message)   
 
 @bind(self, "message")

@@ -1,15 +1,17 @@
 graphics.clear(0, 0, 0)
 
 for i in range(12):
-    graphics.forward(50)
-    graphics.left(90)
+    turtle.forward(50)
+    turtle.left(90)
     
-    graphics.forward(50)
-    graphics.left(90)
+    turtle.forward(50)
+    turtle.left(90)
     
-    graphics.forward(50)
-    graphics.left(90)
+    turtle.forward(50)
+    turtle.left(90)
     
-    graphics.forward(50)
+    turtle.forward(50)
     
-    graphics.left(60)
+    turtle.left(60)
+    
+graphics.drawText("All done!", 175, 80, fontSize = 30)

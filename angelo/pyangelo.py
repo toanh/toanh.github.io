@@ -52,7 +52,7 @@ class PyAngelo():
     STATE_INPUT     =   5
     
     def __init__(self):
-        global test_buff, PyAngeloWorker, array
+        global test_buff, PyAngeloWorker, array, my_turtle
         
         self.commands = []
         
@@ -96,7 +96,9 @@ class PyAngelo():
         window.console.log("Attempting to send shared data")
         
         PyAngeloWorker.send(keys_buff) 
-        #PyAngeloWorker.send(input_buff)           
+        #PyAngeloWorker.send(input_buff)       
+
+        my_turtle.set_shared_memory(array)
         
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
@@ -396,10 +398,9 @@ class PyAngelo():
             
             # do turtle stuff
             my_turtle.update()
+            my_turtle.draw()
             
             # now draw the turtle
-            if my_turtle.trail:
-                self.__drawLine(my_turtle.prev_x, my_turtle.prev_y, my_turtle.x, my_turtle.y)
             #if my_turtle.visible:
             #    self.__drawText("*", my_turtle.x, my_turtle.y, fontSize = 16)
             
@@ -407,13 +408,11 @@ class PyAngelo():
         elif self.state == self.STATE_STOP:       
             self.__clear(0.392,0.584,0.929)	  
         elif self.state == self.STATE_HALT:
+            #print(len(my_turtle.commands))
             if len(my_turtle.commands) > 0:
                 # do turtle stuff
                 my_turtle.update()
-                
-                # now draw the turtle
-                if my_turtle.trail:
-                    self.__drawLine(my_turtle.prev_x, my_turtle.prev_y, my_turtle.x, my_turtle.y)
+                my_turtle.draw()
             # program has finished (halted) - just leave the display as is
             # execute the command in the queue (to show the results if they didn't call reveal())
             
@@ -457,7 +456,7 @@ class PyAngelo():
         global my_turtle
         if len(self.commands) > 0:
             self.last_frame_commands = copy.deepcopy(self.commands)
-        
+        #print("draining queue of len:", len(self.commands))
         while len(self.commands) > 0:
             command = self.commands[0]
             
@@ -495,6 +494,12 @@ class PyAngelo():
                  
                 del self.commands[0]
                 continue
+            elif command[0] == CMD_TRTL_CLEAR:
+                command[0] = my_turtle.clear
+                my_turtle.receiveCommand(command)
+                 
+                del self.commands[0]
+                continue                
             else:
                 # not a valid command
                 del self.commands[0]
@@ -507,6 +512,7 @@ class PyAngelo():
     def start(self):
         if self.state != self.STATE_RUN:
             self.state = self.STATE_RUN
+            #window.console.log("Start clears commands")
             self.commands = []
             self.last_frame_commands = []
             
@@ -527,7 +533,9 @@ class PyAngelo():
             
             array[KEY_ESC] = 1
             
+            
             my_turtle = AngeloTurtle()
+            my_turtle.set_shared_memory(array)
 
             disable_stop_enable_play()        
             
@@ -546,8 +554,9 @@ def onmessage(e):
     #result.text = e.data
     if e.data[0] == CMD_REVEAL:
         window.console.log("Executing on the main thread...")
-        graphics.commands = e.data[1]
+        
         graphics.start()
+        graphics.commands += e.data[1]
     elif e.data[0] == "error":
         do_print(e.data[1], "red")    
         graphics.stop()    

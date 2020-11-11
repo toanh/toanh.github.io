@@ -1,3 +1,4 @@
+# keys have a buffer size of 512 for now
 KEY_HOME          = 0xff50
 KEY_ENTER         = 13
 KEY_ESC           = 27
@@ -22,6 +23,8 @@ KEY_V_RIGHT       = "v_right"
 KEY_V_UP          = "v_up"
 KEY_V_DOWN        = "v_down"
 KEY_V_FIRE        = "v_fire"
+SEMAPHORE1        = 500
+SEMAPHORE2        = 501
 
 MOUSE_LEFT        = 0xe000
 MOUSE_RIGHT       = 0xe001
@@ -44,3 +47,4 @@ CMD_INPUT         = 14
 CMD_TRTL_FORWARD  = 15
 CMD_TRTL_RIGHT    = 16
 CMD_TRTL_LEFT     = 17
+CMD_TRTL_CLEAR    = 18

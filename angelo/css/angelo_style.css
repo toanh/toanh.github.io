@@ -330,7 +330,8 @@ body #canvas {
     background-color: white;
     background-image: url("../images/starting.png");
     background-repeat: no-repeat;
-    background-position: center;    
+    background-position: center;  
+    z-index: 0;
 }
 
 body.pyangelo .outputWrapper {
