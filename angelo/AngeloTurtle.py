@@ -11,6 +11,7 @@ class AngeloTurtle:
         self.dir = 0
         self.visible = True
         self.trail = True
+        self.filling = False
         
         self.dest_x = self.x
         self.dest_y = self.y
@@ -57,6 +58,8 @@ class AngeloTurtle:
         
         self.instant_render = False
         
+        self.fill_path = []
+        
     def hide(self):
         self.visible = False
         self.turtle_ctx.clearRect(0, 0, self.width, self.height)
@@ -64,6 +67,14 @@ class AngeloTurtle:
         
     def show(self):
         self.visible = True
+        return True
+        
+    def penup(self):
+        self.trail = False
+        return True
+        
+    def pendown(self):
+        self.trail = True
         return True
         
     def set_shared_memory(self, array):
@@ -96,7 +107,25 @@ class AngeloTurtle:
         self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
-        self.ctx.stroke()        
+        self.ctx.stroke()  
+
+    def begin_fill(self):
+        self.filling = True
+        self.fill_path = []
+        self.fill_path.append([self.x, self.height - self.y])
+        return True
+        
+        
+    def end_fill(self):
+        self.filling = False
+        self.ctx.beginPath()
+        self.ctx.moveTo(self.fill_path[0][0], self.fill_path[0][1])
+        for i in range(1, len(self.fill_path)):
+            self.ctx.lineTo(self.fill_path[i][0], self.fill_path[i][1])
+        self.ctx.closePath()
+        self.ctx.fillStyle = "red";
+        self.ctx.fill()
+        return True
         
     def draw(self):
         if self.trail:
@@ -115,9 +144,7 @@ class AngeloTurtle:
             self.turtle_ctx.rotate(- radians(self.dir))# - 3.1415926535)# + math.PI / 180)
             self.turtle_ctx.fillText("👻", -icon_width/2, icon_height/2) 
             #self.ctx.drawImage(image.img, -anchorX * width, -anchorY * height, width, height)
-            self.turtle_ctx.restore()
-            
-            
+            self.turtle_ctx.restore()           
         
     def __rotate(self):
         prev_dir = self.dir
@@ -163,6 +190,9 @@ class AngeloTurtle:
         if abs(self.x - self.dest_x) < eps and abs(self.y - self.dest_y) < eps:
             print("reached destination")
             self.array[SEMAPHORE1] = 0
+            if self.filling:
+                self.fill_path.append([self.dest_x, self.height - self.dest_y])
+            
             return True
         else:
             return False
@@ -217,11 +247,13 @@ class AngeloTurtle:
             self.x = self.dest_x
             self.y = self.dest_y
             self.array[SEMAPHORE1] = 0
+            
+            if self.filling:
+                self.fill_path.append([self.dest_x, self.height - self.dest_y])
         else:
             self.commands.insert(0, [self.__move, {}])
             
         return True
-        #print("added move command", len(self.commands))
         
         
     def clear(self, r, g, b, a):

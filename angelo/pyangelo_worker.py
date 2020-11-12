@@ -20,9 +20,40 @@ window = self
 class Turtle():
     def __init__(self):
         self.visible = True
+        self.trail = True
+        self.filling = False
+        
+    def begin_fill(self):
+        self.filling = True
+        graphics.commands.append([CMD_TRTL_BEGINFILL, {}])
+        # immediate reveal
+        graphics.reveal()
+        
+    def end_fill(self):
+        self.filling = False
+        graphics.commands.append([CMD_TRTL_ENDFILL, {}])
+        # immediate reveal
+        graphics.reveal()
         
     def isvisible(self):
         return self.visible
+        
+    def pu(self):
+        self.penup()
+    def penup(self):
+        self.trail = False
+        graphics.commands.append([CMD_TRTL_PENUP, {}])
+        # immediate reveal
+        graphics.reveal()
+        
+    def pd(self):
+        self.pendown()
+    def pendown(self):
+        self.trail = False
+        graphics.commands.append([CMD_TRTL_PENDOWN, {}])
+        # immediate reveal
+        graphics.reveal()
+        
         
     def ht(self):
         self.hide()

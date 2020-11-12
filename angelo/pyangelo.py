@@ -508,6 +508,22 @@ class PyAngelo():
             elif command[0] == CMD_TRTL_SHOW:
                 command[0] = my_turtle.show
                 my_turtle.receiveCommand(command)
+                execute = False  
+            elif command[0] == CMD_TRTL_PENUP:
+                command[0] = my_turtle.penup
+                my_turtle.receiveCommand(command)
+                execute = False  
+            elif command[0] == CMD_TRTL_PENDOWN:
+                command[0] = my_turtle.pendown
+                my_turtle.receiveCommand(command)
+                execute = False    
+            elif command[0] == CMD_TRTL_BEGINFILL:
+                command[0] = my_turtle.begin_fill
+                my_turtle.receiveCommand(command)
+                execute = False  
+            elif command[0] == CMD_TRTL_ENDFILL:
+                command[0] = my_turtle.end_fill
+                my_turtle.receiveCommand(command)
                 execute = False                 
             else:
                 # not a valid command
