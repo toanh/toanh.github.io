@@ -1,5 +1,6 @@
 graphics.clear(0, 0, 0)
 
+turtle.show()
 turtle.speed(2)
 
 for i in range(12):

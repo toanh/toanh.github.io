@@ -60,11 +60,11 @@ class AngeloTurtle:
     def hide(self):
         self.visible = False
         self.turtle_ctx.clearRect(0, 0, self.width, self.height)
-        del self.commands[0]
+        return True
         
     def show(self):
         self.visible = True
-        del self.commands[0]
+        return True
         
     def set_shared_memory(self, array):
     
@@ -78,7 +78,8 @@ class AngeloTurtle:
         if len(self.commands) > 0:
             command = self.commands[0]
             #print("executing: ", str(command))
-            command[0](**command[1])
+            if command[0](**command[1]):
+                self.commands.remove(command)
         return
         
     def _convY(self, y):
@@ -130,7 +131,9 @@ class AngeloTurtle:
             # pop off commands
             self.dir = self.dest_dir
             self.array[SEMAPHORE1] = 0
-            del self.commands[0]
+            return True
+        else:
+            return False
             
             
     def __move(self):
@@ -160,7 +163,9 @@ class AngeloTurtle:
         if abs(self.x - self.dest_x) < eps and abs(self.y - self.dest_y) < eps:
             print("reached destination")
             self.array[SEMAPHORE1] = 0
-            del self.commands[0]
+            return True
+        else:
+            return False
             
         #print(self.x, self.y, self.dest_x, self.dest_y)
             
@@ -180,7 +185,7 @@ class AngeloTurtle:
             self.stepSize = speed
             self.angleStepSize = speed * 5
             
-        del self.commands[0]
+        return True
     
     def forward(self, steps):
         
@@ -202,7 +207,7 @@ class AngeloTurtle:
         
         
         # pop off the trigger command and replace with executor
-        del self.commands[0]
+        #del self.commands[0]
         #print("deleting forward trigger", len(self.commands))
         
         if self.instant_render:
@@ -214,6 +219,8 @@ class AngeloTurtle:
             self.array[SEMAPHORE1] = 0
         else:
             self.commands.insert(0, [self.__move, {}])
+            
+        return True
         #print("added move command", len(self.commands))
         
         
@@ -223,7 +230,9 @@ class AngeloTurtle:
         self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"        
         self.ctx.fillRect(0, 0, self.width, self.height) 
         
-        del self.commands[0]
+        return True
+        
+        #del self.commands[0]
         
     def left(self, angle):   
         if angle < 0:
@@ -233,7 +242,7 @@ class AngeloTurtle:
             
         self.dest_dir = self.dir + angle
         
-        del self.commands[0]
+        #del self.commands[0]
         # pop off the trigger command and replace with executor
         
         if self.instant_render:
@@ -242,4 +251,6 @@ class AngeloTurtle:
             self.array[SEMAPHORE1] = 0
         else:
             self.commands.insert(0, [self.__rotate, {}])
+            
+        return True
         

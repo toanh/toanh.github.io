@@ -99,6 +99,7 @@ class PyAngelo():
         #PyAngeloWorker.send(input_buff)       
 
         my_turtle.set_shared_memory(array)
+        my_turtle.hide()
         
         self.pixel_id = self.ctx.createImageData(1, 1)
         self.pixel_color = self.pixel_id.data
@@ -545,6 +546,7 @@ class PyAngelo():
             
             my_turtle = AngeloTurtle()
             my_turtle.set_shared_memory(array)
+            my_turtle.hide()
 
             disable_stop_enable_play()        
             
