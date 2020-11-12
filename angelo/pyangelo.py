@@ -55,6 +55,7 @@ class PyAngelo():
         global test_buff, PyAngeloWorker, array, my_turtle
         
         self.commands = []
+        self.turtle_commands = []
         
         # get the canvas element
         self.canvas = document["canvas"]
@@ -297,6 +298,7 @@ class PyAngelo():
 
     def __clear(self, r = 0, g = 0, b = 0, a = 1):
         global array
+        print("Clearing screen")
         self.ctx.fillStyle= "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0))+ ")"
         self.ctx.fillRect(0, 0, self.width, self.height)    
         
@@ -457,9 +459,7 @@ class PyAngelo():
         global my_turtle
         if len(self.commands) > 0:
             self.last_frame_commands = copy.deepcopy(self.commands)
-        #print("draining queue of len:", len(self.commands))
         
-        execute = True
         while len(self.commands) > 0:
             command = self.commands[0]
             
@@ -484,62 +484,57 @@ class PyAngelo():
             elif command[0] == CMD_DRAWCIRCLE:
                 command[0] = self.__drawCircle
             elif command[0] == CMD_INPUT:
-                command[0] = self.__input
-            elif command[0] == CMD_TRTL_FORWARD:
-                command[0] = my_turtle.forward
-                my_turtle.receiveCommand(command)
-                execute = False
-            elif command[0] == CMD_TRTL_LEFT:
-                command[0] = my_turtle.left
-                my_turtle.receiveCommand(command)
-                execute = False
-            elif command[0] == CMD_TRTL_CLEAR:
-                command[0] = my_turtle.clear
-                my_turtle.receiveCommand(command)
-                execute = False 
-            elif command[0] == CMD_TRTL_SPEED:
-                command[0] = my_turtle.speed
-                my_turtle.receiveCommand(command)
-                execute = False 
-            elif command[0] == CMD_TRTL_HIDE:
-                command[0] = my_turtle.hide
-                my_turtle.receiveCommand(command)
-                execute = False 
-            elif command[0] == CMD_TRTL_SHOW:
-                command[0] = my_turtle.show
-                my_turtle.receiveCommand(command)
-                execute = False  
-            elif command[0] == CMD_TRTL_PENUP:
-                command[0] = my_turtle.penup
-                my_turtle.receiveCommand(command)
-                execute = False  
-            elif command[0] == CMD_TRTL_PENDOWN:
-                command[0] = my_turtle.pendown
-                my_turtle.receiveCommand(command)
-                execute = False    
-            elif command[0] == CMD_TRTL_BEGINFILL:
-                command[0] = my_turtle.begin_fill
-                my_turtle.receiveCommand(command)
-                execute = False  
-            elif command[0] == CMD_TRTL_ENDFILL:
-                command[0] = my_turtle.end_fill
-                my_turtle.receiveCommand(command)
-                execute = False                 
+                command[0] = self.__input         
             else:
                 # not a valid command
                 del self.commands[0]
                 continue
                 
-            if execute:
-                command[0](**command[1])    
+            command[0](**command[1])    
 
-            del self.commands[0]       
+            del self.commands[0]   
+
+        if len(self.turtle_commands) > 0:
+            self.last_frame_commands = copy.deepcopy(self.commands)
+            #print("draining queue of len:", len(self.commands))
         
+        while len(self.turtle_commands) > 0:
+            command = self.turtle_commands[0]
+            
+            if command[0] == CMD_TRTL_FORWARD:
+                command[0] = my_turtle.forward
+            elif command[0] == CMD_TRTL_LEFT:
+                command[0] = my_turtle.left
+            elif command[0] == CMD_TRTL_CLEAR:
+                command[0] = my_turtle.clear
+            elif command[0] == CMD_TRTL_SPEED:
+                command[0] = my_turtle.speed
+            elif command[0] == CMD_TRTL_HIDE:
+                command[0] = my_turtle.hide
+            elif command[0] == CMD_TRTL_SHOW:
+                command[0] = my_turtle.show
+            elif command[0] == CMD_TRTL_PENUP:
+                command[0] = my_turtle.penup
+            elif command[0] == CMD_TRTL_PENDOWN:
+                command[0] = my_turtle.pendown
+            elif command[0] == CMD_TRTL_BEGINFILL:
+                command[0] = my_turtle.begin_fill
+            elif command[0] == CMD_TRTL_ENDFILL:
+                command[0] = my_turtle.end_fill
+            else:
+                # not a valid command
+                del self.turtle_commands[0]
+                continue
+                
+            my_turtle.receiveCommand(command)
+            del self.turtle_commands[0]  
+            
     def start(self):
         if self.state != self.STATE_RUN:
             self.state = self.STATE_RUN
             #window.console.log("Start clears commands")
             self.commands = []
+            self.turtle_commands = []
             self.last_frame_commands = []
             
             array[KEY_ESC] = 0
@@ -552,6 +547,7 @@ class PyAngelo():
             # TODO: put all these into a Reset() method
             
             self.commands = []
+            self.turtle_commands = []
             self.resources =  {}
             self.loadingResources = 0
 
@@ -583,7 +579,15 @@ def onmessage(e):
         window.console.log("Executing on the main thread...")
         
         graphics.start()
-        graphics.commands += e.data[1]
+        # clears out existing commands for a new reveal EXCEPT for turtle ones
+        graphics.commands = e.data[1]
+    elif e.data[0] == CMD_TRTL_REVEAL:
+        window.console.log("Executing turtle on the main thread...")
+        
+        graphics.start()
+        # clears out existing commands for a new reveal EXCEPT for turtle ones
+        graphics.turtle_commands += e.data[1]
+        #graphics.commands += e.data[1]
     elif e.data[0] == "error":
         do_print(e.data[1], "red")    
         graphics.stop()    
