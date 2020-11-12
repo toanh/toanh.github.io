@@ -19,7 +19,30 @@ window = self
 
 class Turtle():
     def __init__(self):
-        pass
+        self.visible = True
+        
+    def isvisible(self):
+        return self.visible
+        
+    def ht(self):
+        self.hide()
+    def hideturtle(self):
+        self.hide()
+    def hide(self):
+        self.visible = False
+        graphics.commands.append([CMD_TRTL_HIDE, {}])
+        # immediate reveal
+        graphics.reveal()
+        
+    def st(self):
+        self.show()
+    def showturtle(self):
+        self.show()
+    def show(self):
+        self.visible = True
+        graphics.commands.append([CMD_TRTL_SHOW, {}])
+        # immediate reveal
+        graphics.reveal()
         
     def speed(self, speed):
         kwargs = {"speed": speed}

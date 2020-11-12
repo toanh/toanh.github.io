@@ -55,6 +55,17 @@ class AngeloTurtle:
         
         self.array = None
         
+        self.instant_render = False
+        
+    def hide(self):
+        self.visible = False
+        self.turtle_ctx.clearRect(0, 0, self.width, self.height)
+        del self.commands[0]
+        
+    def show(self):
+        self.visible = True
+        del self.commands[0]
+        
     def set_shared_memory(self, array):
     
         print("setting shared memory!", array)
@@ -160,12 +171,19 @@ class AngeloTurtle:
         #print("added forward trigger", len(self.commands))
         
     def speed(self, speed):
-        #print("Setting speed", speed)
-        self.stepSize = speed
-        self.angleStepSize = speed * 5
+    
+        if speed == 0:
+            self.instant_render = True
+        else:
+            self.instant_render = False
+            #print("Setting speed", speed)
+            self.stepSize = speed
+            self.angleStepSize = speed * 5
+            
         del self.commands[0]
     
     def forward(self, steps):
+        
         if steps < 0:
             self.stepSize = -abs(self.stepSize)
         else:
@@ -182,11 +200,20 @@ class AngeloTurtle:
         self.dest_x = self.x + dx
         self.dest_y = self.y + dy
         
+        
         # pop off the trigger command and replace with executor
         del self.commands[0]
         #print("deleting forward trigger", len(self.commands))
         
-        self.commands.insert(0, [self.__move, {}])
+        if self.instant_render:
+            self.prev_x = self.x
+            self.prev_y = self.y
+            
+            self.x = self.dest_x
+            self.y = self.dest_y
+            self.array[SEMAPHORE1] = 0
+        else:
+            self.commands.insert(0, [self.__move, {}])
         #print("added move command", len(self.commands))
         
         
@@ -208,5 +235,11 @@ class AngeloTurtle:
         
         del self.commands[0]
         # pop off the trigger command and replace with executor
-        self.commands.insert(0, [self.__rotate, {}])
+        
+        if self.instant_render:
+            self.prev_dir = self.dir
+            self.dir = self.dest_dir
+            self.array[SEMAPHORE1] = 0
+        else:
+            self.commands.insert(0, [self.__rotate, {}])
         

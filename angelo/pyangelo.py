@@ -499,7 +499,15 @@ class PyAngelo():
             elif command[0] == CMD_TRTL_SPEED:
                 command[0] = my_turtle.speed
                 my_turtle.receiveCommand(command)
-                execute = False                  
+                execute = False 
+            elif command[0] == CMD_TRTL_HIDE:
+                command[0] = my_turtle.hide
+                my_turtle.receiveCommand(command)
+                execute = False 
+            elif command[0] == CMD_TRTL_SHOW:
+                command[0] = my_turtle.show
+                my_turtle.receiveCommand(command)
+                execute = False                 
             else:
                 # not a valid command
                 del self.commands[0]
