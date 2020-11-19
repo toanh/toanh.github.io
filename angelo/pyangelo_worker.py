@@ -54,6 +54,16 @@ class Turtle():
         # immediate reveal
         graphics.reveal(CMD_TRTL_REVEAL)
         
+    def pencolor(self, r = 255, g = 255, b = 255, a = 255):
+        kwargs = {"r": r, "g": g, "b": b, "a": a}
+        graphics.commands.append([CMD_TRTL_PENCOLOR, kwargs])
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def fillcolor(self, r = 255, g = 255, b = 255, a = 255):
+        kwargs = {"r": r, "g": g, "b": b, "a": a}
+        graphics.commands.append([CMD_TRTL_FILLCOLOR, kwargs])
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
         
     def ht(self):
         self.hide()

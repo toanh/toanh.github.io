@@ -521,6 +521,10 @@ class PyAngelo():
                 command[0] = my_turtle.begin_fill
             elif command[0] == CMD_TRTL_ENDFILL:
                 command[0] = my_turtle.end_fill
+            elif command[0] == CMD_TRTL_PENCOLOR:
+                command[0] = my_turtle.pencolor
+            elif command[0] == CMD_TRTL_FILLCOLOR:
+                command[0] = my_turtle.fillcolor
             else:
                 # not a valid command
                 del self.turtle_commands[0]

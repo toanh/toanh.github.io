@@ -60,6 +60,30 @@ class AngeloTurtle:
         
         self.fill_path = []
         
+        self.r = 255
+        self.g = 255
+        self.b = 255
+        self.a = 1
+        
+        self.fill_r = 255
+        self.fill_g = 255
+        self.fill_b = 255
+        self.fill_a = 1
+        
+    def pencolor(self, r, g, b, a):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a/255.0
+        return True
+        
+    def fillcolor(self, r, g, b, a):
+        self.fill_r = r
+        self.fill_g = g
+        self.fill_b = b
+        self.fill_a = a/255.0
+        return True
+        
     def hide(self):
         self.visible = False
         self.turtle_ctx.clearRect(0, 0, self.width, self.height)
@@ -96,15 +120,11 @@ class AngeloTurtle:
     def _convY(self, y):
         return self.height - y        
         
-    def __drawLine(self, x1, y1, x2, y2, r = 1.0, g = 1.0, b = 1.0, a = 1.0, width = 1):
-        r = min(r, 1.0)
-        g = min(g, 1.0)
-        b = min(b, 1.0)
-        a = min(a, 1.0)
-
+    def __drawLine(self, x1, y1, x2, y2, width = 1):
         self.ctx.beginPath()
         self.ctx.lineWidth = width
-        self.ctx.strokeStyle = "rgba(" + str(int(r * 255.0)) + "," + str(int(g * 255.0)) + "," + str(int(b * 255.0)) + "," + str(int(a * 255.0)) + ")"
+        self.ctx.strokeStyle = f"rgba({self.r},{self.g},{self.b},{self.a})"
+        print('Turtle line:' + self.ctx.strokeStyle)
         self.ctx.moveTo(x1, self._convY(y1))
         self.ctx.lineTo(x2, self._convY(y2))
         self.ctx.stroke()  
@@ -123,7 +143,7 @@ class AngeloTurtle:
         for i in range(1, len(self.fill_path)):
             self.ctx.lineTo(self.fill_path[i][0], self.fill_path[i][1])
         self.ctx.closePath()
-        self.ctx.fillStyle = "red";
+        self.ctx.fillStyle = f"rgba({self.fill_r},{self.fill_g},{self.fill_b},{self.fill_a})";
         self.ctx.fill()
         return True
         
