@@ -3,9 +3,21 @@
 <script>
 window.requestAnimationFrame(draw);
 
-var times = [	
+var times_nontues = [	
 				[845,935,"Period 1"],
 				[935,1025,"Period 2"],
+				[1025,1045,"Recess"],
+				[1045,1135,"Period 3"],
+				[1135,1225,"Period 4"],
+				[1225,1315,"Period 5"],
+				[1315,1405,"Lunch"],
+				[1405,1455,"Period 7"],
+				[1455,1545,"Period 8"]	
+			]
+			
+var times_tues = [	
+				[830,920,"Period 1"],
+				[920,1010,"Period 2"],
 				[1025,1045,"Recess"],
 				[1045,1135,"Period 3"],
 				[1135,1225,"Period 4"],
@@ -37,6 +49,10 @@ function draw() {
 
 
 	var today = new Date();
+	if (today.getDay() == 2)
+		times = times_tues;
+	else
+		times = times_nontues;
 	var time = today.getHours() * 100 + today.getMinutes();
 	
 	ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
@@ -71,6 +87,13 @@ function draw() {
 			
 			ctx.fillStyle = 'hsl(' + colour + ', 100%, 50%)';
 			ctx.fillText(get12HourTime(time), 300, 50);
+			
+			// progress bar
+			ctx.strokeStyle = 'rgba(255, 255, 255, 1.0)';
+			ctx.fillStyle = 'rgba(255, 255, 255, 255)';
+			ctx.strokeRect(300, 135, 150, 15); // progress bar background
+			ctx.fillStyle = 'hsl(' + colour + ', 100%, 50%)';
+			ctx.fillRect(300, 135, (1.0 - ratio) * 150, 15); // progress bar background
 			
 			ctx.strokeStyle = 'rgba(0, 153, 255, 0.4)';
 			ctx.fillStyle = 'rgba(255, 255, 255, 255)';

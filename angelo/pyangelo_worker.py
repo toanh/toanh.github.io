@@ -19,7 +19,78 @@ window = self
 
 class Turtle():
     def __init__(self):
-        pass
+        self.visible = True
+        self.trail = True
+        self.filling = False
+        
+    def begin_fill(self):
+        self.filling = True
+        graphics.commands.append([CMD_TRTL_BEGINFILL, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def end_fill(self):
+        self.filling = False
+        graphics.commands.append([CMD_TRTL_ENDFILL, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def isvisible(self):
+        return self.visible
+        
+    def pu(self):
+        self.penup()
+    def penup(self):
+        self.trail = False
+        graphics.commands.append([CMD_TRTL_PENUP, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def pd(self):
+        self.pendown()
+    def pendown(self):
+        self.trail = False
+        graphics.commands.append([CMD_TRTL_PENDOWN, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def pencolor(self, r = 255, g = 255, b = 255, a = 255):
+        kwargs = {"r": r, "g": g, "b": b, "a": a}
+        graphics.commands.append([CMD_TRTL_PENCOLOR, kwargs])
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def fillcolor(self, r = 255, g = 255, b = 255, a = 255):
+        kwargs = {"r": r, "g": g, "b": b, "a": a}
+        graphics.commands.append([CMD_TRTL_FILLCOLOR, kwargs])
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+        
+    def ht(self):
+        self.hide()
+    def hideturtle(self):
+        self.hide()
+    def hide(self):
+        self.visible = False
+        graphics.commands.append([CMD_TRTL_HIDE, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def st(self):
+        self.show()
+    def showturtle(self):
+        self.show()
+    def show(self):
+        self.visible = True
+        graphics.commands.append([CMD_TRTL_SHOW, {}])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
+    def speed(self, speed):
+        kwargs = {"speed": speed}
+        graphics.commands.append([CMD_TRTL_SPEED, kwargs])
+        # immediate reveal
+        graphics.reveal(CMD_TRTL_REVEAL)
+        
     def forward(self, steps):
         global array, graphics
         
@@ -29,7 +100,7 @@ class Turtle():
         kwargs = {"steps": steps}
         graphics.commands.append([CMD_TRTL_FORWARD, kwargs])
         # immediate reveal
-        graphics.reveal()
+        graphics.reveal(CMD_TRTL_REVEAL)
         
         # this should block until last turtle command is done
         while array[SEMAPHORE1] == 1:
@@ -46,7 +117,7 @@ class Turtle():
         kwargs = {"angle": angle}
         graphics.commands.append([CMD_TRTL_LEFT, kwargs])
         # immediate reveal
-        graphics.reveal()
+        graphics.reveal(CMD_TRTL_REVEAL)
         # this should block until last turtle command is done
         while array[SEMAPHORE1] == 1:
             continue
@@ -57,7 +128,7 @@ class Turtle():
 
         kwargs = {"r": r, "g": g, "b": b, "a": a}       
         graphics.commands.append([CMD_TRTL_CLEAR, kwargs])  
-        graphics.reveal()        
+        graphics.reveal(CMD_TRTL_REVEAL)        
    
 class PyAngeloWorker():
     def __init__(self):
@@ -186,7 +257,7 @@ class PyAngeloWorker():
         while (currTime - prevTime < milliseconds):
             currTime = window.performance.now()        
         
-    def reveal(self):
+    def reveal(self, command_type = CMD_REVEAL):
     
         if array[KEY_ESC] == 1:
             console.log("Escape detected!")
@@ -207,8 +278,15 @@ class PyAngeloWorker():
                 console.log("Escape detected!")
                 array[KEY_ESC] = 0
                 raise SystemExit("QUIT requested")    
-                                       
-        send_message([CMD_REVEAL,self.commands])
+        
+        # TODO: HACK
+        if command_type == CMD_TRTL_REVEAL and len(self.commands) > 1:
+            send_message([CMD_REVEAL, self.commands[0:-1]])
+            send_message([CMD_TRTL_REVEAL, [self.commands[-1]]])
+        
+        # end HACK
+        else:
+            send_message([command_type, self.commands])
         self.commands = []        
                
         return True
