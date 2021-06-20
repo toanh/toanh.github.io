@@ -31,23 +31,6 @@
     
     <script type="text/javascript">   
 
-        var myCustomFiles = {'./test_me.py': 'print ("hello")\nprint ("test")'};
-
-        function builtinRead(x) {
-            return "print('test_me')"
-/*
-            if (myCustomFiles[x] !== undefined) {
-                return myCustomfiles[x];
-            }
-
-            
-
-            if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-                    throw "File not found: '" + x + "'";
-            return Sk.builtinFiles["files"][x];
-*/
-        }       
-        
         function save() {
             var code = ace.edit("editor").getValue();
             var file = new File([code], "my_code.py", {type: "text/plain;charset=utf-8"});
@@ -76,8 +59,7 @@
                 var labels = {};
                 
                 var blocks = [];
-                
-                
+                                
                 // grabbing all the blocks and their character indices in the code
                 var casePattern = /case \d+:/g;                
                 var matches = code.matchAll(casePattern);
@@ -104,7 +86,9 @@
                     blocks.push([start, code.length - start - 1]);
                 }
                 
-
+                // pass 1:
+                // finding all the label blocks, grabbing their block numbers
+                // and populating the lookup table with them
                 for (i = 0; i < blocks.length; i++)
                 {
                     block = code.substr(blocks[i][0], blocks[i][1]);
@@ -120,23 +104,18 @@
                             
                             // deleting suspensions code associated with label code
                             var suspensionsPattern = /var \$loadname[\S\s]+?\$blk=\d+;/g;
-                            //var suspensionsPattern = /var/g;
                             var suspensionsMatches = block.matchAll(suspensionsPattern);   
-                            //var suspensionsMatches = block.matchAll(/.*/g);   
 
                             for (suspensionMatch of suspensionsMatches)
                             {
                                 destCode = destCode.replace(suspensionMatch[0], "");                                                          
                             }
                             
-                            // do the next block too
+                            // deleting suspensions code in the next block too
                             if (i < blocks.length - 1)
                             {
-                            
-                            
                                 block = code.substr(blocks[i + 1][0], blocks[i + 1][1]);
                                 var suspensionsPattern = /if \(\$ret[\s\S]+=\$ret;/g;
-                                //var suspensionsMatches = block.matchAll(suspensionsPattern);   
                                 var suspensionsMatches = block.matchAll(suspensionsPattern);   
 
                                 for (suspensionMatch of suspensionsMatches)
@@ -148,6 +127,7 @@
                     }
                 }
                 
+                // pass 2:
                 // fill in goto statements
                 for (i = 0; i < blocks.length; i++)
                 {
@@ -157,61 +137,10 @@
                     for (gotoMatch of gotoMatches)
                     {
                         var lineNo = labels[gotoMatch[1].trim()];
+                        // replace everything from the case statement onwards (exclusively) with the blk jump
                         destCode = destCode.replace(gotoMatch[0], "$blk=" + lineNo + ";/* goto */continue;");
                     }
-                }                
-                
-                /*
-                
-                // find labels
-                var patt1 = /case [\S\s]+?label \.[\S\s]+?=\$ret;/;
-                var result1 = patt1.exec(code);
-
-                if (result1 == null || result1.length < 1)
-                    return code;
-                    
-                moreCode = code;
-                while (result1 != null && result1.length > 0)
-                //for (i = 0; i < result1.length; i++)
-                {
-                    moreCode = moreCode.substr(result1.index + result1[0].length);
-                
-                    var patt2 = /case (\d+)/g;                    
-                    var result2 = patt2.exec(result1[0]);
-                    
-                    var patt3 = /label (.+)\n/
-                    var result3 = patt3.exec(result1[0]);
-
-                    labels[result3[1]] = result2[1];
-
-                    //var patt4 = /var \$loadname[\S\s]+?blk=/;
-                    //var patt4 = /var \$loadname[\S\s]+?\$ret =/;
-                    var patt4 = /var \$loadname[\S\s]+?=\$ret;/;
-                    var result4 = patt4.exec(result1);
-
-                    //code = code.replace(result4[0], "$blk=");  
-                    code = code.replace(result4[0], "");  
-                    
-                    patt1 = /(case [\S\s]+)?label \.[\S\s]+?=\$ret;/;                    
-                    result1 = patt1.exec(moreCode);                        
-                }
-                // find gotos
-                patt1 = /\/\/\s+goto \.[\S\s]+?blk=\d+/;
-                result1 = patt1.exec(code);
-                
-                if (result1 == null || result1.length < 1)
-                    return code;
-
-                for (i = 0; i < result1.length; i++)
-                {
-                    patt2 = /\/\/\s+goto (.+)/;
-                    result2 = patt2.exec(result1);
-
-                    lineNo = labels[result2[1]]
-
-                    code = code.replace(result1[0], "$blk=" + lineNo + ";continue;");  
-                }  
-                */
+                }                                
             }
             return destCode;
         }
