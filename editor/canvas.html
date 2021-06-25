@@ -135,12 +135,19 @@
                             labels[labalNameMatch[1].trim()] = blockNumberMatch[1];
                             
                             // deleting suspensions code associated with label code
-                            var suspensionsPattern = /var \$loadname[\S\s]+?\$blk=\d+;/g;
+                            var suspensionsPattern = /var \$loadname[\S\s]+?\$blk=(\d+);/g;
                             var suspensionsMatches = block.matchAll(suspensionsPattern);   
 
                             for (suspensionMatch of suspensionsMatches)
                             {
-                                destCode = destCode.replace(suspensionMatch[0], "");                                                          
+                                var nextBlock = parseInt(blockNumberMatch[1]) + 1;
+                                var linenoPattern = /currLineNo = (\d+);/g;
+                                var linenoMatches = block.matchAll(linenoPattern);   
+                                for (linenoMatch of linenoMatches)                                
+                                {
+                                    var suspCode = "if (Sk.breakpoints('<stdin>.py'," + linenoMatch[1] + ",0)) {var $susp = $saveSuspension({data: {type: 'Sk.delay'}, resume: function() {}}, '<stdin>.py'," + linenoMatch[1] + ",0);$susp.$blk = " + nextBlock + ";$susp.optional = true;return $susp;}$blk=" + nextBlock + ";";
+                                    destCode = destCode.replace(suspensionMatch[0], suspCode);      
+                                }                                
                             }
                             
                             // deleting suspensions code in the next block too
@@ -152,6 +159,7 @@
 
                                 for (suspensionMatch of suspensionsMatches)
                                 {
+                                    
                                     destCode = destCode.replace(suspensionMatch[0], "");                                                          
                                 }                            
                             }
@@ -325,14 +333,14 @@
 
 i = 1
 name = input("name:")
-while True:
-    clearScreen(i * 10, 0, 255, 1)  
-    drawRect(10, 10, 50, 70, 5, GREEN)
-    fillRect(20, 300, 100, 50, BLUE)
-    if isKeyPressed('a'):
-        printAt("hello😋", 100, 200)
-        print("released")
-    i = (i + 1) % 25
+label .here
+clearScreen(i * 10, 0, 255, 1)  
+drawRect(10, 10, 50, 70, 5, GREEN)
+fillRect(20, 300, 100, 50, BLUE)
+if isKeyPressed(65):
+    printAt("hello😋", 100, 200)
+i = (i + 1) % 25
+goto .here
 
 print("all done")
         </div>
