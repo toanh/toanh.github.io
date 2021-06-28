@@ -39,33 +39,36 @@
         function outputf(n) {
             var text = "";
             var color = "rgb(255,255,255)";
-            for(i = 0; i < n.length; i++)
+                          
+            i = 0;
+            while (n.length > 0)
             {
-
-                if (n[i] == "\u001b")
+                if (n[0] == "\u001b")
                 {
+                    i++;
                     if (text.length > 0)
                         pyConsole.appendChild(createColouredTextSpanElement(text, color));                
                     text = "";
-                    i++;
-                    switch (n[i])
+                    
+                    var escPattern = /\[ (\d+);2;(\d+);(\d+);(\d+) m/;                          
+                    var match = n.match(escPattern);
+                    
+                    if (typeof(match) !== 'undefined')
                     {
-                        case '1':
-                            color = "red";
-                            break;
-                        case '2':
-                            color = "green";
-                            break;
-                        case '3':
-                            color = "blue";
-                            break;                           
-                        default:
-                            color = "white";
+                        code = parseInt(match[1]);
+                        if (code == 38)
+                        {
+                            color = "rgb(" + parseInt(match[2]) + "," + parseInt(match[3]) + "," + parseInt(match[4]) + ")"; 
+                        }
+                        i = match.index + match[0].length;
                     }
-                    i++;
+                    n = n.substring(i);
                 }
-                text += n[i];
-                
+                else
+                {
+                    text += n[0];
+                    n = n.substring(1);
+                }                
             }
             if (text.length > 0)
                 pyConsole.appendChild(createColouredTextSpanElement(text, color));                           
@@ -334,6 +337,7 @@
                 <div id="editor" style="height: 400px">from pyangelo import *
 from random import *
 
+print("\u001b[ 38;2;255;255;0 mhello \u001b[ 38;2;255;0;0 mworld!")
 blockSize = 20
 font = str(blockSize) + "px consolas"
 
