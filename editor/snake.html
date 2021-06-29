@@ -276,13 +276,13 @@
                 output: outputf,
                 inputfun: inputf,
                 inputfunTakesPrompt: false,
-                debugging: false, //stepRun ? true : false,
+                debugging: true, //stepRun ? true : false,
                 killableWhile: true,
                 //breakpoints: function() { return true; },
                 __future__: Sk.python3
             });
             
-            //Sk.onAfterCompile = doGoto;
+            Sk.onAfterCompile = doGoto;
                 
             var handlers = {};
             handlers["*"] = checkForStop;            
