@@ -337,7 +337,7 @@
                 <div id="editor" style="height: 400px">from pyangelo import *
 from random import *
 
-print("\u001b[ 38;2;255;255;0 mhello \u001b[ 38;2;255;0;0 mworld!")
+print(GREEN + "hello " + RED + "world" + BLUE + "!")
 blockSize = 20
 font = str(blockSize) + "px consolas"
 
@@ -346,7 +346,7 @@ gameState = 'intro'
 
 while True:
     clearScreen()
-    drawText("Snake!", 120, 40, font)
+    drawText("Snake!", 120, 40, font, RED)
     drawText("Score: " + str(score), 100, 65, font)
     
     # draw the border
@@ -355,7 +355,7 @@ while True:
     
     if gameState == 'intro':
         drawText("Press 'ENTER' to start", 40, 285, font)
-        if isKeyReleased(13):
+        if isKeyReleased('Enter'):
             gameState = 'play'
             # Initializing values
             score = 0
@@ -371,16 +371,16 @@ while True:
             progress = 0            
     elif gameState == 'play':
         # check for keys
-        if isKeyPressed(68):
+        if isKeyPressed('d'):
             dx = 1
             dy = 0
-        elif isKeyPressed(65):
+        elif isKeyPressed('a'):
             dx = -1
             dy = 0
-        elif isKeyPressed(83):
+        elif isKeyPressed('s'):
             dx = 0
             dy = 1
-        elif isKeyPressed(87):
+        elif isKeyPressed('w'):
             dx = 0
             dy = -1
         progress = progress + speed
@@ -423,6 +423,7 @@ while True:
             foodX = randint(1, 14) * blockSize
             foodY = randint(6, 26) * blockSize
             food = [foodX, foodY]         
+
                 </div>
                 <div class="divider" style="height: 10px"></div>    
                 <pre id="console" style="height: 140px" onfocus="if (inputElement != null) inputElement.focus();"></pre>        
