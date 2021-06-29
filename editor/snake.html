@@ -39,6 +39,9 @@
         function outputf(n) {
             var text = "";
             var color = "rgb(255,255,255)";
+            var bgcolor = "rgb(0,0,0)";
+            var style;
+            var weight;
                           
             i = 0;
             while (n.length > 0)
@@ -47,7 +50,7 @@
                 {
                     i++;
                     if (text.length > 0)
-                        pyConsole.appendChild(createColouredTextSpanElement(text, color));                
+                        pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, style, weight));                
                     text = "";
                     
                     var escPattern = /\[ (\d+);2;(\d+);(\d+);(\d+) m/;                          
@@ -60,6 +63,10 @@
                         {
                             color = "rgb(" + parseInt(match[2]) + "," + parseInt(match[3]) + "," + parseInt(match[4]) + ")"; 
                         }
+                        else if (code == 48)
+                        {
+                            bgcolor = "rgb(" + parseInt(match[2]) + "," + parseInt(match[3]) + "," + parseInt(match[4]) + ")"; 
+                        }
                         i = match.index + match[0].length;
                     }
                     n = n.substring(i);
@@ -71,16 +78,31 @@
                 }                
             }
             if (text.length > 0)
-                pyConsole.appendChild(createColouredTextSpanElement(text, color));                           
+                pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, style, weight));                           
             
             pyConsole.scrollTop = document.getElementById("console").scrollHeight;
         }
             
-        function createColouredTextSpanElement(n, color) {
+        function createColouredTextSpanElement(n, color, bgcolor, style, weight) {
             let t = document.createTextNode(n);        
             let e = document.createElement("span");
             e.style.color = color;        
             e.style.fontSize = "14pt";
+            
+            if (typeof(bgcolor) !== 'undefined')
+            {
+                e.style.backgroundColor = bgcolor;
+            }
+            
+            if (typeof(style) !== 'undefined')
+            {
+            
+            }
+            
+            if (typeof(weight) !== 'undefined')
+            {
+            
+            }            
             e.appendChild(t);        
             return e;
         }
@@ -337,7 +359,7 @@
                 <div id="editor" style="height: 400px">from pyangelo import *
 from random import *
 
-print(GREEN + "hello " + RED + "world" + BLUE + "!")
+print(HIGHLIGHT_WHITE + GREEN + "hello " + RED + "world" + BLUE + "!")
 blockSize = 20
 font = str(blockSize) + "px consolas"
 
