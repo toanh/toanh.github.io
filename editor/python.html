@@ -192,10 +192,8 @@
         <div style = "display: flex; flex-direction:row;">
             <div style = "width: 75%; border: 1px solid black">
                 <div id="editor" style="height: 400px">from pyangelo import *
-print(HL_GREEN + BLACK + BLUE + "hello, " + ITALICS + BOLD + UNDERLINE + RED + "world")
-print("how are you?"")
-
-                
+print(HL_RED + BLACK + BLUE + "hello, " + ITALICS + BOLD + UNDERLINE + GREEN + "universe!")
+print("howfore art thou?")
                 </div>
                 <div class="divider" style="height: 10px"></div>    
                 <pre id="console" style="height: 140px" onfocus="if (inputElement != null) inputElement.focus();"></pre>        
@@ -224,7 +222,8 @@ print("how are you?"")
             var url = window.location.href.split("?")[0];
 
 
-            url = url + "?code=" + utoa(ace.edit("editor").getValue());
+            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
+            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
 
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
@@ -244,7 +243,8 @@ print("how are you?"")
                 
         if (esc != null && esc.length > 0)
         {            
-            codeString = atou(esc);
+            //codeString = atou(esc);
+            codeString = decodeFromUTF16(esc);
             document.getElementById("editor").innerHTML = codeString;            
         }
       
