@@ -2,8 +2,9 @@ function outputf(n) {
     var text = "";
     var color = "rgb(255,255,255)";
     var bgcolor = "rgb(0,0,0)";
-    var style;
-    var weight;
+    var italics;
+    var bold;
+    var underlined;
                   
     i = 0;
     while (n.length > 0)
@@ -12,7 +13,7 @@ function outputf(n) {
         {
             i++;
             if (text.length > 0)
-                pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, style, weight));                
+                pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, italics, bold, underlined));                
             text = "";
             
             var escPattern = /\[ (\d+);2;(\d+);(\d+);(\d+) m/;                          
@@ -21,7 +22,16 @@ function outputf(n) {
             if (typeof(match) !== 'undefined')
             {
                 code = parseInt(match[1]);
-                if (code == 38)
+                if (code == 0)
+                {
+                    // reset
+                    color = "rgb(255,255,255)";
+                    bgcolor = "rgb(0,0,0)";                    
+                    bold = false;
+                    italics = false;
+                    underlined = false;
+                }
+                else if (code == 38)
                 {
                     color = "rgb(" + parseInt(match[2]) + "," + parseInt(match[3]) + "," + parseInt(match[4]) + ")"; 
                 }
@@ -29,6 +39,21 @@ function outputf(n) {
                 {
                     bgcolor = "rgb(" + parseInt(match[2]) + "," + parseInt(match[3]) + "," + parseInt(match[4]) + ")"; 
                 }
+                else if (code == 1)
+                {
+                    // bold
+                    bold = true;
+                }
+                else if (code == 3)
+                {
+                    // italics
+                    italics = true;
+                }
+                else if (code == 4)
+                {
+                    // underlined
+                    underlined = true;
+                }                
                 i = match.index + match[0].length;
             }
             n = n.substring(i);
@@ -40,7 +65,7 @@ function outputf(n) {
         }                
     }
     if (text.length > 0)
-        pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, style, weight));                           
+        pyConsole.appendChild(createColouredTextSpanElement(text, color, bgcolor, italics, bold, underlined));                           
     
     pyConsole.scrollTop = document.getElementById("console").scrollHeight;
 }
@@ -69,7 +94,7 @@ function inputf(n) {
     return inputPromise;
 }
     
-function createColouredTextSpanElement(n, color, bgcolor, style, weight) {
+function createColouredTextSpanElement(n, color, bgcolor, italics, bold, underlined) {
     let t = document.createTextNode(n);        
     let e = document.createElement("span");
     e.style.color = color;        
@@ -80,15 +105,42 @@ function createColouredTextSpanElement(n, color, bgcolor, style, weight) {
         e.style.backgroundColor = bgcolor;
     }
     
-    if (typeof(style) !== 'undefined')
+    if (typeof(italics) !== 'undefined')
     {
-    
+        if (italics)
+        {
+            e.style.fontStyle = "italic";
+        }
+        else
+        {
+            e.style.fontStyle = "normal";
+        }
+            
     }
     
-    if (typeof(weight) !== 'undefined')
+    if (typeof(bold) !== 'undefined')
     {
-    
-    }            
+        if (bold)
+        {
+            e.style.fontWeight = "bold";
+        }
+        else
+        {
+            e.style.fontWeight = "normal";
+        }    
+    }    
+
+    if (typeof(underlined) !== 'undefined')
+    {
+        if (underlined)
+        {
+            e.style.textDecorationLine = "underline";
+        }
+        else
+        {
+            e.style.textDecorationLine = "none";
+        }    
+    }  
     e.appendChild(t);        
     return e;
 }
