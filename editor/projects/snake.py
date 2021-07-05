@@ -28,7 +28,8 @@ if gameState == 'intro':
     drawText("'A' moves left", 75, 325, font, WHITE)
     drawText("'D' moves right", 75, 355, font, WHITE)
     
-    drawText("Press 'ENTER' to play", 45, 415, font, WHITE)
+    drawText("Press 'ENTER' to play"\
+                        , 45, 415, font, WHITE)
     if isKeyReleased('Enter'):
         gameState = 'play'
         # Initializing values

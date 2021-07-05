@@ -2,6 +2,7 @@
 <head> 
     <script src="js/skulpt.min.js" type="text/javascript"></script> 
     <script src="js/skulpt-stdlib.js" type="text/javascript"></script> 
+    <script src="js/csinsc.js" type="text/javascript" charset="utf-8"></script>    
     <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>    
     <script src="js/FileSaver.min.js" type="text/javascript" charset="utf-8"></script>
     
@@ -30,186 +31,38 @@
     </style>
     
     <script type="text/javascript">   
+        function generateCode()
+        {
+            var code = ace.edit("editor").getValue(); 
+
+            navigator.permissions.query({name: "clipboard-write"}).then(result => {
+                if (result.state == "granted" || result.state == "prompt") {
+                    navigator.clipboard.writeText(code);
+                    alert("Code copied to clipboard");
+                    /* write to the clipboard now */
+                }
+                else
+                {
+                    alert("Unable to copy code to clipboard. Please allow the appropriate permissions.");
+                }
+            });
+        }
+        
+        function resetCanvas()
+        {
+            window.cancelAnimationFrame(Sk.builtins.animationFrameRequest);
+            var canvas = document.getElementById("pyangelo");
+            var ctx = canvas.getContext('2d');         
+            ctx.fillStyle = "rgb(127, 127, 127)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      
         function save() {
             var code = ace.edit("editor").getValue();
             var file = new File([code], "my_code.py", {type: "text/plain;charset=utf-8"});
             saveAs(file);    
         }
-        
-        function outputf(n) {
-            var text = "";
-            var color = "rgb(255,255,255)";
-            for(i = 0; i < n.length; i++)
-            {
-
-                if (n[i] == "\u001b")
-                {
-                    if (text.length > 0)
-                        pyConsole.appendChild(createColouredTextSpanElement(text, color));                
-                    text = "";
-                    i++;
-                    switch (n[i])
-                    {
-                        case '1':
-                            color = "red";
-                            break;
-                        case '2':
-                            color = "green";
-                            break;
-                        case '3':
-                            color = "blue";
-                            break;                           
-                        default:
-                            color = "white";
-                    }
-                    i++;
-                }
-                text += n[i];
-                
-            }
-            if (text.length > 0)
-                pyConsole.appendChild(createColouredTextSpanElement(text, color));                           
-            
-            pyConsole.scrollTop = document.getElementById("console").scrollHeight;
-        }
-            
-        function createColouredTextSpanElement(n, color) {
-            let t = document.createTextNode(n);        
-            let e = document.createElement("span");
-            e.style.color = color;        
-            e.style.fontSize = "14pt";
-            e.appendChild(t);        
-            return e;
-        }
-        
-        function doGoto(name, code)
-        {
-            var destCode = code;
-            if (name == "<stdin>")            
-            {
-                console.log(code);
-                var labels = {};
-                
-                var blocks = [];
-                                
-                // grabbing all the blocks and their character indices in the code
-                var casePattern = /case \d+:/g;                
-                var matches = code.matchAll(casePattern);
-                var numBlocks = 0;
-                var start = 0;
-                var end = 0;
-                for (match of matches)
-                {
-                    if (numBlocks == 0)
-                    {
-                        start = match.index;
-                    }
-                    else
-                    {
-                        end = match.index;
-                        blocks.push([start, end - start]);
-                        start = end;
-                        
-                    }
-                    numBlocks++;
-                }
-                if (numBlocks > 0)
-                {
-                    blocks.push([start, code.length - start - 1]);
-                }
-                
-                // pass 1:
-                // finding all the label blocks, grabbing their block numbers
-                // and populating the lookup table with them
-                for (i = 0; i < blocks.length; i++)
-                {
-                    block = code.substr(blocks[i][0], blocks[i][1]);
-                    var blockNumberPattern = /case (\d+)/g;  
-                    var blockNumberMatches = block.matchAll(blockNumberPattern);
-                    for (blockNumberMatch of blockNumberMatches)
-                    {
-                        var labalNamePattern = /label (.+)/g;
-                        var labalNameMatches = block.matchAll(labalNamePattern);
-                        for (labalNameMatch of labalNameMatches)
-                        {
-                            labels[labalNameMatch[1].trim()] = blockNumberMatch[1];
-                            
-                            // deleting suspensions code associated with label code
-                            var suspensionsPattern = /var \$loadname[\S\s]+?\$blk=(\d+);/g;
-                            var suspensionsMatches = block.matchAll(suspensionsPattern);   
-
-                            for (suspensionMatch of suspensionsMatches)
-                            {
-                                var nextBlock = parseInt(blockNumberMatch[1]) + 1;
-                                var linenoPattern = /currLineNo = (\d+);/g;
-                                var linenoMatches = block.matchAll(linenoPattern);   
-                                for (linenoMatch of linenoMatches)                                
-                                {
-                                    var suspCode = "if (Sk.breakpoints('<stdin>.py'," + linenoMatch[1] + ",0)) {var $susp = $saveSuspension({data: {type: 'Sk.delay'}, resume: function() {}}, '<stdin>.py'," + linenoMatch[1] + ",0);$susp.$blk = " + nextBlock + ";$susp.optional = true;return $susp;}$blk=" + nextBlock + ";";
-                                    destCode = destCode.replace(suspensionMatch[0], suspCode);      
-                                }                                
-                            }
-                            
-                            // deleting suspensions code in the next block too
-                            if (i < blocks.length - 1)
-                            {
-                                block = code.substr(blocks[i + 1][0], blocks[i + 1][1]);
-                                var suspensionsPattern = /if \(\$ret[\s\S]+=\$ret;/g;
-                                var suspensionsMatches = block.matchAll(suspensionsPattern);   
-
-                                for (suspensionMatch of suspensionsMatches)
-                                {
-                                    
-                                    destCode = destCode.replace(suspensionMatch[0], "");                                                          
-                                }                            
-                            }
-                        }
-                    }
-                }
-                
-                // pass 2:
-                // fill in goto statements
-                for (i = 0; i < blocks.length; i++)
-                {
-                    block = code.substr(blocks[i][0], blocks[i][1]);
-                    var gotoPattern = patt2 = /\/\/\s+goto (.+)[\s\S]+/g;
-                    var gotoMatches = block.matchAll(gotoPattern);
-                    for (gotoMatch of gotoMatches)
-                    {
-                        var lineNo = labels[gotoMatch[1].trim()];
-                        // replace everything from the case statement onwards (exclusively) with the blk jump
-                        destCode = destCode.replace(gotoMatch[0], "$blk=" + lineNo + ";/* goto */continue;");
-                    }
-                }                                
-            }
-            
-            return destCode;
-        }
-
-        function inputf(n) {
-            inputPromise = new Promise((function(n, e) {                    
-                        inputElement = document.createElement("span");
-                        inputElement.setAttribute("contenteditable", "true");
-                        inputElement.style.color = "rgb(255,255,255)";
-                        inputElement.style.fontSize = "14pt";
-                        inputElement.style.outlineStyle = "none";
-                        pyConsole.appendChild(inputElement);
-                        inputElement.focus();
-                        inputElement.addEventListener("keyup", (function(e) {
-                            e.preventDefault();
-                            if (e.key ==="Enter") {
-                                userResponse = inputElement.innerText.replace(/\n+$/, "");
-                                inputElement.remove();
-                                inputElement = null;
-                                outputf(userResponse);
-                                outputf("\n");
-                                n(userResponse);
-                            }
-                        }))
-                    }));
-            return inputPromise;
-        }
-        
+       
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
@@ -220,9 +73,11 @@
             try {
                 
                 editor.gotoLine(susp.child.$lineno);            
-                // don't pause on the first line
+                // don't pause on the first line                
                 if (just_run) just_run = false            
-                else await sleep(1000);            
+                else {
+                    await sleep(1000);            
+                }
 
                 // Return an already-resolved promise in this case
                 return Promise.resolve(susp.resume());
@@ -236,12 +91,25 @@
                 throw 'stopped!';
         }
         
+        function logError(text)
+        {
+            outputf(Sk.builtins.RESET + Sk.builtins.RED + text + "\n" + Sk.builtins.RESET);
+        }
+        
+        function logInfo(text)
+        {
+            outputf(Sk.builtins.RESET + Sk.builtins.BLUE + text + "\n" + Sk.builtins.RESET);
+        }
+        
         function runSkulpt(stepRun) {
             var code = ace.edit("editor").getValue(); 
             
             editor.setReadOnly(true); 
             
             _stopped = false;
+            stopButton.style.display = "inline";
+            stepButton.style.display = "none";
+            runButton.style.display = "none";            
             
             // clear the console
             pyConsole.innerHTML = "";
@@ -274,18 +142,18 @@
             
             e.catch((function(err) {
                 if (err.message) {
-                   outputf(err.message + "\n");
-                   outputf(err.stack);
+                   logError(err.message);
+                   logError(err.stack);
                    if (err.nativeError) {
-                       outputf(err.nativeError.message + "\n");
-                       outputf(err.nativeError.stack);
+                       logError(err.nativeError.message);
+                       logError(err.nativeError.stack);
                    }
                 }
                 else {
-                   outputf(err.toString() + "\n");
+                   logError(err.toString());
                    if (err.stack)
                    {
-                       outputf(err.stack);
+                       logError(err.stack);
                    }                   
             }}));
             e.finally((function() { 
@@ -297,7 +165,18 @@
             editor.setReadOnly(false); 
             editor.setTheme("ace/theme/monokai");
             just_run = false;
-         
+            
+            stopButton.style.display = "none";          
+            runButton.style.display = "inline";          
+            if (nostep != null && nostep.length > 0)
+            {        
+                stepButton.style.display = "none";
+            }    
+            else
+            {
+                stepButton.style.display = "inline";
+            }        
+            resetCanvas();                     
         }
         
         function stopEditor()
@@ -305,66 +184,180 @@
             _stopped = true;
             if (inputElement != null)
             {
+                // if stopped during an input...
                 stopSkulpt();
                 userResponse = inputElement.innerText.replace(/\n+$/, "");
-                                                inputElement.remove();
-                                                outputf(userResponse);
-                                                outputf("\n"); 
+                inputElement.remove();
+                outputf(userResponse);
+                outputf("\n"); 
                 // TODO: fold this into the main promise/catch process?
                 inputElement = null;
-                outputf("stopped");
-                throw "stopped";
-            }           
+                logError("stopped!");                
+                throw "stopped!";
+            }                       
         }
     </script>     
 </head> 
 
 <body> 
  
-    <div id="container" style = "width:800px; margin: 0 auto">
-    <h1 style="text-align: center">Coding Exercise # 1</h3>     
-    <form style = "width:400px; margin: 20px auto;text-align: center"> 
-        <button type="button" onclick="runSkulpt(false);">Run</button> 
-        <button type="button" onclick="runSkulpt(true);">Step-Run</button> 
-        <button type="button" onclick="stopEditor();">Stop</button>
-        <button type="button" onclick="save();">Save</button> 
-    </form>       
-        <div id="editor" style="height: 400px">from pyangelo import *
-
-i = 1
-name = input("name:")
-label .here
-clearScreen(i * 10, 0, 255, 1)  
-drawRect(10, 10, 50, 70, 5, GREEN)
-fillRect(20, 300, 100, 50, BLUE)
-if isKeyPressed(65):
-    printAt("hello😋", 100, 200)
-i = (i + 1) % 25
-goto .here
-
-print("all done")
+    <div id="container" style = "width:900px; margin: 0 auto"> 
+        <form style = "width:400px; margin: 20px auto;text-align: center"> 
+            <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
+            <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
+            <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
+            <button id="copyButton" type="button" onclick="generateCode();">Copy Code</button> 
+            <button id="saveButton" type="button" onclick="saveCode();">Save Code</button>         
+            <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
+        </form>  
+        <div style = "display: flex; flex-direction:row;">
+            <div style = "width: 75%; border: 1px solid black">
+                <div id="editor" style="height: 400px">from pyangelo import *
+print(HL_RED + BLACK + BLUE + "hello, " + ITALICS + BOLD + UNDERLINE + GREEN + "universe!")
+print("howfore art thou?")
+                </div>
+                <div class="divider" style="height: 10px"></div>    
+                <pre id="console" style="height: 140px" onclick="if (inputElement != null) inputElement.focus();"></pre>        
+            </div>
+            <div>
+                <canvas id="pyangelo" height = 550 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>
+            </div>
         </div>
-        <div class="divider" style="height: 10px"></div>    
-        <pre id="console" style="height: 200px" onfocus="if (inputElement != null) inputElement.focus();"></pre>        
-        <canvas id="pyangelo" height = 480 width = 640 style="border: 1px solid black;" tabindex='1'></canvas>  
+        
     </div>
     
     <!---- setting up global vars for the editor and console etc. ----->
     <script>
+        //Encode
+        function utoa(str) {
+            return /*window.btoa*/(escape(encodeURIComponent(str)));
+        }
+        //Decode
+        function atou(str) {
+            return decodeURIComponent(unescape(/*window.atob*/(str)));
+        }    
+        function generateURL()
+        {
+            ta = document.getElementById("code");
+            
+            var url = window.location.href.split("?")[0];
+
+
+            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
+            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
+
+            navigator.permissions.query({name: "clipboard-write"}).then(result => {
+              if (result.state == "granted" || result.state == "prompt") {
+                navigator.clipboard.writeText(url);
+                alert("URL copied to clipboard");
+                /* write to the clipboard now */
+              }
+              else
+              {
+                alert("Unable to copy URL to clipboard. Please allow the appropriate permissions.");
+              }
+            });
+        }
+  
+        urlParams = new URLSearchParams(window.location.search);
+        esc = urlParams.get('code')
+                
+        if (esc != null && esc.length > 0)
+        {            
+            //codeString = atou(esc);
+            codeString = decodeFromUTF16(esc);
+            document.getElementById("editor").innerHTML = codeString;            
+        }
+      
         var pyConsole = document.getElementById("console"); 
         
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/monokai");
         editor.session.setMode("ace/mode/python");        
         editor.setOptions({  
-          fontSize: "14pt"
+          fontSize: "12pt"
         });        
         editor.setHighlightActiveLine(true);
+        
+        demo = urlParams.get('demo')
+        if (demo != null && demo.length > 0)
+        {
+            var consoleDiv = document.getElementById("console"); 
+            var editorDiv = document.getElementById("editor");
+            var dividerDiv = document.getElementById("split1");
+
+            editorDiv.before(dividerDiv);
+            dividerDiv.before(consoleDiv);
+        }      
+
+        var saveButton = document.getElementById("saveButton"); 
+        var stepButton = document.getElementById("stepButton"); 
+        var copyButton = document.getElementById("copyButton");       
+        var stopButton = document.getElementById("stopButton");  
+        var URLButton = document.getElementById("URLButton");  
+
+        stopButton.style.display = "none";  
+        save = urlParams.get('save')
+        if (save != null && save.length > 0)
+        {        
+            saveButton.style.display = "inline";
+        }    
+        else
+        {        
+            saveButton.style.display = "none";
+        }        
+
+        nostep = urlParams.get('nostep')
+        if (nostep != null && nostep.length > 0)
+        {        
+            stepButton.style.display = "none";
+        }    
+        else
+        {
+            stepButton.style.display = "inline";
+        }   
+
+        nocopy = urlParams.get('nocopy')
+        if (nocopy != null && nocopy.length > 0)
+        {
+            copyButton.style.display = "none";
+        }    
+        else
+        {
+            copyButton.style.display = "inline";
+        }           
+
+        URLButton.style.display = "none";  
+        urlButtonOn = urlParams.get('URL')
+        if (urlButtonOn != null && urlButtonOn.length > 0)
+        {        
+            URLButton.style.display = "inline";
+        }    
+        else
+        {        
+            URLButton.style.display = "none";
+        }          
+        
+        project = urlParams.get('project');
+        if (project != null && project.length > 0)
+        {
+            var client = new XMLHttpRequest();
+            client.open("GET", "projects/" + project + ".py");
+            client.onreadystatechange = function () {
+                if (client.readyState == 4) {
+                    project_src = client.responseText;
+                    editor.setValue(project_src, -1);
+                }
+            };
+            client.send();            
+        }    
         
         var just_run = false;
         var _stopped = false;
         var inputElement = null;
-     
+        
+        resetCanvas();
+        
     </script>    
 
 </body> 
