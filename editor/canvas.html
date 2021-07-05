@@ -209,6 +209,7 @@
             <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
             <button id="copyButton" type="button" onclick="generateCode();">Copy Code</button> 
             <button id="saveButton" type="button" onclick="saveCode();">Save Code</button>         
+            <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;">Load Code</button> 
             <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
         </form>  
         <div style = "display: flex; flex-direction:row;">
@@ -226,6 +227,7 @@ print("howfore art thou?")
         </div>
         
     </div>
+    <input id="file-input" type="file" name="name" style="display: none;"/>
     
     <!---- setting up global vars for the editor and console etc. ----->
     <script>
@@ -280,6 +282,22 @@ print("howfore art thou?")
         });        
         editor.setHighlightActiveLine(true);
         
+        function userLoadCode(event) {
+            var files = event.target.files;
+            var file = null;
+            if (files.length > 0) file = files[0];
+            else return;
+            var reader = new FileReader();
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    editor.setValue(e.target.result, -1);
+                };
+            })(file);
+            reader.readAsText(file);
+        }
+
+        document.getElementById('file-input').addEventListener('change', userLoadCode, false);            
+        
         demo = urlParams.get('demo')
         if (demo != null && demo.length > 0)
         {
@@ -292,6 +310,7 @@ print("howfore art thou?")
         }      
 
         var saveButton = document.getElementById("saveButton"); 
+        var loadButton = document.getElementById("loadButton"); 
         var stepButton = document.getElementById("stepButton"); 
         var copyButton = document.getElementById("copyButton");       
         var stopButton = document.getElementById("stopButton");  
@@ -302,10 +321,12 @@ print("howfore art thou?")
         if (save != null && save.length > 0)
         {        
             saveButton.style.display = "inline";
+            loadButton.style.display = "inline";
         }    
         else
         {        
             saveButton.style.display = "none";
+            loadButton.style.display = "none";
         }      
 
         
