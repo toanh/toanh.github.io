@@ -1,7 +1,26 @@
+// colour constants
+Sk.builtins.RESET = new Sk.builtin.str("\u001b[ 0;2;0;0;0 m");
+
+Sk.builtins.BLACK = new Sk.builtin.str("\u001b[ 38;2;0;0;0 m");
+Sk.builtins.WHITE = new Sk.builtin.str("\u001b[ 38;2;255;255;255 m");
+Sk.builtins.RED = new Sk.builtin.str("\u001b[ 38;2;255;0;0 m");
+Sk.builtins.GREEN = new Sk.builtin.str("\u001b[ 38;2;0;255;0 m");
+Sk.builtins.BLUE = new Sk.builtin.str("\u001b[ 38;2;0;0;255 m");
+    
+Sk.builtins.HL_BLACK = new Sk.builtin.str("\u001b[ 48;2;0;0;0 m");
+Sk.builtins.HL_WHITE = new Sk.builtin.str("\u001b[ 48;2;255;255;255 m");
+Sk.builtins.HL_RED = new Sk.builtin.str("\u001b[ 48;2;255;0;0 m");
+Sk.builtins.HL_GREEN = new Sk.builtin.str("\u001b[ 48;2;0;255;0 m");
+Sk.builtins.HL_BLUE = new Sk.builtin.str("\u001b[ 48;2;0;0;255 m");    
+    
+Sk.builtins.BOLD = new Sk.builtin.str("\u001b[ 1;2;0;0;0 m");    
+Sk.builtins.ITALICS = new Sk.builtin.str("\u001b[ 3;2;0;0;0 m");    
+Sk.builtins.UNDERLINE = new Sk.builtin.str("\u001b[ 4;2;0;0;0 m");    
+
 function outputf(n) {
     var text = "";
-    var color = "rgb(255,255,255)";
-    var bgcolor = "rgb(0,0,0)";
+    var color;
+    var bgcolor;
     var italics;
     var bold;
     var underlined;
@@ -94,39 +113,58 @@ function inputf(n) {
     return inputPromise;
 }
     
+var fontColour = "rgba(255, 255, 255, 1)";
+var fontBgColour = "rgba(0, 0, 0, 1)";
+var fontItalics = false;
+var fontBold = false;
+var fontUnderlined = false;
+var fontSize = "14pt";
+
+function resetConsole()
+{
+    fontColour = "rgba(255, 255, 255, 1)";
+    fontBgColour = "rgba(0, 0, 0, 1)";
+    fontItalics = false;
+    fontBold = false;
+    fontUnderlined = false;
+    fontSize = "14pt";    
+}
+
 function createColouredTextSpanElement(n, color, bgcolor, italics, bold, underlined) {
     let t = document.createTextNode(n);        
-    let e = document.createElement("span");
-    e.style.color = color;        
-    e.style.fontSize = "14pt";
+    let e = document.createElement("span");    
+    
+    if (typeof(color) !== 'undefined')
+    {
+        fontColour = color;
+    }    
     
     if (typeof(bgcolor) !== 'undefined')
     {
-        e.style.backgroundColor = bgcolor;
+        fontBgColour = bgcolor;
     }
     
     if (typeof(italics) !== 'undefined')
     {
         if (italics)
         {
-            e.style.fontStyle = "italic";
+            fontItalics = "italic";
         }
         else
         {
-            e.style.fontStyle = "normal";
-        }
-            
+            fontItalics = "normal";
+        }            
     }
     
     if (typeof(bold) !== 'undefined')
     {
         if (bold)
         {
-            e.style.fontWeight = "bold";
+            fontBold = "bold";
         }
         else
         {
-            e.style.fontWeight = "normal";
+            fontBold = "normal";
         }    
     }    
 
@@ -134,13 +172,21 @@ function createColouredTextSpanElement(n, color, bgcolor, italics, bold, underli
     {
         if (underlined)
         {
-            e.style.textDecorationLine = "underline";
+            fontUnderlined = "underline";
         }
         else
         {
-            e.style.textDecorationLine = "none";
+            fontUnderlined = "none";
         }    
     }  
+    
+    e.style.textDecoration = fontUnderlined;
+    e.style.fontWeight = fontBold;
+    e.style.fontStyle = fontItalics;
+    e.style.backgroundColor = fontBgColour;
+    e.style.color = fontColour;
+    e.style.fontSize = fontSize;
+    
     e.appendChild(t);        
     return e;
 }

@@ -47,6 +47,15 @@
                 }
             });
         }
+        
+        function resetCanvas()
+        {
+            window.cancelAnimationFrame(Sk.builtins.animationFrameRequest);
+            var canvas = document.getElementById("pyangelo");
+            var ctx = canvas.getContext('2d');         
+            ctx.fillStyle = "rgb(127, 127, 127)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
       
         function save() {
             var code = ace.edit("editor").getValue();
@@ -64,9 +73,11 @@
             try {
                 
                 editor.gotoLine(susp.child.$lineno);            
-                // don't pause on the first line
+                // don't pause on the first line                
                 if (just_run) just_run = false            
-                else await sleep(1000);            
+                else {
+                    await sleep(1000);            
+                }
 
                 // Return an already-resolved promise in this case
                 return Promise.resolve(susp.resume());
@@ -78,6 +89,16 @@
         function checkForStop() {
             if (_stopped)
                 throw 'stopped!';
+        }
+        
+        function logError(text)
+        {
+            outputf(Sk.builtins.RESET + Sk.builtins.RED + text + "\n" + Sk.builtins.RESET);
+        }
+        
+        function logInfo(text)
+        {
+            outputf(Sk.builtins.RESET + Sk.builtins.BLUE + text + "\n" + Sk.builtins.RESET);
         }
         
         function runSkulpt(stepRun) {
@@ -121,18 +142,18 @@
             
             e.catch((function(err) {
                 if (err.message) {
-                   outputf(err.message + "\n");
-                   outputf(err.stack);
+                   logError(err.message);
+                   logError(err.stack);
                    if (err.nativeError) {
-                       outputf(err.nativeError.message + "\n");
-                       outputf(err.nativeError.stack);
+                       logError(err.nativeError.message);
+                       logError(err.nativeError.stack);
                    }
                 }
                 else {
-                   outputf(err.toString() + "\n");
+                   logError(err.toString());
                    if (err.stack)
                    {
-                       outputf(err.stack);
+                       logError(err.stack);
                    }                   
             }}));
             e.finally((function() { 
@@ -154,8 +175,8 @@
             else
             {
                 stepButton.style.display = "inline";
-            }                 
-         
+            }        
+            resetCanvas();                     
         }
         
         function stopEditor()
@@ -163,16 +184,17 @@
             _stopped = true;
             if (inputElement != null)
             {
+                // if stopped during an input...
                 stopSkulpt();
                 userResponse = inputElement.innerText.replace(/\n+$/, "");
-                                                inputElement.remove();
-                                                outputf(userResponse);
-                                                outputf("\n"); 
+                inputElement.remove();
+                outputf(userResponse);
+                outputf("\n"); 
                 // TODO: fold this into the main promise/catch process?
                 inputElement = null;
-                outputf("stopped");
-                throw "stopped";
-            }           
+                logError("stopped!");                
+                throw "stopped!";
+            }                       
         }
     </script>     
 </head> 
@@ -180,7 +202,7 @@
 <body> 
  
     <div id="container" style = "width:1024px; margin: 0 auto">
-        <h1 style="text-align: center">Coding Exercise # 1</h3>     
+        <h1 style="text-align: center">Online Python Editor</h3>     
         <form style = "width:400px; margin: 20px auto;text-align: center"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
@@ -196,7 +218,7 @@ print(HL_RED + BLACK + BLUE + "hello, " + ITALICS + BOLD + UNDERLINE + GREEN + "
 print("howfore art thou?")
                 </div>
                 <div class="divider" style="height: 10px"></div>    
-                <pre id="console" style="height: 140px" onfocus="if (inputElement != null) inputElement.focus();"></pre>        
+                <pre id="console" style="height: 140px" onclick="if (inputElement != null) inputElement.focus();"></pre>        
             </div>
             <div>
                 <canvas id="pyangelo" height = 550 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>
@@ -334,7 +356,9 @@ print("howfore art thou?")
         var just_run = false;
         var _stopped = false;
         var inputElement = null;
-     
+        
+        resetCanvas();
+        
     </script>    
 
 </body> 
