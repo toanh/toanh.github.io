@@ -57,9 +57,10 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
       
-        function save() {
+        var filename = null;
+        function saveCode() {
             var code = ace.edit("editor").getValue();
-            var file = new File([code], "my_code.py", {type: "text/plain;charset=utf-8"});
+            var file = new File([code], filename + ".py", {type: "text/plain;charset=utf-8"});
             saveAs(file);    
         }
        
@@ -305,8 +306,15 @@ print("howfore art thou?")
         else
         {        
             saveButton.style.display = "none";
-        }        
+        }      
 
+        
+        filename = urlParams.get('name')
+        if (filename == null || filename.length == 0)
+        {        
+            filename = "my_code";
+        }    
+        
         nostep = urlParams.get('nostep')
         if (nostep != null && nostep.length > 0)
         {        
