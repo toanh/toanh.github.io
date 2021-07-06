@@ -116,6 +116,8 @@
             pyConsole.innerHTML = "";
             just_run = true;
             
+            resetConsole();
+            
             Sk.configure({
                 output: outputf,
                 inputfun: inputf,
@@ -213,15 +215,29 @@
             <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
         </form>  
         <div style = "display: flex; flex-direction:row;">
-            <div style = "width: 75%; border: 1px solid black">
-                <div id="editor" style="height: 400px">from pyangelo import *
-print(HL_RED + BLACK + BLUE + "hello, " + ITALICS + BOLD + UNDERLINE + GREEN + "universe!")
-print("howfore art thou?")
+            <div id = "leftpane" style = "width: 75%; border: 1px solid black">
+                <div id="editor" style="height: 400px">from random import *
+
+secret = randint(1, 100)
+
+print("I'm thinking of a number between 1 and 100...")
+
+guess = -1
+
+while guess != secret:
+    guess = int(input(WHITE + "Enter your guess:"))
+    if guess > secret:
+        print(GREEN + "Lower...")
+    elif guess < secret:
+        print(RED + "Higher")
+
+print(CYAN + "You got it!")
+print(RESET + "Bye now!")
                 </div>
                 <div class="divider" style="height: 10px"></div>    
                 <pre id="console" style="height: 140px" onclick="if (inputElement != null) inputElement.focus();"></pre>        
             </div>
-            <div>
+            <div id = "rightpane">
                 <canvas id="pyangelo" height = 550 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>
             </div>
         </div>
@@ -365,6 +381,15 @@ print("howfore art thou?")
         else
         {        
             URLButton.style.display = "none";
+        }  
+
+        nocanvas = urlParams.get('nocanvas')
+        if (nocanvas != null && nocanvas.length > 0)
+        {        
+            var rightpane = document.getElementById("rightpane");
+            rightpane.style.display = "none";
+            var leftpane = document.getElementById("leftpane");
+            leftpane.style.width = "100%";
         }          
         
         project = urlParams.get('project');
