@@ -266,8 +266,8 @@
 
 <body> 
  
-    <div id="container" style = "width:900px; margin: 0 auto"> 
-        <form style = "width:400px; margin: 20px auto;text-align: center"> 
+    <div id="container" style = "width:100%; margin: 0 auto"> 
+        <form style = "width:400px; margin: 10px auto;text-align: center"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
             <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
@@ -278,7 +278,7 @@
         </form>  
         <div style = "display: flex; flex-direction:row;">
             <div id = "leftpane" style = "width: 75%; border: 1px solid black">
-                <div id="editor" style="height: 400px">from random import *
+                <div id="editor" style="height: 395px">from random import *
 
 secret = randint(1, 100)
 
@@ -296,11 +296,12 @@ while guess != secret:
 print(CYAN + "You got it!")
 print(RESET + "Bye now!")
                 </div>
-                <div class="divider" style="height: 10px"></div>    
-                <pre id="console" style="height: 140px" onclick="if (inputElement != null) inputElement.focus();"></pre>        
-            </div>
+                <div id="split1" class="divider" style="height: 5px"></div>    
+                <pre id="console" style="height: 145px" onclick="if (inputElement != null) inputElement.focus();"></pre>        
+            </div>  
+			<div style="height:100%; width: 5px;"></div> 
             <div id = "rightpane">
-                <canvas id="pyangelo" height = 550 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>
+                <canvas id="pyangelo" height = 545 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>
             </div>
         </div>
         
@@ -350,6 +351,9 @@ print(RESET + "Bye now!")
 
             editorDiv.before(dividerDiv);
             dividerDiv.before(consoleDiv);
+			
+			consoleDiv.style.height = 200;
+			editorDiv.style.height = 340;
         }    
         
         // project mode: load from code from existing .py file under /projects
