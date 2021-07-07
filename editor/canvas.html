@@ -267,7 +267,7 @@
 <body> 
  
     <div id="container" style = "width:100%; margin: 0 auto"> 
-        <form style = "width:400px; margin: 10px auto;text-align: center"> 
+        <form id="buttons" style = "width:400px; margin: 10px auto;text-align: center"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
             <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
@@ -348,10 +348,35 @@ print(RESET + "Bye now!")
             var consoleDiv = document.getElementById("console"); 
             var editorDiv = document.getElementById("editor");
             var dividerDiv = document.getElementById("split1");
+			var buttonsDiv = document.getElementById("buttons");
 
             editorDiv.before(dividerDiv);
             dividerDiv.before(consoleDiv);
+			editorDiv.before(buttonsDiv);
+
 			
+			consoleDiv.style.height = 200;
+			editorDiv.style.height = 340;
+        }    
+		
+        democanvas = urlParams.get('democanvas')
+        if (democanvas != null && democanvas.length > 0)
+        {
+            var rightpane = document.getElementById("rightpane");
+            rightpane.style.display = "none";
+            var leftpane = document.getElementById("leftpane");
+            leftpane.style.width = "100%";
+            
+            var consoleDiv = document.getElementById("console"); 
+            var editorDiv = document.getElementById("editor");
+            var dividerDiv = document.getElementById("split1");
+			var canvasDiv = document.getElementById("pyangelo");
+
+            editorDiv.before(dividerDiv);
+            dividerDiv.before(canvasDiv);
+			
+			canvasDiv.style.width = consoleDiv.style.width;
+			canvasDiv.style.height = 300;
 			consoleDiv.style.height = 200;
 			editorDiv.style.height = 340;
         }    
