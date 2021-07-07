@@ -260,9 +260,7 @@
                 };
             })(file);
             reader.readAsText(file);
-        }
-
-        document.getElementById('file-input').addEventListener('change', userLoadCode, false);              
+        }           
     </script>     
 </head> 
 
@@ -321,9 +319,8 @@ print(RESET + "Bye now!")
           fontSize: "12pt"
         });        
         editor.setHighlightActiveLine(true);
-        
-        // hide stop button on load
-        stopButton.style.display = "none";  
+		
+		document.getElementById('file-input').addEventListener('change', userLoadCode, false);   
         
         // grabbing the URL parameters and processing them
         urlParams = new URLSearchParams(window.location.search);
@@ -378,8 +375,11 @@ print(RESET + "Bye now!")
         var copyButton = document.getElementById("copyButton");       
         var stopButton = document.getElementById("stopButton");  
         var URLButton = document.getElementById("URLButton");  
+		
+		// hide stop button on load
+        stopButton.style.display = "none";  
 
-        // allows save (and loadi)
+        // allows save (and load)
         save = urlParams.get('save')
         if (save != null && save.length > 0)
         {        
