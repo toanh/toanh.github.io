@@ -228,38 +228,7 @@ print("howfore art thou?")
     </div>
     
     <!---- setting up global vars for the editor and console etc. ----->
-    <script>
-        //Encode
-        function utoa(str) {
-            return /*window.btoa*/(escape(encodeURIComponent(str)));
-        }
-        //Decode
-        function atou(str) {
-            return decodeURIComponent(unescape(/*window.atob*/(str)));
-        }    
-        function generateURL()
-        {
-            ta = document.getElementById("code");
-            
-            var url = window.location.href.split("?")[0];
-
-
-            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
-            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
-
-            navigator.permissions.query({name: "clipboard-write"}).then(result => {
-              if (result.state == "granted" || result.state == "prompt") {
-                navigator.clipboard.writeText(url);
-                alert("URL copied to clipboard");
-                /* write to the clipboard now */
-              }
-              else
-              {
-                alert("Unable to copy URL to clipboard. Please allow the appropriate permissions.");
-              }
-            });
-        }
-  
+    <script> 
         urlParams = new URLSearchParams(window.location.search);
         esc = urlParams.get('code')
                 

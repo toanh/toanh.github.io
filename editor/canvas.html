@@ -31,7 +31,37 @@
     </style>
     
     <script type="text/javascript">   
-        function generateCode()
+        function utoa(str) {
+            return /*window.btoa*/(escape(encodeURIComponent(str)));
+        }
+        //Decode
+        function atou(str) {
+            return decodeURIComponent(unescape(/*window.atob*/(str)));
+        }    
+        function generateURL()
+        {
+            ta = document.getElementById("code");
+            
+            var url = window.location.href.split("?")[0];
+
+
+            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
+            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
+
+            navigator.permissions.query({name: "clipboard-write"}).then(result => {
+              if (result.state == "granted" || result.state == "prompt") {
+                navigator.clipboard.writeText(url);
+                alert("URL copied to clipboard");
+                /* write to the clipboard now */
+              }
+              else
+              {
+                alert("Unable to copy URL to clipboard. Please allow the appropriate permissions.");
+              }
+            });
+        }
+        
+        function copyCode()
         {
             var code = ace.edit("editor").getValue(); 
 
@@ -68,6 +98,7 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
         
+        var justDelayed = false;
         async function lineStepper(susp)
         {
             checkForStop();
@@ -77,7 +108,24 @@
                 // don't pause on the first line                
                 if (just_run) just_run = false            
                 else {
-                    await sleep(1000);            
+                    if (susp.data.type == "Sk.delay")
+                    {
+                        if (!justDelayed)
+                        {
+                            justDelayed = true;
+                            await sleep(1000);    
+                        }
+                        else
+                        {
+                            justDelayed = false;
+                        }
+                    }
+                    else
+                    {
+                        await sleep(1000);  
+                        justDelayed = false;
+                    }
+                            
                 }
 
                 // Return an already-resolved promise in this case
@@ -199,6 +247,22 @@
                 throw "stopped!";
             }                       
         }
+        
+        function userLoadCode(event) {
+            var files = event.target.files;
+            var file = null;
+            if (files.length > 0) file = files[0];
+            else return;
+            var reader = new FileReader();
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    editor.setValue(e.target.result, -1);
+                };
+            })(file);
+            reader.readAsText(file);
+        }
+
+        document.getElementById('file-input').addEventListener('change', userLoadCode, false);              
     </script>     
 </head> 
 
@@ -209,7 +273,7 @@
             <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
             <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
-            <button id="copyButton" type="button" onclick="generateCode();">Copy Code</button> 
+            <button id="copyButton" type="button" onclick="copyCode();">Copy Code</button> 
             <button id="saveButton" type="button" onclick="saveCode();">Save Code</button>         
             <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;">Load Code</button> 
             <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
@@ -247,47 +311,7 @@ print(RESET + "Bye now!")
     
     <!---- setting up global vars for the editor and console etc. ----->
     <script>
-        //Encode
-        function utoa(str) {
-            return /*window.btoa*/(escape(encodeURIComponent(str)));
-        }
-        //Decode
-        function atou(str) {
-            return decodeURIComponent(unescape(/*window.atob*/(str)));
-        }    
-        function generateURL()
-        {
-            ta = document.getElementById("code");
-            
-            var url = window.location.href.split("?")[0];
-
-
-            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
-            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
-
-            navigator.permissions.query({name: "clipboard-write"}).then(result => {
-              if (result.state == "granted" || result.state == "prompt") {
-                navigator.clipboard.writeText(url);
-                alert("URL copied to clipboard");
-                /* write to the clipboard now */
-              }
-              else
-              {
-                alert("Unable to copy URL to clipboard. Please allow the appropriate permissions.");
-              }
-            });
-        }
-  
-        urlParams = new URLSearchParams(window.location.search);
-        esc = urlParams.get('code')
-                
-        if (esc != null && esc.length > 0)
-        {            
-            //codeString = atou(esc);
-            codeString = decodeFromUTF16(esc);
-            document.getElementById("editor").innerHTML = codeString;            
-        }
-      
+        // setting up the ace editor
         var pyConsole = document.getElementById("console"); 
         
         var editor = ace.edit("editor");
@@ -298,100 +322,41 @@ print(RESET + "Bye now!")
         });        
         editor.setHighlightActiveLine(true);
         
-        function userLoadCode(event) {
-            var files = event.target.files;
-            var file = null;
-            if (files.length > 0) file = files[0];
-            else return;
-            var reader = new FileReader();
-            reader.onload = (function (theFile) {
-                return function (e) {
-                    editor.setValue(e.target.result, -1);
-                };
-            })(file);
-            reader.readAsText(file);
-        }
-
-        document.getElementById('file-input').addEventListener('change', userLoadCode, false);            
+        // hide stop button on load
+        stopButton.style.display = "none";  
         
+        // grabbing the URL parameters and processing them
+        urlParams = new URLSearchParams(window.location.search);
+        
+        
+        // embedded code in the URL
+        esc = urlParams.get('code')                
+        if (esc != null && esc.length > 0)
+        {            
+            //codeString = atou(esc);
+            codeString = decodeFromUTF16(esc);
+            document.getElementById("editor").innerHTML = codeString;            
+        }
+      
+        // demo mode: console on top, no canvas
         demo = urlParams.get('demo')
         if (demo != null && demo.length > 0)
         {
+            var rightpane = document.getElementById("rightpane");
+            rightpane.style.display = "none";
+            var leftpane = document.getElementById("leftpane");
+            leftpane.style.width = "100%";
+            
             var consoleDiv = document.getElementById("console"); 
             var editorDiv = document.getElementById("editor");
             var dividerDiv = document.getElementById("split1");
 
             editorDiv.before(dividerDiv);
             dividerDiv.before(consoleDiv);
-        }      
-
-        var saveButton = document.getElementById("saveButton"); 
-        var loadButton = document.getElementById("loadButton"); 
-        var stepButton = document.getElementById("stepButton"); 
-        var copyButton = document.getElementById("copyButton");       
-        var stopButton = document.getElementById("stopButton");  
-        var URLButton = document.getElementById("URLButton");  
-
-        stopButton.style.display = "none";  
-        save = urlParams.get('save')
-        if (save != null && save.length > 0)
-        {        
-            saveButton.style.display = "inline";
-            loadButton.style.display = "inline";
-        }    
-        else
-        {        
-            saveButton.style.display = "none";
-            loadButton.style.display = "none";
-        }      
-
-        
-        filename = urlParams.get('name')
-        if (filename == null || filename.length == 0)
-        {        
-            filename = "my_code";
         }    
         
-        nostep = urlParams.get('nostep')
-        if (nostep != null && nostep.length > 0)
-        {        
-            stepButton.style.display = "none";
-        }    
-        else
-        {
-            stepButton.style.display = "inline";
-        }   
-
-        nocopy = urlParams.get('nocopy')
-        if (nocopy != null && nocopy.length > 0)
-        {
-            copyButton.style.display = "none";
-        }    
-        else
-        {
-            copyButton.style.display = "inline";
-        }           
-
-        URLButton.style.display = "none";  
-        urlButtonOn = urlParams.get('URL')
-        if (urlButtonOn != null && urlButtonOn.length > 0)
-        {        
-            URLButton.style.display = "inline";
-        }    
-        else
-        {        
-            URLButton.style.display = "none";
-        }  
-
-        nocanvas = urlParams.get('nocanvas')
-        if (nocanvas != null && nocanvas.length > 0)
-        {        
-            var rightpane = document.getElementById("rightpane");
-            rightpane.style.display = "none";
-            var leftpane = document.getElementById("leftpane");
-            leftpane.style.width = "100%";
-        }          
-        
+        // project mode: load from code from existing .py file under /projects
+        // only works when hosted on web server (no filesystem mode)
         project = urlParams.get('project');
         if (project != null && project.length > 0)
         {
@@ -404,7 +369,79 @@ print(RESET + "Bye now!")
                 }
             };
             client.send();            
+        }            
+
+        // configurable buttons
+        var saveButton = document.getElementById("saveButton"); 
+        var loadButton = document.getElementById("loadButton"); 
+        var stepButton = document.getElementById("stepButton"); 
+        var copyButton = document.getElementById("copyButton");       
+        var stopButton = document.getElementById("stopButton");  
+        var URLButton = document.getElementById("URLButton");  
+
+        // allows save (and loadi)
+        save = urlParams.get('save')
+        if (save != null && save.length > 0)
+        {        
+            saveButton.style.display = "inline";
+            loadButton.style.display = "inline";
         }    
+        else
+        {        
+            saveButton.style.display = "none";
+            loadButton.style.display = "none";
+        }       
+
+        // default file name (for saving)
+        filename = urlParams.get('name')
+        if (filename == null || filename.length == 0)
+        {        
+            filename = "my_code";
+        }          
+        
+        // disable step-run button
+        nostep = urlParams.get('nostep')
+        if (nostep != null && nostep.length > 0)
+        {        
+            stepButton.style.display = "none";
+        }    
+        else
+        {
+            stepButton.style.display = "inline";
+        }   
+
+        // disable copy code button
+        nocopy = urlParams.get('nocopy')
+        if (nocopy != null && nocopy.length > 0)
+        {
+            copyButton.style.display = "none";
+        }    
+        else
+        {
+            copyButton.style.display = "inline";
+        }           
+
+        // disable generate URL button
+        URLButton.style.display = "none";  
+        urlButtonOn = urlParams.get('url')
+        if (urlButtonOn != null && urlButtonOn.length > 0)
+        {        
+            URLButton.style.display = "inline";
+        }    
+        else
+        {        
+            URLButton.style.display = "none";
+        }  
+
+        // hides the drawing canvas
+        nocanvas = urlParams.get('nocanvas')
+        if (nocanvas != null && nocanvas.length > 0)
+        {        
+            var rightpane = document.getElementById("rightpane");
+            rightpane.style.display = "none";
+            var leftpane = document.getElementById("leftpane");
+            leftpane.style.width = "100%";
+        }          
         
         var just_run = false;
         var _stopped = false;
