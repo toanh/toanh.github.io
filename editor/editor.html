@@ -43,15 +43,7 @@
         }        
     </style>
     
-    <script type="text/javascript">   
-    
-        function utoa(str) {
-            return /*window.btoa*/(escape(encodeURIComponent(str)));
-        }
-        //Decode
-        function atou(str) {
-            return decodeURIComponent(unescape(/*window.atob*/(str)));
-        }    
+    <script type="text/javascript">        
         function generateURL()
         {
             ta = document.getElementById("code");
@@ -60,7 +52,7 @@
 
 
             //url = url + "?code=" + utoa(ace.edit("editor").getValue());
-            url = url + "?URL=1&code=" + encodeToUTF16(ace.edit("editor").getValue());
+            url = url + "?code=" + encodeToUTF16(ace.edit("editor").getValue());
 
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
@@ -342,7 +334,8 @@ print(RESET + "Bye now!")
         {            
             //codeString = atou(esc);
             codeString = decodeFromUTF16(esc);
-            document.getElementById("editor").innerHTML = codeString;            
+            editor.setValue(codeString, -1);
+            //document.getElementById("editor").innerHTML = codeString;            
         }
              
         // project mode: load from code from existing .py file under /projects
