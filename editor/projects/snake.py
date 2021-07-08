@@ -77,10 +77,7 @@ elif gameState == 'play':
     for n, body in enumerate(snake[1:]):
         drawText("📀", body[0], body[1], font)
 
-    if snake[0][0] <= 18 or \
-      snake[0][1] <= 100 or \
-      snake[0][0] >= 300 or \
-      snake[0][1] >= 523: 
+    if snake[0][0] <= 18 or snake[0][1] <= 100 or snake[0][0] >= 300 or snake[0][1] >= 523: 
         gameState = 'intro'            
 
     # did the snake eat itself?
