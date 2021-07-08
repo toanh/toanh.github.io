@@ -19,8 +19,10 @@ print("You believe it is hidden in this forest somewhere and")
 print("after many weeks of exploring, you have discovered a")
 print("mysterious looking cave. You walk inside...")
 print()
+input(Colour.green + "Press [enter] to play" + Colour.reset)
 
 label .cave
+clear()
 print(Colour.cyan + "You are in a cave." + Colour.reset)
 print(r"        ___..-.")
 print(r"     ._/  __ \_`-.__")        
@@ -43,6 +45,7 @@ print("You can't go that way!")
 goto .cave
 
 label .waterfall
+clear()
 print(Colour.cyan + "You are underneath a giant waterfall." + Colour.reset)
 print(r'''
           ~-~`~-~-~-~-~-~-~'~-~-~
@@ -73,6 +76,7 @@ print("You can't go that way!")
 goto .waterfall
 
 label .forest
+clear()
 print(Colour.cyan + "You are in a dense forest." + Colour.reset)
 print(r'''
       ---\=,__,>,_`-.  
@@ -100,6 +104,7 @@ print("You can't go that way!")
 goto .forest
 
 label .stream
+clear()
 print(Colour.cyan + "You are next to a stream of crystal clear water." + Colour.reset) 
 print("You can go [east] or [north].")
 direction = input("Where would you like to go:")
@@ -111,6 +116,7 @@ print("You can't go that way!")
 goto .stream
 
 label .underground
+clear()
 print(Colour.cyan + "You are underground. It is very dark here and rather unsafe." + Colour.reset)
 print("To the east is the cave from which you came.")
 print("You can go [north], [south], [east] or [west].")
@@ -121,6 +127,7 @@ print("While you are stumbling along in the dark, you trip and fall down a chasm
 goto .game_over
 
 label .clearing
+clear()
 print(Colour.cyan + "You find yourself in a bright forest clearing." + Colour.reset)
 print("You can go [north], [south], [east] or [west].")
 direction = input("Where would you like to go:")
@@ -136,6 +143,7 @@ print("You can't go that way!")
 goto .clearing
 
 label .hut
+clear()
 print(Colour.cyan + "You are outside an old hut. It looks abandoned and run-down." + Colour.reset)
 print(r'''
                      /\ 
@@ -163,6 +171,7 @@ print("You run about aimlessly but the troll catches you and has you for dinner!
 goto .game_over
 
 label .valley
+clear()
 print(Colour.cyan + "You stand at the bottom of a deep valley. It is cold in the shadows." + Colour.reset)
 print("You can go [north] or [west].")
 direction = input("Where would you like to go:")
@@ -174,6 +183,7 @@ print("You can't go that way!")
 goto .valley
 
 label .hill
+clear()
 print(Colour.cyan + "You are on top of a hill overlooking a valley."  + Colour.reset)
 print(r'''                             
                         .-.  
@@ -201,6 +211,7 @@ print("You can't go that way!")
 goto .hill
 
 label .magic_cave
+clear()
 print(Colour.cyan + "You are back in the cave you started in." + Colour.reset)
 print(r"        ___..-.")
 print(r"     ._/  __ \_`-.__")        
@@ -226,6 +237,7 @@ print("You can't go that way!")
 goto .cave
 
 label .finish
+clear()
 print("You have discovered the magical lost city of gold!")
 print(Colour.yellow + r'''
                      X_x

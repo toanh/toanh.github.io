@@ -2,6 +2,7 @@
 <head> 
     <script src="js/skulpt.min.js" type="text/javascript"></script> 
     <script src="js/skulpt-stdlib.js" type="text/javascript"></script> 
+    <script src="js/pygmi.js" type="text/javascript" charset="utf-8"></script>   
     <script src="js/console.js" type="text/javascript" charset="utf-8"></script>    
     <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>    
     <script src="js/FileSaver.min.js" type="text/javascript" charset="utf-8"></script>
@@ -150,6 +151,8 @@
                
         function runSkulpt(stepRun) {
             var code = ace.edit("editor").getValue(); 
+            
+            code = pygmify(code);
             
             editor.setReadOnly(true); 
             

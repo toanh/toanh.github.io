@@ -262,6 +262,10 @@ function decodeFromUTF16(codedText) {
   return res;
 }
 
+Sk.builtins.clear = function()
+{
+    pyConsole.innerHTML = "";
+}
 
 Sk.onAfterCompile = function(name, code) {
     var destCode = code;
