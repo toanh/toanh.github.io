@@ -23,7 +23,7 @@ function pygmify(code)
 
     pass2 = pass1;
     // no colons   
-    var if_elif_else_while_for_def_class_pattern = /^\s*(if|elif|else|while|for|def|class).*$/gm;                
+    var if_elif_else_while_for_def_class_pattern = /^(\s*)(if|elif|else|while|for|def|class)(.*)$/gm;                
     matches = pass1.matchAll(if_elif_else_while_for_def_class_pattern);
     for (match of matches)
     {
