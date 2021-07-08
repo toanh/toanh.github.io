@@ -30,13 +30,15 @@
             display: flex;
             flex-direction: row;
         }
-
         .gutter {
             background-color: #eee;
             background-repeat: no-repeat;
             background-position: 50%;
-        }
-
+        }        
+        .gutter.gutter-vertical {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+            cursor: row-resize;
+        }        
         .gutter.gutter-horizontal {
             background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
             cursor: col-resize;
@@ -50,15 +52,12 @@
             
             var url = window.location.href.split("?")[0];
 
-
-            //url = url + "?code=" + utoa(ace.edit("editor").getValue());
             url = url + "?code=" + encodeToUTF16(ace.edit("editor").getValue());
 
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
                 navigator.clipboard.writeText(url);
                 alert("URL copied to clipboard");
-                /* write to the clipboard now */
               }
               else
               {
@@ -75,7 +74,6 @@
                 if (result.state == "granted" || result.state == "prompt") {
                     navigator.clipboard.writeText(code);
                     alert("Code copied to clipboard");
-                    /* write to the clipboard now */
                 }
                 else
                 {
@@ -83,7 +81,7 @@
                 }
             });
         }
-        
+                
         function resetCanvas()
         {
             window.cancelAnimationFrame(Sk.builtins.animationFrameRequest);
@@ -92,9 +90,8 @@
             ctx.fillStyle = "rgb(127, 127, 127)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
-      
-        var filename = null;
-        function saveCode() {
+              
+        function saveCode(filename) {
             var code = ace.edit("editor").getValue();
             var file = new File([code], filename + ".py", {type: "text/plain;charset=utf-8"});
             saveAs(file);    
@@ -150,12 +147,7 @@
         {
             outputf(Sk.builtins.RESET + Sk.builtins.RED + text + "\n" + Sk.builtins.RESET);
         }
-        
-        function logInfo(text)
-        {
-            outputf(Sk.builtins.RESET + Sk.builtins.BLUE + text + "\n" + Sk.builtins.RESET);
-        }
-        
+               
         function runSkulpt(stepRun) {
             var code = ace.edit("editor").getValue(); 
             
@@ -183,7 +175,7 @@
             });
             
             //Sk.onAfterCompile = doGoto;
-                
+               
             var handlers = {};
             handlers["*"] = checkForStop;            
             if (stepRun) {        
@@ -277,17 +269,17 @@
             <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
             <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
             <button id="copyButton" type="button" onclick="copyCode();">Copy Code</button> 
-            <button id="saveButton" type="button" onclick="saveCode();">Save Code</button>         
+            <button id="saveButton" type="button" onclick="saveCode(filename);">Save Code</button>         
             <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;">Load Code</button> 
             <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
         </form>  
-        <div class="split" id="split" style = "height: 640px">
+        <div class="split" id="split">
             <div id ="leftpane"></div>
             <div id ="rightpane"></div>
         </div>   
         <div id ="bottompane"></div>
         
-        <div id="editor" style = "height: 100%; border: 1px solid black">from random import *
+        <div id="editor" style = "border: 1px solid black">from random import *
 
 secret = randint(1, 100)
 
@@ -296,16 +288,16 @@ print("I'm thinking of a number between 1 and 100...")
 guess = -1
 
 while guess != secret:
-guess = int(input(WHITE + "Enter your guess:"))
-if guess > secret:
-print(GREEN + "Lower...")
-elif guess < secret:
-print(RED + "Higher")
+    guess = int(input(WHITE + "Enter your guess:"))
+    if guess > secret:
+        print(GREEN + "Lower...")
+    elif guess < secret:
+        print(RED + "Higher")
 
 print(CYAN + "You got it!")
 print(RESET + "Bye now!")
         </div>
-        <pre id="console" style = "height: 100%" onclick="if (inputElement != null) inputElement.focus();"></pre>     
+        <pre id="console" onclick="if (inputElement != null) inputElement.focus();"></pre>     
         <canvas id="pyangelo" height = 545 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
     <input id="file-input" type="file" name="name" style="display: none;"/>
@@ -323,8 +315,8 @@ print(RESET + "Bye now!")
         });        
         editor.setHighlightActiveLine(true);
 		
-		document.getElementById('file-input').addEventListener('change', userLoadCode, false);   
-        
+		document.getElementById('file-input').addEventListener('change', userLoadCode, false);  
+
         // grabbing the URL parameters and processing them
         urlParams = new URLSearchParams(window.location.search);        
         
@@ -378,6 +370,7 @@ print(RESET + "Bye now!")
             loadButton.style.display = "none";
         }       
 
+        var filename = null;  
         // default file name (for saving)
         filename = urlParams.get('name')
         if (filename == null || filename.length == 0)
@@ -430,13 +423,31 @@ print(RESET + "Bye now!")
         }          
         
         // canvas demo mode: canvas to the right of the editor, console at the bottom
-        democanvas = urlParams.get('democanvas')
-        if (democanvas != null && democanvas.length > 0)
+        var display = null;  
+        display = urlParams.get('display');
+        if (display == null || display.length == 0 || display == "side")
+        {
+            // standard editor mode: console to the right of the editor, no canvas - splittable view
+            document.getElementById('pyangelo').style = "display:none";        
+            document.getElementById('split').style.height = "640px";               
+            document.getElementById('editor').style.height = "100%";   
+            document.getElementById('console').style.height = "100%";              
+            
+            document.getElementById('leftpane').appendChild(document.getElementById('editor'));
+            document.getElementById('rightpane').appendChild(document.getElementById('console'));
+            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));    
+            
+            Split(['#leftpane', '#rightpane'])   
+            
+        }    
+        else if (display == "canvas")
         {
             // we're in canvas demo mode
             document.getElementById('leftpane').appendChild(document.getElementById('editor'));
             document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
             document.getElementById('bottompane').appendChild(document.getElementById('console')); 
+            
+            document.getElementById('editor').style.height = "100%";   
                                    
             document.getElementById('split').style = "height: 555px; display: flex; flex-direction:row;";            
             document.getElementById('rightpane').style = "width: 330px;"
@@ -444,17 +455,64 @@ print(RESET + "Bye now!")
             
             document.getElementById('console').style = "height: 240px";
             
+            // no step-run for canvas items
+            // TODO: implement optional immediate drawing mode to support this
             nostep = "1";
-            stepButton.style.display = "none";
-        }    
-        else
+            stepButton.style.display = "none";     
+        }        
+        else if (display == "top")
         {
-            // standard editor mode: console to the right of the editor, no canvas - splittable view
-            document.getElementById('pyangelo').style = "display:none";        
+            // editor on top, console at the bottom, splittable
+            document.getElementById('pyangelo').style = "display:none";     
+
+            document.getElementById('split').style = "display: flex; flex-direction: column"; 
+            document.getElementById('split').style.width = "100%";               
+            //document.getElementById('split').style.height = "960px"; 
+            document.getElementById('split').style.height = "100%"; 
+                     
+            document.getElementById('editor').style.width = "100%";   
+            document.getElementById('editor').style.height = "100%"; 
+            document.getElementById('console').style.width = "100%"; 
+            document.getElementById('console').style.height = "100%";            
+            
             document.getElementById('leftpane').appendChild(document.getElementById('editor'));
             document.getElementById('rightpane').appendChild(document.getElementById('console'));
-            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));            
-            Split(['#leftpane', '#rightpane'])        
+            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
+                        
+            Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
+            
+            new ResizeObserver(function(entries) {
+                // needed so that resizing the divider forces a resize on the window 
+                // and thereby updating the ace code window properly
+                window.dispatchEvent(new Event('resize'));
+            }).observe(document.getElementById('leftpane')); 
+        }
+        else if (display == "bottom")
+        {
+            // console on top, editor at the bottom, splittable
+            document.getElementById('pyangelo').style = "display:none";     
+
+            document.getElementById('split').style = "display: flex; flex-direction: column"; 
+            document.getElementById('split').style.width = "100%";               
+            //document.getElementById('split').style.height = "960px"; 
+            document.getElementById('split').style.height = "100%"; 
+                     
+            document.getElementById('editor').style.width = "100%";   
+            document.getElementById('editor').style.height = "100%"; 
+            document.getElementById('console').style.width = "100%"; 
+            document.getElementById('console').style.height = "100%";            
+            
+            document.getElementById('leftpane').appendChild(document.getElementById('console'));
+            document.getElementById('rightpane').appendChild(document.getElementById('editor'));
+            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
+                        
+            Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
+            
+            new ResizeObserver(function(entries) {
+                // needed so that resizing the divider forces a resize on the window 
+                // and thereby updating the ace code window properly
+                window.dispatchEvent(new Event('resize'));
+            }).observe(document.getElementById('rightpane')); 
         }        
         
         var just_run = false;
