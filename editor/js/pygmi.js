@@ -29,7 +29,7 @@ function pygmify(code)
     {
         if (match[0].trim().slice(-1) != ":")
         {
-            pass2 = pass2.replace(match[0], match[0] + ":");
+            pass2 = pass2.replace(pass1.substr(match.index, match[0].length), match[0] + ":");
         }
     }    
 
