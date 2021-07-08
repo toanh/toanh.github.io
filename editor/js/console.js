@@ -22,7 +22,6 @@ Sk.builtins.HL_YELLOW = new Sk.builtin.str("\u001b[ 48;2;255;255;0 m");
 Sk.builtins.HL_MAGENTA = new Sk.builtin.str("\u001b[ 48;2;255;0;255 m");
 Sk.builtins.HL_ORANGE = new Sk.builtin.str("\u001b[ 48;2;255;165;0 m");
 Sk.builtins.HL_PURPLE = new Sk.builtin.str("\u001b[ 48;2;127;0;255 m");
-
     
 Sk.builtins.BOLD = new Sk.builtin.str("\u001b[ 1;2;0;0;0 m");    
 Sk.builtins.ITALICS = new Sk.builtin.str("\u001b[ 3;2;0;0;0 m");    
@@ -202,8 +201,69 @@ function createColouredTextSpanElement(n, color, bgcolor, italics, bold, underli
     return e;
 }
 
-function doGoto(name, code)
-{
+function encodeToUTF16(plaintext) {
+  var res = "";
+  for (i = 0; i < plaintext.length; i++)
+  {
+    var ch1 = plaintext.charCodeAt(i);
+    var ch2 = 0;
+    if (ch1 < 256 && i < plaintext.length - 1)
+    {
+      ch2 = plaintext.charCodeAt(++i);   
+      if (ch2 >= 256)
+      {      	
+        ch2 = 0;
+        --i;
+      }
+    }
+    else if (ch1 >= 256)
+    {
+      ch2 = 0;
+      if (i < plaintext.length - 1)
+      {
+        ch2 = plaintext.charCodeAt(++i);    
+      }
+      res = res + "@" + String.fromCharCode(ch1, ch2);
+      continue;
+    }
+    res = res + String.fromCharCode(ch1 * 256 + ch2);    
+  }
+  return res;
+}
+
+function decodeFromUTF16(codedText) {
+  var res = "";
+  
+  for (i = 0; i < codedText.length; i++)
+  {
+    ch = codedText.charCodeAt(i);
+    
+    if (ch == 64)
+    {
+      ch1 = codedText.charCodeAt(++i);
+      ch2 = codedText.charCodeAt(++i);
+      res += String.fromCharCode(ch1, ch2);
+    }
+    else
+    {
+      var ch1 = (ch / 256) % (256);
+      var ch2 = ch % (256);
+           
+      if (ch2 == 0)
+      {
+      	res += String.fromCharCode(ch1);
+      }
+      else
+      {
+      	res += String.fromCharCode(ch1, ch2);
+      }
+    }
+  }
+  return res;
+}
+
+
+Sk.onAfterCompile = function(name, code) {
     var destCode = code;
     if (name == "<stdin>")            
     {
@@ -301,68 +361,7 @@ function doGoto(name, code)
                 destCode = destCode.replace(gotoMatch[0], "$blk=" + lineNo + ";/* goto */continue;");
             }
         }                                
-    }
-    
+    }        
     return destCode;
 }
 
-function encodeToUTF16(plaintext) {
-  var res = "";
-  for (i = 0; i < plaintext.length; i++)
-  {
-    var ch1 = plaintext.charCodeAt(i);
-    var ch2 = 0;
-    if (ch1 < 256 && i < plaintext.length - 1)
-    {
-      ch2 = plaintext.charCodeAt(++i);   
-      if (ch2 >= 256)
-      {      	
-        ch2 = 0;
-        --i;
-      }
-    }
-    else if (ch1 >= 256)
-    {
-      ch2 = 0;
-      if (i < plaintext.length - 1)
-      {
-        ch2 = plaintext.charCodeAt(++i);    
-      }
-      res = res + "@" + String.fromCharCode(ch1, ch2);
-      continue;
-    }
-    res = res + String.fromCharCode(ch1 * 256 + ch2);    
-  }
-  return res;
-}
-
-function decodeFromUTF16(codedText) {
-  var res = "";
-  
-  for (i = 0; i < codedText.length; i++)
-  {
-    ch = codedText.charCodeAt(i);
-    
-    if (ch == 64)
-    {
-      ch1 = codedText.charCodeAt(++i);
-      ch2 = codedText.charCodeAt(++i);
-      res += String.fromCharCode(ch1, ch2);
-    }
-    else
-    {
-      var ch1 = (ch / 256) % (256);
-      var ch2 = ch % (256);
-           
-      if (ch2 == 0)
-      {
-      	res += String.fromCharCode(ch1);
-      }
-      else
-      {
-      	res += String.fromCharCode(ch1, ch2);
-      }
-    }
-  }
-  return res;
-}
