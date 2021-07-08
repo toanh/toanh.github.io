@@ -8,7 +8,8 @@ function pygmify(code)
     var matches = code.matchAll(forever_pattern);
     for (match of matches)
     {
-        pass1 = pass1.replace(match[0], match[1] + "while True");
+        pass1 = pass1.substr(0, match.index) + pass1.substr(match.index).replace(match[0], match[1] + "while True");
+        //pass1 = pass1.replace(match[0], match[1] + "while True");
     }    
 
     // until loop
@@ -16,7 +17,8 @@ function pygmify(code)
     matches = code.matchAll(until_pattern);
     for (match of matches)
     {
-        pass1 = pass1.replace(match[0], match[1] + "while not" + match[3]);
+        pass1 = pass1.substr(0, match.index) + pass1.substr(match.index).replace(match[0], match[1] + "while not" + match[3]);
+        //pass1 = pass1.replace(match[0], match[1] + "while not" + match[3]);
     }      
     
 
