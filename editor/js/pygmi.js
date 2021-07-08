@@ -24,6 +24,27 @@ function pygmify(code)
 
 
     pass2 = pass1;
+    // repeat for
+    var repeat_for_pattern = /^(\s*)(repeat)(\s*)(\S+)(\s*)=(\s*)(\S*)(\s*)to(\s*)(.*)$/gm;                
+    matches = pass1.matchAll(repeat_for_pattern);
+    for (match of matches)
+    {
+        times = match[10].replace(/(:)|(times)/g, "")
+        pass2 = pass2.substr(0, match.index) + pass2.substr(match.index).replace(match[0], match[1] + "for " + match[4] + " in range(" + match[7] + ", " + times + "+ 1):");
+    }      
+    
+    pass3 = pass2;
+    // repeat   
+    var repeat_pattern = /^(\s*)(repeat)(\s*)(.*)$/gm;                
+    matches = pass2.matchAll(repeat_pattern);
+    for (match of matches)
+    {
+        times = match[4].replace(/(:)|(times)/g, "")
+        pass3 = pass3.substr(0, match.index) + pass3.substr(match.index).replace(match[0], match[1] + "for _ in range(" + times + "):");
+    }  
+    
+    
+    pass4 = pass3;
     // no colons   
     var if_elif_else_while_for_def_class_pattern = /^(\s*)(if|elif|else|while|for|def|class)(.*)$/gm;                
     matches = pass1.matchAll(if_elif_else_while_for_def_class_pattern);
@@ -31,10 +52,12 @@ function pygmify(code)
     {
         if (match[0].trim().slice(-1) != ":")
         {
-            pass2 = pass2.substr(0, match.index) + pass2.substr(match.index).replace(match[0], match[0] + ":");
+            pass4 = pass4.substr(0, match.index) + pass4.substr(match.index).replace(match[0], match[0] + ":");
         }
     }    
 
+  
+
     
-    return pass2;
+    return pass4;
 }
