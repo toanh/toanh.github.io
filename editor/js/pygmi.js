@@ -13,11 +13,11 @@ function pygmify(code)
     }    
 
     // until loop
-    var until_pattern = /^(\s*)(until)(.*)$/gm;                
+    var until_pattern = /^(\s*)(until )(.*)$/gm;                
     matches = code.matchAll(until_pattern);
     for (match of matches)
     {
-        pass1 = pass1.substr(0, match.index) + pass1.substr(match.index).replace(match[0], match[1] + "while not" + match[3]);
+        pass1 = pass1.substr(0, match.index) + pass1.substr(match.index).replace(match[0], match[1] + "while not " + match[3]);
         //pass1 = pass1.replace(match[0], match[1] + "while not" + match[3]);
     }      
     
@@ -25,7 +25,7 @@ function pygmify(code)
 
     pass2 = pass1;
     // repeat for
-    var repeat_for_pattern = /^(\s*)(repeat)(\s*)(\S+)(\s*)=(\s*)(\S*)(\s*)to(\s*)(.*)$/gm;                
+    var repeat_for_pattern = /^(\s*)(repeat )(\s*)(\S+)(\s*)=(\s*)(\S*)(\s*)to(\s*)(.*)$/gm;                
     matches = pass1.matchAll(repeat_for_pattern);
     for (match of matches)
     {
@@ -35,7 +35,7 @@ function pygmify(code)
     
     pass3 = pass2;
     // repeat   
-    var repeat_pattern = /^(\s*)(repeat)(\s*)(.*)$/gm;                
+    var repeat_pattern = /^(\s*)(repeat )(\s*)(.*)$/gm;                
     matches = pass2.matchAll(repeat_pattern);
     for (match of matches)
     {
@@ -45,19 +45,55 @@ function pygmify(code)
     
     
     pass4 = pass3;
+    // = vs ==   
+    //var eq_pattern = /^(\s*)(if |elif |while )(.*[^=\<>\!])(=)([^=\<>\!].*)$/gm;                
+    var eq_pattern = /^(\s*)(if |elif |while )(.*)$/gm;                
+    matches = pass3.matchAll(eq_pattern);
+    for (match of matches)
+    {
+        var condition = "";
+        for (i = 0; i < match[3].length; i++)
+        {
+            var c = match[3][i];
+            condition += c;
+            // found an equals sign
+            if (c == "=")
+            {
+                if (i > 0)
+                {
+                    // check the prev char
+                    var prev = match[3][i-1];
+                    // if it's not <>!
+                    if (prev != ">" && prev != "<" && prev != "!")
+                    {
+                        // always add another equal sign
+                        condition += "=";
+                        // if the next char is actually an equals sign, then skip it
+                        if (i < match[3].length -1 && match[3][i+1] == "=")
+                        {
+                            i++;
+                        }                        
+                    }
+                }
+            }            
+        }
+        pass4 = pass4.substr(0, match.index) + pass4.substr(match.index).replace(match[0], match[1] + match[2] + condition);
+    }      
+    
+    lastpass = pass4;
     // no colons   
-    var if_elif_else_while_for_def_class_pattern = /^(\s*)(if|elif|else|while|for|def|class)(.*)$/gm;                
-    matches = pass1.matchAll(if_elif_else_while_for_def_class_pattern);
+    var if_elif_else_while_for_def_class_pattern = /^(\s*)(if |elif |else|while |for |def |class )(.*)$/gm;                
+    matches = pass4.matchAll(if_elif_else_while_for_def_class_pattern);
     for (match of matches)
     {
         if (match[0].trim().slice(-1) != ":")
         {
-            pass4 = pass4.substr(0, match.index) + pass4.substr(match.index).replace(match[0], match[0] + ":");
+            lastpass = lastpass.substr(0, match.index) + lastpass.substr(match.index).replace(match[0], match[0] + ":");
         }
     }    
 
   
 
     
-    return pass4;
+    return lastpass;
 }
