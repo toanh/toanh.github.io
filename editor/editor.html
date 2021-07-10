@@ -326,7 +326,7 @@
                 document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
                 document.getElementById('bottompane').appendChild(document.getElementById('console')); 
                 
-                document.getElementById('bottompane').style = "display:block";      
+                document.getElementById('bottompane').style = "display:block; height: calc(100% - 640px);";      
                 
                 document.getElementById('editor').style.height = "100%";   
                                        
@@ -334,7 +334,8 @@
                 document.getElementById('rightpane').style = "width: 330px;"
                 document.getElementById('leftpane').style = "height: 545px; flex-grow: 1;";
                 
-                document.getElementById('console').style = "height: 200px";
+                //document.getElementById('console').style = "height: 200px";
+				document.getElementById('console').style = "height: 100%";
                 
                 document.getElementById('pyangelo').style = "display:block";  
                 
@@ -411,7 +412,7 @@
                 // standard editor mode: console to the right of the editor, no canvas - splittable view
                 document.getElementById('pyangelo').style = "display:none";        
                 //document.getElementById('split').style.height = "100%";               
-                document.getElementById('split').style.height = "calc(100% - 60px)";               
+                document.getElementById('split').style.height = "calc(100% - 80px)";               
                 document.getElementById('editor').style.height = "100%";   
                 document.getElementById('console').style.height = "100%";    
                 
@@ -431,7 +432,7 @@
 
 <body> 
     <div id="container" style = "width:100%; margin: 0 auto"> 
-        <form id="buttons" style = "margin: 20px auto;text-align: center"> 
+        <form id="buttons" style = "margin: 20px auto;text-align: center; position: sticky;"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button> 
             <button id="stopButton" type="button" onclick="stopEditor();" style = "width:148px">🛑 Stop</button>
