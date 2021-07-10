@@ -46,7 +46,29 @@
         }        
     </style>
     
-    <script type="text/javascript">        
+    <script type="text/javascript"> 
+        function generateEmbed()
+        {
+            ta = document.getElementById("code");
+            
+            var url = window.location.href.split("?")[0];
+
+            url = url + "?code=" + encodeToUTF16(ace.edit("editor").getValue());
+            
+            embed = "<iframe src=\"" + url + "\" width = 960 height = 640 style='border:1px solid #808080;'></iframe>";
+
+            navigator.permissions.query({name: "clipboard-write"}).then(result => {
+              if (result.state == "granted" || result.state == "prompt") {
+                navigator.clipboard.writeText(embed);
+                alert("Embed code copied to clipboard");
+              }
+              else
+              {
+                alert("Unable to copy embed code to clipboard. Please allow the appropriate permissions.");
+              }
+            });
+        }
+        
         function generateURL()
         {
             ta = document.getElementById("code");
@@ -227,7 +249,15 @@
             else
             {
                 stepButton.style.display = "inline";
-            }        
+            }    
+            if (norun != null && norun.length > 0)
+            {        
+                runButton.style.display = "none";
+            }    
+            else
+            {
+                runButton.style.display = "inline";
+            }            
             resetCanvas();                     
         }
         
@@ -267,14 +297,15 @@
 
 <body> 
     <div id="container" style = "width:100%; margin: 0 auto"> 
-        <form id="buttons" style = "width:400px; margin: 20px auto;text-align: center"> 
+        <form id="buttons" style = "margin: 20px auto;text-align: center"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button> 
             <button id="stopButton" type="button" onclick="stopEditor();" style = "width:148px">🛑 Stop</button>
             <button id="copyButton" type="button" onclick="copyCode();" style = "width:72px">📋 Copy</button> 
             <button id="saveButton" type="button" onclick="saveCode(filename);" style = "width:72px">💾 Save</button>         
             <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;" style = "width:72px">📂 Open</button> 
-            <button id="URLButton" type="button" onclick="generateURL();" style = "width:72px">Generate Link</button> 
+            <button id="URLButton" type="button" onclick="generateURL();" style = "width:72px">URL</button> 
+            <button id="embedButton" type="button" onclick="generateEmbed();" style = "width:72px">Embed</button> 
         </form>  
         <div class="split" id="split">
             <div id ="leftpane"></div>
@@ -350,27 +381,29 @@ print(RESET + "Bye now!")
         }            
 
         // configurable buttons
+        var runButton = document.getElementById("runButton"); 
         var saveButton = document.getElementById("saveButton"); 
         var loadButton = document.getElementById("loadButton"); 
         var stepButton = document.getElementById("stepButton"); 
         var copyButton = document.getElementById("copyButton");       
         var stopButton = document.getElementById("stopButton");  
         var URLButton = document.getElementById("URLButton");  
+        var embedButton = document.getElementById("embedButton");  
 		
 		// hide stop button on load
         stopButton.style.display = "none";  
 
         // allows save (and load)
-        save = urlParams.get('save')
-        if (save != null && save.length > 0)
-        {        
-            saveButton.style.display = "inline";
-            loadButton.style.display = "inline";
-        }    
-        else
+        nosave = urlParams.get('nosave')
+        if (nosave != null && nosave.length > 0)
         {        
             saveButton.style.display = "none";
             loadButton.style.display = "none";
+        }    
+        else
+        {        
+            saveButton.style.display = "inline";
+            loadButton.style.display = "inline";
         }       
 
         var filename = null;  
@@ -386,11 +419,25 @@ print(RESET + "Bye now!")
         if (nostep != null && nostep.length > 0)
         {        
             stepButton.style.display = "none";
+            stopButton.style.width = "72px";
         }    
         else
         {
             stepButton.style.display = "inline";
         }   
+        
+        // disable run button
+        norun = urlParams.get('norun')
+        if (norun != null && norun.length > 0)
+        {        
+            runButton.style.display = "none";
+            stopButton.style.width = "72px";
+            stepButton.innerHTML = "🞂 Step";
+        }    
+        else
+        {
+            runButton.style.display = "inline";
+        }           
 
         // disable copy code button
         nocopy = urlParams.get('nocopy')
@@ -403,7 +450,7 @@ print(RESET + "Bye now!")
             copyButton.style.display = "inline";
         }           
 
-        // disable generate URL button
+        // get URL button
         URLButton.style.display = "none";  
         urlButtonOn = urlParams.get('url')
         if (urlButtonOn != null && urlButtonOn.length > 0)
@@ -413,7 +460,19 @@ print(RESET + "Bye now!")
         else
         {        
             URLButton.style.display = "none";
-        }  
+        }     
+        
+        // get embed button
+        embedButton.style.display = "none";  
+        embedButtonOn = urlParams.get('embed')
+        if (embedButtonOn != null && embedButtonOn.length > 0)
+        {        
+            embedButton.style.display = "inline";
+        }    
+        else
+        {        
+            embedButton.style.display = "none";
+        }          
 
         // hides the drawing canvas
         nocanvas = urlParams.get('nocanvas')
@@ -432,7 +491,8 @@ print(RESET + "Bye now!")
         {
             // standard editor mode: console to the right of the editor, no canvas - splittable view
             document.getElementById('pyangelo').style = "display:none";        
-            document.getElementById('split').style.height = "640px";               
+            //document.getElementById('split').style.height = "100%";               
+            document.getElementById('split').style.height = "calc(100% - 60px)";               
             document.getElementById('editor').style.height = "100%";   
             document.getElementById('console').style.height = "100%";              
             
