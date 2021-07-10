@@ -40,8 +40,10 @@ CS in Schools Python Editor
         </div>        
         <div class = "title" style="color: #082A4C">...with training wheels!</div>
     </div>
-    <iframe class = "editorframe" src="editor.html" width = "80%" height = 680 >
-<div>
-</frame>
+    <iframe id = "editor" class = "editorframe" src="editor.html" width = "80%" height = 680></iframe>
+</div>
+<script>
+	document.getElementById("editor").height = Math.max(screen.height - 300, 580) + "px";
+</script>
 </body>
 </html>
