@@ -42,6 +42,7 @@ if direction == "east":
 if direction == "west":
   goto .underground
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .cave
 
 label .waterfall
@@ -73,6 +74,7 @@ if direction == "south":
 if direction == "east":
   goto .clearing
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .waterfall
 
 label .forest
@@ -101,6 +103,7 @@ if direction == "south":
 if direction == "north":
   goto .cave
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .forest
 
 label .stream
@@ -113,6 +116,7 @@ if direction == "east":
 if direction == "north":
   goto .clearing
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .stream
 
 label .underground
@@ -124,6 +128,7 @@ direction = input("Where would you like to go:")
 if direction == "east":
   goto .cave
 print("While you are stumbling along in the dark, you trip and fall down a chasm!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .game_over
 
 label .clearing
@@ -140,6 +145,7 @@ if direction == "east":
 if direction == "west":
   goto .waterfall  
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .clearing
 
 label .hut
@@ -166,8 +172,10 @@ print("Suddenly out of the entrance, a troll charges at you with a giant club!")
 direction = input("Hurry!! Where do you go:")
 if direction == "south":
   print("You manage to sprint back the way you came as the troll runs out of breath.")
+  input(Colour.green + "Press [enter] to continue." + Colour.reset)
   goto .clearing
 print("You run about aimlessly but the troll catches you and has you for dinner!!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .game_over
 
 label .valley
@@ -180,6 +188,7 @@ if direction == "north":
 if direction == "west":
   goto .stream   
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .valley
 
 label .hill
@@ -208,6 +217,7 @@ if direction == "west":
 if direction == "through the portal" or direction == "portal":
   goto .magic_cave 
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .hill
 
 label .magic_cave
@@ -225,6 +235,7 @@ direction = input("Where would you like to go:")
 if direction == "down":
   goto .finish
 print("The magic staircase shimmers and then vanishes.")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 if direction == "north":
   goto .waterfall
 if direction == "south":
@@ -234,6 +245,7 @@ if direction == "east":
 if direction == "west":
   goto .underground
 print("You can't go that way!")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .cave
 
 label .finish
@@ -265,6 +277,7 @@ print(Colour.yellow + r'''
 ''' + Colour.reset)
 print("You fill your bags and pockets with all the treasures and gold they can hold. You have fulfilled your quest!")
 print("Now, where was the exit again...?")
+input(Colour.green + "Press [enter] to continue." + Colour.reset)
 goto .game_over
 
 label .game_over
