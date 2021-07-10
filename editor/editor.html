@@ -141,7 +141,7 @@
         
         function checkForStop() {
             if (_stopped)
-                throw 'stopped!';
+                throw 'Stopped!';
         }
         
         function logError(text)
@@ -244,8 +244,8 @@
                 outputf("\n"); 
                 // TODO: fold this into the main promise/catch process?
                 inputElement = null;
-                logError("stopped!");                
-                throw "stopped!";
+                logError("Stopped!");                
+                throw "Stopped!";
             }                       
         }
         
@@ -267,14 +267,14 @@
 
 <body> 
     <div id="container" style = "width:100%; margin: 0 auto"> 
-        <form id="buttons" style = "width:400px; margin: 10px auto;text-align: center"> 
-            <button id="runButton" type="button" onclick="runSkulpt(false);">Run</button> 
-            <button id="stepButton" type="button" onclick="runSkulpt(true);">Step-Run</button> 
-            <button id="stopButton" type="button" onclick="stopEditor();">Stop</button>
-            <button id="copyButton" type="button" onclick="copyCode();">Copy Code</button> 
-            <button id="saveButton" type="button" onclick="saveCode(filename);">Save Code</button>         
-            <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;">Load Code</button> 
-            <button id="URLButton" type="button" onclick="generateURL();">Generate Link</button> 
+        <form id="buttons" style = "width:400px; margin: 20px auto;text-align: center"> 
+            <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
+            <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button> 
+            <button id="stopButton" type="button" onclick="stopEditor();" style = "width:148px">🛑 Stop</button>
+            <button id="copyButton" type="button" onclick="copyCode();" style = "width:72px">📋 Copy</button> 
+            <button id="saveButton" type="button" onclick="saveCode(filename);" style = "width:72px">💾 Save</button>         
+            <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;" style = "width:72px">📂 Open</button> 
+            <button id="URLButton" type="button" onclick="generateURL();" style = "width:72px">Generate Link</button> 
         </form>  
         <div class="split" id="split">
             <div id ="leftpane"></div>
@@ -456,7 +456,7 @@ print(RESET + "Bye now!")
             document.getElementById('rightpane').style = "width: 330px;"
             document.getElementById('leftpane').style = "height: 545px; flex-grow: 1;";
             
-            document.getElementById('console').style = "height: 240px";
+            document.getElementById('console').style = "height: 200px";
             
             // no step-run for canvas items
             // TODO: implement optional immediate drawing mode to support this
