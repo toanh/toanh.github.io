@@ -287,11 +287,145 @@
             var reader = new FileReader();
             reader.onload = (function (theFile) {
                 return function (e) {
+                    checkForPyangelo(e.target.result);
                     editor.setValue(e.target.result, -1);
                 };
             })(file);
             reader.readAsText(file);
-        }           
+        }     
+
+        function checkForPyangelo(code)
+        {            
+            var pyangeloPattern = /^(?:\s*import\s+pyangelo.*)|(?:\s*from\s+pyangelo\s+import.*)$/gm;                           
+            var match = code.match(pyangeloPattern);
+            
+            setDisplayMode(match != null ? "canvas": display);                
+        }
+
+        function setDisplayMode(mode)
+        {
+            if (prevDisplay != null && prevDisplay == mode)
+            {
+                return;
+            }
+            var gutters = document.getElementsByClassName("gutter");
+            if (typeof(gutters) !== 'undefined' && gutters.length > 0)
+            {
+                for (gutter of gutters)
+                {
+                    gutter.parentNode.removeChild(gutter);
+                }
+            }
+            
+            prevDisplay = mode;
+            // FIXME: Setting display mode to non-canvas after it has been set to canvas causes issues
+            if (mode == "canvas")
+            {
+                // we're in canvas demo mode
+                document.getElementById('leftpane').appendChild(document.getElementById('editor'));
+                document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
+                document.getElementById('bottompane').appendChild(document.getElementById('console')); 
+                
+                document.getElementById('bottompane').style = "display:block";      
+                
+                document.getElementById('editor').style.height = "100%";   
+                                       
+                document.getElementById('split').style = "height: 555px; display: flex; flex-direction:row;";            
+                document.getElementById('rightpane').style = "width: 330px;"
+                document.getElementById('leftpane').style = "height: 545px; flex-grow: 1;";
+                
+                document.getElementById('console').style = "height: 200px";
+                
+                document.getElementById('pyangelo').style = "display:block";  
+                
+                // no step-run for canvas items
+                // TODO: implement optional immediate drawing mode to support this
+                nostep = "1";
+                stepButton.style.display = "none";     
+
+                
+            }            
+            else if (mode == "top")
+            {
+               // editor on top, console at the bottom, splittable
+                document.getElementById('pyangelo').style = "display:none";     
+
+                document.getElementById('split').style = "display: flex; flex-direction: column"; 
+                document.getElementById('split').style.width = "100%";               
+                document.getElementById('split').style.height = "calc(100% - 60px)"; 
+                         
+                document.getElementById('editor').style.width = "100%";   
+                document.getElementById('editor').style.height = "100%"; 
+                document.getElementById('console').style.width = "100%"; 
+                document.getElementById('console').style.height = "100%";                     
+                
+                document.getElementById('leftpane').appendChild(document.getElementById('editor'));
+                document.getElementById('rightpane').appendChild(document.getElementById('console'));
+                document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
+                            
+                Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
+                
+                document.getElementById('rightpane').style.width = "100%";
+                document.getElementById('leftpane').style.width = "100%";    
+                document.getElementById('bottompane').style = "display:none";                    
+                
+                new ResizeObserver(function(entries) {
+                    // needed so that resizing the divider forces a resize on the window 
+                    // and thereby updating the ace code window properly
+                    window.dispatchEvent(new Event('resize'));
+                }).observe(document.getElementById('leftpane'));             
+            }
+            else if (mode == "bottom")
+            {
+                // console on top, editor at the bottom, splittable
+                document.getElementById('pyangelo').style = "display:none";     
+
+                document.getElementById('split').style = "display: flex; flex-direction: column"; 
+                document.getElementById('split').style.width = "100%";               
+                document.getElementById('split').style.height = "calc(100% - 60px)"; 
+                         
+                document.getElementById('editor').style.width = "100%";   
+                document.getElementById('editor').style.height = "100%"; 
+                document.getElementById('console').style.width = "100%"; 
+                document.getElementById('console').style.height = "100%";  
+
+                document.getElementById('leftpane').appendChild(document.getElementById('console'));
+                document.getElementById('rightpane').appendChild(document.getElementById('editor'));
+                document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
+                            
+                Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
+                
+                document.getElementById('rightpane').style.width = "100%";
+                document.getElementById('leftpane').style.width = "100%";      
+                document.getElementById('bottompane').style = "display:none";                    
+                
+                new ResizeObserver(function(entries) {
+                    // needed so that resizing the divider forces a resize on the window 
+                    // and thereby updating the ace code window properly
+                    window.dispatchEvent(new Event('resize'));
+                }).observe(document.getElementById('rightpane'));             
+            }
+            else
+            {
+                // "side" is the default
+                // standard editor mode: console to the right of the editor, no canvas - splittable view
+                document.getElementById('pyangelo').style = "display:none";        
+                //document.getElementById('split').style.height = "100%";               
+                document.getElementById('split').style.height = "calc(100% - 60px)";               
+                document.getElementById('editor').style.height = "100%";   
+                document.getElementById('console').style.height = "100%";    
+                
+                document.getElementById('rightpane').style.height = "100%;"
+                document.getElementById('leftpane').style.height = "100%";     
+                document.getElementById('bottompane').style = "display:none";                   
+
+                document.getElementById('leftpane').appendChild(document.getElementById('editor'));
+                document.getElementById('rightpane').appendChild(document.getElementById('console'));
+                document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));    
+                
+                Split(['#leftpane', '#rightpane'])               
+            }            
+        }
     </script>     
 </head> 
 
@@ -360,6 +494,7 @@ print(RESET + "Bye now!")
         {            
             //codeString = atou(esc);
             codeString = decodeFromUTF16(esc);
+            checkForPyangelo(codeString);
             editor.setValue(codeString, -1);
             //document.getElementById("editor").innerHTML = codeString;            
         }
@@ -374,6 +509,7 @@ print(RESET + "Bye now!")
             client.onreadystatechange = function () {
                 if (client.readyState == 4) {
                     project_src = client.responseText;
+                    checkForPyangelo(project_src);
                     editor.setValue(project_src, -1);
                 }
             };
@@ -485,98 +621,15 @@ print(RESET + "Bye now!")
         }          
         
         // canvas demo mode: canvas to the right of the editor, console at the bottom
-        var display = null;  
-        display = urlParams.get('display');
-        if (display == null || display.length == 0 || display == "side")
+        var prevDisplay = null;  
+        var display = urlParams.get('display');
+        // TODO: the order below is important
+        
+        if (display == null || display.length == 0)
         {
-            // standard editor mode: console to the right of the editor, no canvas - splittable view
-            document.getElementById('pyangelo').style = "display:none";        
-            //document.getElementById('split').style.height = "100%";               
-            document.getElementById('split').style.height = "calc(100% - 60px)";               
-            document.getElementById('editor').style.height = "100%";   
-            document.getElementById('console').style.height = "100%";              
-            
-            document.getElementById('leftpane').appendChild(document.getElementById('editor'));
-            document.getElementById('rightpane').appendChild(document.getElementById('console'));
-            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));    
-            
-            Split(['#leftpane', '#rightpane'])   
-            
+            display = "side";
         }    
-        else if (display == "canvas")
-        {
-            // we're in canvas demo mode
-            document.getElementById('leftpane').appendChild(document.getElementById('editor'));
-            document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
-            document.getElementById('bottompane').appendChild(document.getElementById('console')); 
-            
-            document.getElementById('editor').style.height = "100%";   
-                                   
-            document.getElementById('split').style = "height: 555px; display: flex; flex-direction:row;";            
-            document.getElementById('rightpane').style = "width: 330px;"
-            document.getElementById('leftpane').style = "height: 545px; flex-grow: 1;";
-            
-            document.getElementById('console').style = "height: 200px";
-            
-            // no step-run for canvas items
-            // TODO: implement optional immediate drawing mode to support this
-            nostep = "1";
-            stepButton.style.display = "none";     
-        }        
-        else if (display == "top")
-        {
-            // editor on top, console at the bottom, splittable
-            document.getElementById('pyangelo').style = "display:none";     
-
-            document.getElementById('split').style = "display: flex; flex-direction: column"; 
-            document.getElementById('split').style.width = "100%";               
-            //document.getElementById('split').style.height = "960px"; 
-            document.getElementById('split').style.height = "100%"; 
-                     
-            document.getElementById('editor').style.width = "100%";   
-            document.getElementById('editor').style.height = "100%"; 
-            document.getElementById('console').style.width = "100%"; 
-            document.getElementById('console').style.height = "100%";            
-            
-            document.getElementById('leftpane').appendChild(document.getElementById('editor'));
-            document.getElementById('rightpane').appendChild(document.getElementById('console'));
-            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
-                        
-            Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
-            
-            new ResizeObserver(function(entries) {
-                // needed so that resizing the divider forces a resize on the window 
-                // and thereby updating the ace code window properly
-                window.dispatchEvent(new Event('resize'));
-            }).observe(document.getElementById('leftpane')); 
-        }
-        else if (display == "bottom")
-        {
-            // console on top, editor at the bottom, splittable
-            document.getElementById('pyangelo').style = "display:none";     
-
-            document.getElementById('split').style = "display: flex; flex-direction: column"; 
-            document.getElementById('split').style.width = "100%";               
-            //document.getElementById('split').style.height = "960px"; 
-            document.getElementById('split').style.height = "100%"; 
-                     
-            document.getElementById('editor').style.width = "100%";   
-            document.getElementById('editor').style.height = "100%"; 
-            document.getElementById('console').style.width = "100%"; 
-            document.getElementById('console').style.height = "100%";            
-            
-            document.getElementById('leftpane').appendChild(document.getElementById('console'));
-            document.getElementById('rightpane').appendChild(document.getElementById('editor'));
-            document.getElementById('bottompane').appendChild(document.getElementById('pyangelo'));                                  
-                        
-            Split(['#leftpane', '#rightpane'], {direction: 'vertical',})  
-            
-            new ResizeObserver(function(entries) {
-                // needed so that resizing the divider forces a resize on the window 
-                // and thereby updating the ace code window properly
-                window.dispatchEvent(new Event('resize'));
-            }).observe(document.getElementById('rightpane')); 
-        }        
+        setDisplayMode(display);
         
         var just_run = false;
         var _stopped = false;
