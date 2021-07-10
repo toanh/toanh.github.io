@@ -326,13 +326,13 @@
                 document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
                 document.getElementById('bottompane').appendChild(document.getElementById('console')); 
                 
-                document.getElementById('bottompane').style = "display:block; height: calc(100% - 640px);";      
+                document.getElementById('bottompane').style = "display:block; height: calc(100% - 580px);";      
                 
                 document.getElementById('editor').style.height = "100%";   
                                        
-                document.getElementById('split').style = "height: 555px; display: flex; flex-direction:row;";            
+                document.getElementById('split').style = "height: 505px; display: flex; flex-direction:row;";            
                 document.getElementById('rightpane').style = "width: 330px;"
-                document.getElementById('leftpane').style = "height: 545px; flex-grow: 1;";
+                document.getElementById('leftpane').style = "height: 500px; flex-grow: 1;";
                 
                 //document.getElementById('console').style = "height: 200px";
 				document.getElementById('console').style = "height: 100%";
@@ -467,7 +467,7 @@ print(CYAN + "You got it!")
 print(RESET + "Bye now!")
         </div>
         <pre id="console" onclick="if (inputElement != null) inputElement.focus();"></pre>     
-        <canvas id="pyangelo" height = 545 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
+        <canvas id="pyangelo" height = 500 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
     <input id="file-input" type="file" name="name" style="display: none;"/>
     

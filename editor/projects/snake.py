@@ -15,7 +15,7 @@ drawText("Score: " + str(score), 18, 90, font, WHITE)
 
 # draw the border
 drawRect(18, 98, \
-         290, 428, 1, WHITE)    
+         290, 372, 1, WHITE)    
 
 if gameState == 'intro':
     if progress >= 0:
@@ -77,7 +77,7 @@ elif gameState == 'play':
     for n, body in enumerate(snake[1:]):
         drawText("📀", body[0], body[1], font)
 
-    if snake[0][0] <= 18 or snake[0][1] <= 100 or snake[0][0] >= 300 or snake[0][1] >= 523: 
+    if snake[0][0] <= 18 or snake[0][1] <= 100 or snake[0][0] >= 300 or snake[0][1] >= 480: 
         gameState = 'intro'            
 
     # did the snake eat itself?
@@ -94,6 +94,6 @@ elif gameState == 'play':
       # can't be located in the snake
       while food in snake:
         foodX = randint(1, 14) * blockSize
-        foodY = randint(6, 26) * blockSize
+        foodY = randint(6, 23) * blockSize
         food = [foodX, foodY]         
 goto .here
