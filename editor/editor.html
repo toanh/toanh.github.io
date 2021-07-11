@@ -289,6 +289,7 @@
                 return function (e) {
                     checkForPyangelo(e.target.result);
                     editor.setValue(e.target.result, -1);
+                    pyConsole.innerHTML = "";
                 };
             })(file);
             reader.readAsText(file);
@@ -467,7 +468,7 @@ print(CYAN + "You got it!")
 print(RESET + "Bye now!")
         </div>
         <pre id="console" onclick="if (inputElement != null) inputElement.focus();"></pre>     
-        <canvas id="pyangelo" height = 500 width = 326 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
+        <canvas id="pyangelo" height = 500 width = 330 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
     <input id="file-input" type="file" name="name" style="display: none;"/>
     
