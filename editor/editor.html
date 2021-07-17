@@ -1,5 +1,6 @@
-<html> 
+<html lang="en"> 
 <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="js/skulpt.min.js" type="text/javascript"></script> 
     <script src="js/skulpt-stdlib.js" type="text/javascript"></script> 
     <script src="js/pygmi.js" type="text/javascript" charset="utf-8"></script>   
@@ -47,6 +48,81 @@
     </style>
     
     <script type="text/javascript"> 
+    
+        /* When the openFullscreen() function is executed, open the video in fullscreen.
+        Note that we must include prefixes for different browsers, as they don't support the requestFullscreen property yet */
+        function openFullscreen() {
+            /* Get the element you want displayed in fullscreen mode (a video in this example): */
+            var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+                (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+                (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+                (document.msFullscreenElement && document.msFullscreenElement !== null);
+        
+            
+            if (!isInFullScreen) {
+                var docElm = document.documentElement;
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
+                } else if (docElm.mozRequestFullScreen) {
+                    docElm.mozRequestFullScreen();
+                } else if (docElm.webkitRequestFullScreen) {
+                    docElm.webkitRequestFullScreen();
+                } else if (docElm.msRequestFullscreen) {
+                    docElm.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }  
+    
+        //gets the type of browser
+        function detectBrowser() { 
+            if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) {
+                return 'Opera';
+            } else if(navigator.userAgent.indexOf("Chrome") != -1 ) {
+                return 'Chrome';
+            } else if(navigator.userAgent.indexOf("Safari") != -1) {
+                return 'Safari';
+            } else if(navigator.userAgent.indexOf("Firefox") != -1 ){
+                return 'Firefox';
+            } else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) {
+                return 'IE';
+            } else {
+                return 'Unknown';
+            }
+        } 
+        
+        function copyToClipboard(text, successMsg, errorMsg)
+        {
+            var browser = detectBrowser();
+            if (browser == "Firefox")
+            {
+                navigator.clipboard.writeText(text);
+                alert(successMsg);            
+            }
+            else
+            {
+                navigator.permissions.query({name: "clipboard-write"}).then(result => {
+                  if (result.state == "granted" || result.state == "prompt") {
+                    navigator.clipboard.writeText(text);
+                    alert(successMsg);
+                  }
+                  else
+                  {
+                    alert(errorMsg);
+                  }
+                });      
+            }
+        }
+    
         function generateEmbed()
         {
             ta = document.getElementById("code");
@@ -55,18 +131,9 @@
 
             url = url + "?code=" + encodeToUTF16(ace.edit("editor").getValue());
             
-            embed = "<iframe src=\"" + url + "\" width = 960 height = 640 style='border:1px solid #808080;'></iframe>";
-
-            navigator.permissions.query({name: "clipboard-write"}).then(result => {
-              if (result.state == "granted" || result.state == "prompt") {
-                navigator.clipboard.writeText(embed);
-                alert("Embed code copied to clipboard");
-              }
-              else
-              {
-                alert("Unable to copy embed code to clipboard. Please allow the appropriate permissions.");
-              }
-            });
+            embed = "<iframe src=\"" + url + "\" allow='clipboard-write' width = 960 height = 640 style='border:1px solid #808080;'></iframe>";
+            
+            copyToClipboard(embed, "Embed code copied to clipboard.", "Unable to copy embed code to clipboard. Please copy the embed code below manually: \n" + embed);
         }
         
         function generateURL()
@@ -76,33 +143,16 @@
             var url = window.location.href.split("?")[0];
 
             url = url + "?code=" + encodeToUTF16(ace.edit("editor").getValue());
-
-            navigator.permissions.query({name: "clipboard-write"}).then(result => {
-              if (result.state == "granted" || result.state == "prompt") {
-                navigator.clipboard.writeText(url);
-                alert("URL copied to clipboard");
-              }
-              else
-              {
-                alert("Unable to copy URL to clipboard. Please allow the appropriate permissions.");
-              }
-            });
+            
+            copyToClipboard(url, "URL copied to clipboard.", "Unable to copy URL to clipboard. Please copy the URL below manually: \n" + url);
         }
         
         function copyCode()
         {
             var code = ace.edit("editor").getValue(); 
-
-            navigator.permissions.query({name: "clipboard-write"}).then(result => {
-                if (result.state == "granted" || result.state == "prompt") {
-                    navigator.clipboard.writeText(code);
-                    alert("Code copied to clipboard");
-                }
-                else
-                {
-                    alert("Unable to copy code to clipboard. Please allow the appropriate permissions.");
-                }
-            });
+            navigator.clipboard.writeText(code);
+            
+            copyToClipboard(code, "Code copied to clipboard.", "Unable to copy code to clipboard. Please copy the code manually.");
         }
                 
         function resetCanvas()
@@ -115,6 +165,11 @@
         }
               
         function saveCode(filename) {
+            filename = window.prompt("Enter file name:", filename)
+            if (filename == null)
+            {
+                return;
+            }
             var code = ace.edit("editor").getValue();
             var file = new File([code], filename + ".py", {type: "text/plain;charset=utf-8"});
             saveAs(file);    
@@ -124,13 +179,25 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
         
-        var justDelayed = false;
+        function singleStep()
+        {
+            return new Promise((resolve, reject) => {
+                singleStepButton.addEventListener('click', function(e) {
+                    resolve(1);
+                }, {once: true});
+            });
+		}      
+
         async function lineStepper(susp)
         {
             checkForStop();
             try {
-                
-                editor.gotoLine(susp.child.$lineno);            
+                var child = susp.child;
+                while (child.child.child != null)
+                {
+                    child = child.child;
+                }
+                editor.gotoLine(child.$lineno);            
                 // don't pause on the first line                
                 if (just_run) just_run = false            
                 else {
@@ -139,7 +206,8 @@
                         if (!justDelayed)
                         {
                             justDelayed = true;
-                            await sleep(1000);    
+                            await sleep(1000);  
+                            //await singleStep();
                         }
                         else
                         {
@@ -149,6 +217,7 @@
                     else
                     {
                         await sleep(1000);  
+                        //await singleStep();
                         justDelayed = false;
                     }
                             
@@ -207,7 +276,6 @@
                 editor.setTheme("ace/theme/gob");
                 handlers["Sk.debug"] = lineStepper;
                 handlers["Sk.delay"] = lineStepper;
-
             }
                            
             var e = Sk.misceval.asyncToPromise((function() {
@@ -327,7 +395,7 @@
                 document.getElementById('rightpane').appendChild(document.getElementById('pyangelo'));
                 document.getElementById('bottompane').appendChild(document.getElementById('console')); 
                 
-                document.getElementById('bottompane').style = "display:block; height: calc(100% - 580px);";      
+                document.getElementById('bottompane').style = "display:block; height: " + prefixedCalc() + "(100% - 580px);";      
                 
                 document.getElementById('editor').style.height = "100%";   
                                        
@@ -354,7 +422,7 @@
 
                 document.getElementById('split').style = "display: flex; flex-direction: column"; 
                 document.getElementById('split').style.width = "100%";               
-                document.getElementById('split').style.height = "calc(100% - 60px)"; 
+                document.getElementById('split').style.height = prefixedCalc() + "(100% - 60px)"; 
                          
                 document.getElementById('editor').style.width = "100%";   
                 document.getElementById('editor').style.height = "100%"; 
@@ -384,7 +452,7 @@
 
                 document.getElementById('split').style = "display: flex; flex-direction: column"; 
                 document.getElementById('split').style.width = "100%";               
-                document.getElementById('split').style.height = "calc(100% - 60px)"; 
+                document.getElementById('split').style.height = prefixedCalc() + "(100% - 60px)"; 
                          
                 document.getElementById('editor').style.width = "100%";   
                 document.getElementById('editor').style.height = "100%"; 
@@ -413,7 +481,7 @@
                 // standard editor mode: console to the right of the editor, no canvas - splittable view
                 document.getElementById('pyangelo').style = "display:none";        
                 //document.getElementById('split').style.height = "100%";               
-                document.getElementById('split').style.height = "calc(100% - 80px)";               
+                document.getElementById('split').style.height = prefixedCalc() + "(100% - 80px)";               
                 document.getElementById('editor').style.height = "100%";   
                 document.getElementById('console').style.height = "100%";    
                 
@@ -428,11 +496,20 @@
                 Split(['#leftpane', '#rightpane'])               
             }            
         }
+        
+        function prefixedCalc () {
+            var prefixes = ["","-webkit-","-moz-","-o-"], el;
+            for (var i = 0; i < prefixes.length; i++) {
+                el = document.createElement('div');
+                el.style.cssText = "width:" + prefixes[i] + "calc(9px)";
+                if (el.style.length) return prefixes[i] + "calc";
+            }
+        }
     </script>     
 </head> 
 
 <body> 
-    <div id="container" style = "width:100%; margin: 0 auto"> 
+    <div id="container" style = "width:100%; height: 95%;margin: 0 auto"> 
         <form id="buttons" style = "margin: 20px auto;text-align: center; position: sticky;"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button> 
@@ -441,7 +518,9 @@
             <button id="saveButton" type="button" onclick="saveCode(filename);" style = "width:72px">💾 Save</button>         
             <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;" style = "width:72px">📂 Open</button> 
             <button id="URLButton" type="button" onclick="generateURL();" style = "width:72px">URL</button> 
-            <button id="embedButton" type="button" onclick="generateEmbed();" style = "width:72px">Embed</button> 
+            <button id="embedButton" type="button" onclick="generateEmbed();" style = "width:72px">Embed</button>      
+            <button id="fullscreenButton" type="button" onclick="openFullscreen();" style = "width:104px">🖥️ Fullscreen</button>      
+            <!-- <button id="singleStepButton" type="button" style = "width:72px">Single Step</button> -->
         </form>  
         <div class="split" id="split">
             <div id ="leftpane"></div>
