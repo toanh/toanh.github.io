@@ -30,6 +30,11 @@ CS in Schools Python Editor
             margin: 0px auto;
         }
     </style>
+    <script>
+        function getURL() {
+            return "editor.html?" + window.location.search.split("?")[1];
+        }
+    </script>
 </head>
 <body>
 <div style="width:100%">
@@ -40,7 +45,7 @@ CS in Schools Python Editor
         </div>        
         <!-- <div class = "title" style="color: #082A4C">...with training wheels!</div> -->
     </div>
-    <iframe id = "editor" class = "editorframe" src="editor.html" width = "80%" height = 680 allow='clipboard-write' allowFullScreen></iframe>
+    <iframe id = "editor" class = "editorframe" src="editor.html" width = "80%" height = 680 allow='clipboard-write' allowFullScreen onload="this.onload=null; this.src=getURL();"></iframe>
 </div>
 <script>
 	document.getElementById("editor").height = Math.max(screen.height - 270, 580) + "px";  

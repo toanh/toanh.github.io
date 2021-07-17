@@ -182,11 +182,39 @@
         function singleStep()
         {
             return new Promise((resolve, reject) => {
-                singleStepButton.addEventListener('click', function(e) {
+                nextButton.addEventListener('click', function(e) {
                     resolve(1);
                 }, {once: true});
+                stopButton.addEventListener('click', function(e) {
+                    stopSkulpt();
+                    resolve(1);
+                }, {once: true});                
             });
 		}      
+
+        var prevLine = 0;
+        async function nextlineStepper(susp)
+        {
+            checkForStop();
+            try {
+                var child = susp.child;
+                while (child.child.child != null)
+                {
+                    child = child.child;
+                }
+                if (child.$lineno != prevLine)
+                {
+                    editor.gotoLine(child.$lineno);   
+                    await singleStep();
+                    prevLine = child.$lineno;
+                }
+                            
+                // Return an already-resolved promise in this case
+                return Promise.resolve(susp.resume());
+            } catch(e) {
+                return Promise.reject(e);
+            }    
+        }
 
         async function lineStepper(susp)
         {
@@ -197,33 +225,12 @@
                 {
                     child = child.child;
                 }
-                editor.gotoLine(child.$lineno);            
-                // don't pause on the first line                
-                if (just_run) just_run = false            
-                else {
-                    if (susp.data.type == "Sk.delay")
-                    {
-                        if (!justDelayed)
-                        {
-                            justDelayed = true;
-                            await sleep(1000);  
-                            //await singleStep();
-                        }
-                        else
-                        {
-                            justDelayed = false;
-                        }
-                    }
-                    else
-                    {
-                        await sleep(1000);  
-                        //await singleStep();
-                        justDelayed = false;
-                    }
-                            
-                }
-
-                // Return an already-resolved promise in this case
+                if (child.$lineno != prevLine)
+                {
+                    editor.gotoLine(child.$lineno);   
+                    await sleep(1000);  
+                    prevLine = child.$lineno;
+                }                
                 return Promise.resolve(susp.resume());
             } catch(e) {
                 return Promise.reject(e);
@@ -251,6 +258,7 @@
             stopButton.style.display = "inline";
             stepButton.style.display = "none";
             runButton.style.display = "none";            
+            stopButton.style.width = "144px";
             
             // clear the console
             pyConsole.innerHTML = "";
@@ -267,15 +275,29 @@
                 //breakpoints: function() { return true; },
                 __future__: Sk.python3
             });
-            
-            //Sk.onAfterCompile = doGoto;
-               
+                          
             var handlers = {};
             handlers["*"] = checkForStop;            
-            if (stepRun) {        
+            if (stepRun) {    
+                prevLine = 0;    
                 editor.setTheme("ace/theme/gob");
-                handlers["Sk.debug"] = lineStepper;
-                handlers["Sk.delay"] = lineStepper;
+                if (autostep != null)
+                {
+                    handlers["Sk.debug"] = lineStepper;
+                    handlers["Sk.delay"] = lineStepper;
+                }
+                else
+                {
+                    handlers["Sk.debug"] = nextlineStepper;
+                    handlers["Sk.delay"] = nextlineStepper;    
+                    // shorten stop button 
+                    stopButton.style.width = "72px";
+                    nextButton.style.display = "inline";
+                }
+            }
+            else
+            {
+                stopButton.style.width = "72px";
             }
                            
             var e = Sk.misceval.asyncToPromise((function() {
@@ -308,7 +330,8 @@
             editor.setTheme("ace/theme/monokai");
             just_run = false;
             
-            stopButton.style.display = "none";          
+            stopButton.style.display = "none";     
+            nextButton.style.display = "none";            
             runButton.style.display = "inline";          
             if (nostep != null && nostep.length > 0)
             {        
@@ -512,15 +535,15 @@
     <div id="container" style = "width:100%; height: 95%;margin: 0 auto"> 
         <form id="buttons" style = "margin: 20px auto;text-align: center; position: sticky;"> 
             <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
-            <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button> 
+            <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button>             
             <button id="stopButton" type="button" onclick="stopEditor();" style = "width:148px">🛑 Stop</button>
+            <button id="nextButton" type="button" style = "width:72px">⏭️ Next</button>
             <button id="copyButton" type="button" onclick="copyCode();" style = "width:72px">📋 Copy</button> 
             <button id="saveButton" type="button" onclick="saveCode(filename);" style = "width:72px">💾 Save</button>         
             <button id="loadButton" type="button" onclick="document.getElementById('file-input').click(); return false;" style = "width:72px">📂 Open</button> 
             <button id="URLButton" type="button" onclick="generateURL();" style = "width:72px">URL</button> 
             <button id="embedButton" type="button" onclick="generateEmbed();" style = "width:72px">Embed</button>      
-            <button id="fullscreenButton" type="button" onclick="openFullscreen();" style = "width:104px">🖥️ Fullscreen</button>      
-            <!-- <button id="singleStepButton" type="button" style = "width:72px">Single Step</button> -->
+            <button id="fullscreenButton" type="button" onclick="openFullscreen();" style = "width:104px">🖥️ Fullscreen</button>                  
         </form>  
         <div class="split" id="split">
             <div id ="leftpane"></div>
@@ -602,13 +625,15 @@ print(RESET + "Bye now!")
         var saveButton = document.getElementById("saveButton"); 
         var loadButton = document.getElementById("loadButton"); 
         var stepButton = document.getElementById("stepButton"); 
+        var nextButton = document.getElementById("nextButton"); 
         var copyButton = document.getElementById("copyButton");       
         var stopButton = document.getElementById("stopButton");  
         var URLButton = document.getElementById("URLButton");  
         var embedButton = document.getElementById("embedButton");  
 		
-		// hide stop button on load
-        stopButton.style.display = "none";  
+		// hide stop and next button on load
+        stopButton.style.display = "none";          
+        nextButton.style.display = "none";  
 
         // allows save (and load)
         nosave = urlParams.get('nosave')
@@ -666,6 +691,11 @@ print(RESET + "Bye now!")
         {
             copyButton.style.display = "inline";
         }           
+        
+        // autostep
+        // (linestepper with sleep)
+        autostep = urlParams.get('autostep')
+        autodelay = urlParams.get('autodelay')
 
         // get URL button
         URLButton.style.display = "none";  
