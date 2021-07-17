@@ -295,10 +295,6 @@
                     nextButton.style.display = "inline";
                 }
             }
-            else
-            {
-                stopButton.style.width = "72px";
-            }
                            
             var e = Sk.misceval.asyncToPromise((function() {
                 return Sk.importMainWithBody("<stdin>", true, code, true)})
@@ -534,7 +530,7 @@
 <body> 
     <div id="container" style = "width:100%; height: 95%;margin: 0 auto"> 
         <form id="buttons" style = "margin: 20px auto;text-align: center; position: sticky;"> 
-            <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">🞂 Run</button> 
+            <button id="runButton" type="button" onclick="runSkulpt(false);" style = "width:72px">⚡ Run</button> 
             <button id="stepButton" type="button" onclick="runSkulpt(true);" style = "width:72px">👣 Step</button>             
             <button id="stopButton" type="button" onclick="stopEditor();" style = "width:148px">🛑 Stop</button>
             <button id="nextButton" type="button" style = "width:72px">⏭️ Next</button>
