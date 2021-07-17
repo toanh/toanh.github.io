@@ -138,6 +138,7 @@ function resetConsole()
     fontBold = false;
     fontUnderlined = false;
     fontSize = "14pt";    
+    clearConsole();
 }
 
 function createColouredTextSpanElement(n, color, bgcolor, italics, bold, underlined) {
@@ -264,7 +265,7 @@ function decodeFromUTF16(codedText) {
 
 Sk.builtins.clear = function()
 {
-    pyConsole.innerHTML = "";
+    clearConsole();
 }
 
 Sk.onAfterCompile = function(name, code) {

@@ -26,8 +26,21 @@
             width: 100%;
             height: 300 px;
             overflow-y: auto;
+            overflow-x: auto;
             background-color: #000;       
+            position: relative;
         }  
+        #consoleClear {
+            line-height: 12px;
+            width: 18px;
+            font-size: 8pt;
+            font-family: tahoma;
+            text-align: center;
+            position:sticky;
+            background: rgba(255, 255, 255, 0.7);
+            top:1;
+            left: calc(100% - 18px);
+        }
         .split {
             display: flex;
             flex-direction: row;
@@ -48,6 +61,20 @@
     </style>
     
     <script type="text/javascript"> 
+        function clearConsole()
+        {
+            var clearButton = document.getElementById("consoleClear");
+            
+            pyConsole.innerHTML = "";
+            pyConsole.appendChild(clearButton);
+            if (inputElement != null)
+            {
+                inputElement.innerText = "";
+                pyConsole.appendChild(inputElement);
+            }              
+
+            
+        }
     
         /* When the openFullscreen() function is executed, open the video in fullscreen.
         Note that we must include prefixes for different browsers, as they don't support the requestFullscreen property yet */
@@ -261,7 +288,7 @@
             stopButton.style.width = "144px";
             
             // clear the console
-            pyConsole.innerHTML = "";
+            clearConsole();//pyConsole.innerHTML = "";
             just_run = true;
             
             resetConsole();
@@ -376,7 +403,7 @@
                 return function (e) {
                     checkForPyangelo(e.target.result);
                     editor.setValue(e.target.result, -1);
-                    pyConsole.innerHTML = "";
+                    clearConsole();//pyConsole.innerHTML = "";
                 };
             })(file);
             reader.readAsText(file);
@@ -565,7 +592,8 @@ while guess != secret:
 print(CYAN + "You got it!")
 print(RESET + "Bye now!")
         </div>
-        <pre id="console" onclick="if (inputElement != null) inputElement.focus();"></pre>     
+        <pre id="console" onclick="if (inputElement != null) inputElement.focus();"><div id="consoleClear" onclick="clearConsole();">X</div></pre>     
+        
         <canvas id="pyangelo" height = 500 width = 330 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
     <input id="file-input" type="file" name="name" style="display: none;"/>
@@ -670,7 +698,7 @@ print(RESET + "Bye now!")
         {        
             runButton.style.display = "none";
             stopButton.style.width = "72px";
-            stepButton.innerHTML = "🞂 Step";
+            stepButton.innerHTML = "👣 Step";
         }    
         else
         {
