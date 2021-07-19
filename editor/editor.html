@@ -366,10 +366,14 @@
             editor.setReadOnly(false); 
             if (stepRun)
             {
-                var styleSheet =  document.styleSheets[0];//getStyleSheet('ace-monokai');
-                styleSheet.deleteRule(styleSheet.rules.length - 1);
+                // remove step highlighting
+                var styleSheet =  document.styleSheets[0];
+                var lastRule = styleSheet.rules[styleSheet.rules.length - 1];
+                if (lastRule.cssText.indexOf(".ace_active-line") != -1)
+                {
+                    styleSheet.deleteRule(styleSheet.rules.length - 1);
+                }
             }
-            //editor.setTheme("ace/theme/monokai");
             just_run = false;
             
             stopButton.style.display = "none";     
