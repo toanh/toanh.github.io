@@ -637,8 +637,31 @@ print(RESET + "Bye now!")
 		
 		document.getElementById('file-input').addEventListener('change', userLoadCode, false);  
 
+        // configurable buttons
+        var runButton = document.getElementById("runButton"); 
+        var saveButton = document.getElementById("saveButton"); 
+        var loadButton = document.getElementById("loadButton"); 
+        var stepButton = document.getElementById("stepButton"); 
+        var nextButton = document.getElementById("nextButton"); 
+        var copyButton = document.getElementById("copyButton");       
+        var stopButton = document.getElementById("stopButton");  
+        var URLButton = document.getElementById("URLButton");  
+        var embedButton = document.getElementById("embedButton");  
+        var fsButton = document.getElementById("fullscreenButton");  
+        
         // grabbing the URL parameters and processing them
-        urlParams = new URLSearchParams(window.location.search);        
+        urlParams = new URLSearchParams(window.location.search);  
+
+        // canvas demo mode: canvas to the right of the editor, console at the bottom
+        var prevDisplay = null;  
+        var display = urlParams.get('display');
+        // TODO: the order below is important
+        
+        if (display == null || display.length == 0)
+        {
+            display = "side";
+        }    
+        setDisplayMode(display);        
         
         // embedded code in the URL
         esc = urlParams.get('code')                
@@ -666,19 +689,7 @@ print(RESET + "Bye now!")
                 }
             };
             client.send();            
-        }            
-
-        // configurable buttons
-        var runButton = document.getElementById("runButton"); 
-        var saveButton = document.getElementById("saveButton"); 
-        var loadButton = document.getElementById("loadButton"); 
-        var stepButton = document.getElementById("stepButton"); 
-        var nextButton = document.getElementById("nextButton"); 
-        var copyButton = document.getElementById("copyButton");       
-        var stopButton = document.getElementById("stopButton");  
-        var URLButton = document.getElementById("URLButton");  
-        var embedButton = document.getElementById("embedButton");  
-        var fsButton = document.getElementById("fullscreenButton");  
+        }                    
 		
 		// hide stop and next button on load
         stopButton.style.display = "none";          
@@ -785,18 +796,7 @@ print(RESET + "Bye now!")
         if (nofs != null && nofs.length > 0)
         {        
             fsButton.style.display = "none";   
-        }            
-        
-        // canvas demo mode: canvas to the right of the editor, console at the bottom
-        var prevDisplay = null;  
-        var display = urlParams.get('display');
-        // TODO: the order below is important
-        
-        if (display == null || display.length == 0)
-        {
-            display = "side";
-        }    
-        setDisplayMode(display);
+        }                    
         
         var just_run = false;
         var _stopped = false;
