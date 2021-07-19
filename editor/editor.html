@@ -273,8 +273,20 @@
         {
             outputf(Sk.builtins.RESET + Sk.builtins.RED + text + "\n" + Sk.builtins.RESET);
         }
+        
+        function getStyleSheet(unique_title) {
+          for(var i=0; i<document.styleSheets.length; i++) {
+            var sheet = document.styleSheets[i];
+            if(sheet.title == unique_title) {
+              return sheet;
+            }
+          }
+        }
                
-        function runSkulpt(stepRun) {
+        var stepRun = false;
+        function runSkulpt(stepMode) {
+        
+            stepRun = stepMode;
             var code = ace.edit("editor").getValue(); 
             
             code = pygmify(code);
@@ -307,7 +319,9 @@
             handlers["*"] = checkForStop;            
             if (stepRun) {    
                 prevLine = 0;    
-                editor.setTheme("ace/theme/gob");
+                //editor.setTheme("ace/theme/gob");
+                var styleSheet =  document.styleSheets[0];//getStyleSheet('ace-monokai');
+                styleSheet.insertRule(".ace-monokai .ace_marker-layer .ace_active-line {background: #208020}", styleSheet.rules.length);
                 if (autostep != null)
                 {
                     handlers["Sk.debug"] = lineStepper;
@@ -350,7 +364,12 @@
         
         function stopSkulpt() {
             editor.setReadOnly(false); 
-            editor.setTheme("ace/theme/monokai");
+            if (stepRun)
+            {
+                var styleSheet =  document.styleSheets[0];//getStyleSheet('ace-monokai');
+                styleSheet.deleteRule(styleSheet.rules.length - 1);
+            }
+            //editor.setTheme("ace/theme/monokai");
             just_run = false;
             
             stopButton.style.display = "none";     
@@ -597,7 +616,7 @@ print(RESET + "Bye now!")
         
         <canvas id="pyangelo" height = 500 width = 330 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
-    <input id="file-input" type="file" name="name" style="display: none;"/>
+    <input id="file-input" type="file" name="name" style="display: none;" accept=".py"/>
     
     <!---- setting up global vars for the editor and console etc. ----->
     <script>       
@@ -655,6 +674,7 @@ print(RESET + "Bye now!")
         var stopButton = document.getElementById("stopButton");  
         var URLButton = document.getElementById("URLButton");  
         var embedButton = document.getElementById("embedButton");  
+        var fsButton = document.getElementById("fullscreenButton");  
 		
 		// hide stop and next button on load
         stopButton.style.display = "none";          
@@ -754,7 +774,14 @@ print(RESET + "Bye now!")
             rightpane.style.display = "none";
             var leftpane = document.getElementById("leftpane");
             leftpane.style.width = "100%";
-        }          
+        }  
+
+        // no full screen (if unsupported by other widgets etc.)
+        nofs = urlParams.get('nofs')
+        if (nofs != null && nofs.length > 0)
+        {        
+            fsButton.style.display = "none";   
+        }            
         
         // canvas demo mode: canvas to the right of the editor, console at the bottom
         var prevDisplay = null;  
