@@ -407,6 +407,7 @@
                 };
             })(file);
             reader.readAsText(file);
+            stopEditor();
         }     
 
         function checkForPyangelo(code)
@@ -592,7 +593,7 @@ while guess != secret:
 print(CYAN + "You got it!")
 print(RESET + "Bye now!")
         </div>
-        <pre id="console" onclick="if (inputElement != null) inputElement.focus();"><div id="consoleClear" onclick="clearConsole();">X</div></pre>     
+        <pre id="console" onclick="if (inputElement != null) inputElement.focus();"><div id="consoleClear" onclick="clearConsole();" style="cursor: pointer;">X</div></pre>     
         
         <canvas id="pyangelo" height = 500 width = 330 style="border: 1px solid black; flex: 1 1 0px;" tabindex='1'></canvas>        
     </div>
